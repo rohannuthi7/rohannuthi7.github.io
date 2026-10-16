@@ -1,0 +1,8 @@
+role: Co-Founder & Lead Software Engineer
+org: Reaxe LLC
+dates: { start: "2026-04", end: present }
+photo: { src: ./img/reaxe.png, alt: "Reaxe logo" }
+photoShape: circle
+bullets:
+  - Built the multi-tenant SaaS platform used by home-remodeling contractors for quoting, scheduling and customer portals.
+  - "Own the Postgres data model, Node.js services and AWS deployment; [one measurable outcome]."

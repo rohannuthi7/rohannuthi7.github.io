@@ -1,0 +1,30 @@
+---
+import { site, navLinks } from '../data/site';
+---
+<nav class="nav" aria-label="Site">
+  <div class="container">
+    <a class="nav-name" href="/">{site.name}</a>
+    <div class="nav-links">
+      {navLinks.map((l) => <a href={l.href} data-section={l.href.startsWith('/#') ? l.href.slice(2) : undefined}>{l.label}</a>)}
+    </div>
+  </div>
+</nav>
+
+<script>
+  // On the home page, underline the nav link for the section in view.
+  if (location.pathname === '/' && 'IntersectionObserver' in window) {
+    const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.nav a[data-section]'));
+    const sections = links.map((l) => document.getElementById(l.dataset.section!)).filter((s): s is HTMLElement => !!s);
+    const visible = new Set<Element>();
+    const update = () => {
+      const top = sections.find((s) => visible.has(s)) ?? (window.scrollY < 240 ? sections[0] : null);
+      links.forEach((l) => (l.dataset.section === top?.id ? l.setAttribute('aria-current', 'location') : l.removeAttribute('aria-current')));
+    };
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => (e.isIntersecting ? visible.add(e.target) : visible.delete(e.target)));
+      update();
+    }, { rootMargin: '-40% 0px -55% 0px' });
+    sections.forEach((s) => io.observe(s));
+    window.addEventListener('scroll', update, { passive: true });
+  }
+</script>

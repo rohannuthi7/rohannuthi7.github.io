@@ -1,0 +1,86 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Button from '../components/Button.astro';
+import ContactList from '../components/ContactList.astro';
+import ProjectCarousel from '../components/ProjectCarousel.astro';
+import ExperienceEntry from '../components/ExperienceEntry.astro';
+import Tag from '../components/Tag.astro';
+import { site } from '../data/site';
+import { coursework } from '../data/coursework';
+import { skills } from '../data/skills';
+import { byStartDesc } from '../lib/dates';
+
+const projects = (await getCollection('projects', ({ data }) => !data.draft)).sort((a, b) => a.data.order - b.data.order);
+const experience = (await getCollection('experience')).sort(byStartDesc);
+---
+<Base title={site.title} description={site.description} ogImage="/og/home.png">
+  <header id="about" class="container hero">
+    <p class="kicker">{site.kicker}</p>
+    <h1>{site.name}</h1>
+  </header>
+
+  <section class="container about" aria-label="About">
+    <Image class="headshot" src={site.headshot.src} alt={site.headshot.alt} width={320} height={320} loading="eager" />
+    <div class="about-text">
+      <p class="lede">{site.description}</p>
+      <p class="kicker honours">
+        {site.honours.map((h) => <><span>{h}</span><span aria-hidden="true">·</span></>)}
+        <span class="mark"><span class="mark-badge"><Image src={site.fraternity.mark} alt="" width={160} height={160} /></span><span>{site.fraternity.name}</span></span>
+      </p>
+      <div class="btn-row">
+        <Button href={site.resume} external>View resume</Button>
+        <Button href="#projects" variant="secondary">Selected projects</Button>
+      </div>
+    </div>
+    <div class="about-contact">
+      <h2 id="contact" class="col-head">Contact</h2>
+      <ContactList />
+    </div>
+  </section>
+
+  <section id="coursework" class="section section-tint">
+    <div class="container"><h2 class="h2 section-title">Coursework</h2></div>
+    <div class="container">
+      <div class="course-table">
+        {coursework.map((group) => (
+          <div class="course-row">
+            <p class="dept kicker">{group.department}</p>
+            <div class="cells">
+              {group.courses.map((c) => (
+                <div class="course-cell">
+                  <p class="course-num">{c.number}</p>
+                  <p class="course-title">{c.title}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <ProjectCarousel projects={projects} />
+
+  <section id="experience" class="section">
+    <div class="container"><h2 class="h2 section-title">Experience</h2></div>
+    <div class="container">
+      <ul class="timeline">
+        {experience.map((entry) => <ExperienceEntry entry={entry} />)}
+      </ul>
+    </div>
+  </section>
+
+  <section id="skills" class="section section-tint">
+    <div class="container"><h2 class="h2 section-title">Skills</h2></div>
+    <div class="container stack">
+      {skills.map((row) => (
+        <div class="lrow">
+          <p class="kicker">{row.category}</p>
+          <ul class="chips">{row.items.map((s) => <Tag label={s} />)}</ul>
+        </div>
+      ))}
+    </div>
+  </section>
+</Base>

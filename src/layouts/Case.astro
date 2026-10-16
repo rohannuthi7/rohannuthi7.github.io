@@ -1,0 +1,38 @@
+---
+// Case-study page: collage left, article right, shared nav and footer.
+import type { CollectionEntry } from 'astro:content';
+import Base from './Base.astro';
+import Collage from '../components/Collage.astro';
+import { site } from '../data/site';
+import { formatRange } from '../lib/dates';
+
+interface Props { project: CollectionEntry<'projects'>; next: CollectionEntry<'projects'> }
+const { project, next } = Astro.props;
+const { data } = project;
+---
+<Base title={`${data.title} — ${site.name}`} description={data.tagline} page="case" ogImage={`/og/${project.id}.png`}>
+  <div class="container case">
+    <Collage title={data.title} photos={data.collage} />
+    <article class="article">
+      <header class="case-header">
+        <h1>{data.title}</h1>
+        <p class="lede">{data.tagline}</p>
+        <dl class="meta">
+          <dt class="kicker">Role</dt><dd>{data.role}</dd>
+          <dt class="kicker">Team</dt><dd>{data.team}</dd>
+          <dt class="kicker">Dates</dt><dd>{formatRange(data.dates.start, data.dates.end)}</dd>
+          <dt class="kicker">Status</dt><dd>{data.status}</dd>
+        </dl>
+        <div class="links-row">
+          {data.private
+            ? <span>Private repository: architecture and screenshots below</span>
+            : data.repo && <a href={data.repo} target="_blank" rel="noopener">Code on GitHub</a>}
+          {data.demo && <a href={data.demo} target="_blank" rel="noopener">Live</a>}
+          <a href={site.resume} target="_blank" rel="noopener">Resume</a>
+        </div>
+      </header>
+      <slot />
+      <p class="kicker next">Next: <a href={`/projects/${next.id}`}>{next.data.title}</a></p>
+    </article>
+  </div>
+</Base>

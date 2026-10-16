@@ -1,0 +1,14 @@
+---
+// Four-photo pinboard for the case-study page. Positions, sizes and
+// rotations live in site.css (.collage img:nth-child(n)).
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+interface Props { title: string; photos: { src: ImageMetadata; alt: string }[] }
+const { title, photos } = Astro.props;
+const sizes = [[340, 240], [280, 280], [320, 220], [320, 300]];
+---
+<div class="collage" role="img" aria-label={`${title} photographs`}>
+  {photos.map((p, i) => (
+    <Image src={p.src} alt={p.alt} width={sizes[i][0] * 2} height={sizes[i][1] * 2} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" />
+  ))}
+</div>

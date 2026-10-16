@@ -1,0 +1,7 @@
+role: Technical Project Manager
+org: Wisconsin Tech Consulting
+dates: { start: "2026-02", end: present }
+photo: { src: ./img/wisconsin-tech-consulting.png, alt: "Wisconsin Tech Consulting logo" }
+bullets:
+  - "Lead a student team on a pro-bono engagement for PostBite: scope, timeline and client communication."
+  - "[Second contribution from resume]."

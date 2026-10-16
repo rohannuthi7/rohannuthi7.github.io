@@ -1,0 +1,7 @@
+role: Embedded Systems Engineer
+org: Badger Solar Racing
+dates: { start: "2025-09", end: present }
+photo: { src: ./img/badger-solar-racing.png, alt: "Badger Solar Racing logo" }
+bullets:
+  - Firmware and board bring-up in C for the solar race car, including sensor interfaces and the CAN bus.
+  - "[Second contribution from resume]."
