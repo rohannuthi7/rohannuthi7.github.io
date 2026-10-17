@@ -1,6 +1,6 @@
 role: Robotics Hardware Engineer
 org: Wisconsin Humanoid
-dates: { start: "2025-11", end: present }
+dates: { start: "2025-11", end: "2026-08" }
 photo: { src: ./img/wisconsin-humanoid.png, alt: "Wisconsin Humanoid logo" }
 bullets:
   - Electrical design and testing for actuator and sensor hardware on a student humanoid platform.

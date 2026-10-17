@@ -12,6 +12,8 @@ repo: https://github.com/rohannuthi7
 private: false
 stack: [C, Altium, CAN]
 cover: { src: ./cover.svg, alt: "[Solar car hardware photo, square]" }
+stats:
+  - { label: boards brought up, value: "[n]", accent: true }
 collage:
   - { src: ./01.svg, alt: "[Solar car on the track]" }
   - { src: ./02.svg, alt: "[Board on the bench]" }

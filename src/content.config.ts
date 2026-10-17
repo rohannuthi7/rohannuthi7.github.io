@@ -8,8 +8,8 @@ const endDate = z.union([yearMonth, z.literal('present'), z.literal('ongoing')])
 const picture = (image: () => z.ZodTypeAny) =>
   z.object({ src: image(), alt: z.string().min(1) });
 
-// One folder per project under src/content/projects/<slug>/ with an index.md
-// and its images beside it. The folder name is the URL slug.
+// One folder per project under src/content/projects/<slug>/ with an index.md,
+// its images beside it. The folder name is the URL slug.
 const projects = defineCollection({
   loader: glob({ pattern: '*/index.md', base: './src/content/projects', generateId: ({ entry }) => entry.split('/')[0] }),
   schema: ({ image }) =>
@@ -26,6 +26,12 @@ const projects = defineCollection({
       demo: z.string().url().optional(),
       stack: z.array(z.string()).max(6),
       cover: picture(image),
+      // The card's photo strip: exactly three photos, cropped to the centre
+      // when narrow. Defaults to the first three collage photos.
+      frames: z.array(picture(image)).length(3).optional(),
+      // Rows of the card's stats ledger (label left, value right). The stack
+      // is appended as the last row automatically. One row may take the accent.
+      stats: z.array(z.object({ label: z.string(), value: z.string(), accent: z.boolean().default(false) })).min(1).max(4),
       collage: z.array(picture(image)).length(4),
       order: z.number(),
       draft: z.boolean().default(false),

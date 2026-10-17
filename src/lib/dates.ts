@@ -21,9 +21,21 @@ export function formatRange(start: string, end: string): string {
   return `${s.month} ${s.year} – ${e.month} ${e.year}`;
 }
 
-/** Sort key: newest start date first. */
-export function byStartDesc<T extends { data: { dates: { start: string } } }>(a: T, b: T): number {
-  return b.data.dates.start.localeCompare(a.data.dates.start);
+/** "2025-09" -> "Sep 2025" */
+export function formatStart(start: string): string {
+  const s = parse(start);
+  return `${s.month} ${s.year}`;
+}
+
+/** Sort key: roles still held first, then by newest start date; on a tie, the longer-running one first. */
+export function byStartDesc<T extends { data: { dates: { start: string; end: string } } }>(a: T, b: T): number {
+  const current = (e: string) => (e === 'present' || e === 'ongoing' ? 1 : 0);
+  const byCurrent = current(b.data.dates.end) - current(a.data.dates.end);
+  if (byCurrent !== 0) return byCurrent;
+  const byStart = b.data.dates.start.localeCompare(a.data.dates.start);
+  if (byStart !== 0) return byStart;
+  const endKey = (e: string) => (e === 'present' || e === 'ongoing' ? '9999-99' : e);
+  return endKey(b.data.dates.end).localeCompare(endKey(a.data.dates.end));
 }
 
 /** Machine-readable value for <time datetime>. */

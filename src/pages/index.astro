@@ -4,16 +4,17 @@ import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Button from '../components/Button.astro';
 import ContactList from '../components/ContactList.astro';
-import ProjectCarousel from '../components/ProjectCarousel.astro';
+import ProjectDeck from '../components/ProjectDeck.astro';
 import ExperienceEntry from '../components/ExperienceEntry.astro';
 import Tag from '../components/Tag.astro';
 import { site } from '../data/site';
-import { coursework } from '../data/coursework';
+import { coursework, levels, levelOf, catalogNumber } from '../data/coursework';
 import { skills } from '../data/skills';
 import { byStartDesc } from '../lib/dates';
 
 const projects = (await getCollection('projects', ({ data }) => !data.draft)).sort((a, b) => a.data.order - b.data.order);
 const experience = (await getCollection('experience')).sort(byStartDesc);
+const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber(a) - catalogNumber(b);
 ---
 <Base title={site.title} description={site.description} ogImage="/og/home.png">
   <header id="about" class="container hero">
@@ -22,12 +23,14 @@ const experience = (await getCollection('experience')).sort(byStartDesc);
   </header>
 
   <section class="container about" aria-label="About">
-    <Image class="headshot" src={site.headshot.src} alt={site.headshot.alt} width={320} height={320} loading="eager" />
+    <div class="headshot-frame">
+      <Image class="headshot" src={site.headshot.src} alt={site.headshot.alt} width={320} height={598} loading="eager" />
+    </div>
     <div class="about-text">
       <p class="lede">{site.description}</p>
       <p class="kicker honours">
-        {site.honours.map((h) => <><span>{h}</span><span aria-hidden="true">·</span></>)}
         <span class="mark"><span class="mark-badge"><Image src={site.fraternity.mark} alt="" width={160} height={160} /></span><span>{site.fraternity.name}</span></span>
+        {site.honours.map((h) => <><span aria-hidden="true">·</span><span>{h}</span></>)}
       </p>
       <div class="btn-row">
         <Button href={site.resume} external>View resume</Button>
@@ -41,31 +44,37 @@ const experience = (await getCollection('experience')).sort(byStartDesc);
   </section>
 
   <section id="coursework" class="section section-tint">
-    <div class="container"><h2 class="h2 section-title">Coursework</h2></div>
     <div class="container">
-      <div class="course-table">
+      <h2 class="h2 section-title">Coursework</h2>
+      <div class="ruler">
+        <div class="ruler-head" aria-hidden="true">
+          <span></span>
+          {levels.map((l) => <span class="kicker">{l}-level</span>)}
+        </div>
         {coursework.map((group) => (
-          <div class="course-row">
-            <p class="dept kicker">{group.department}</p>
-            <div class="cells">
-              {group.courses.map((c) => (
-                <div class="course-cell">
-                  <p class="course-num">{c.number}</p>
-                  <p class="course-title">{c.title}</p>
-                </div>
-              ))}
-            </div>
+          <div class="ruler-row">
+            <p class="kicker ruler-dept">{group.department}</p>
+            {levels.map((l) => (
+              <ul class="ruler-cell" aria-label={`${group.department}, ${l}-level`}>
+                {group.courses.filter((c) => levelOf(c) === l).sort(byNumber).map((c) => (
+                  <li class="course">
+                    <span class="course-num">{c.number}</span>
+                    <span class="course-title">{c.title}{c.term && <span class="kicker term">{c.term}</span>}</span>
+                  </li>
+                ))}
+              </ul>
+            ))}
           </div>
         ))}
       </div>
     </div>
   </section>
 
-  <ProjectCarousel projects={projects} />
+  <ProjectDeck projects={projects} />
 
   <section id="experience" class="section">
-    <div class="container"><h2 class="h2 section-title">Experience</h2></div>
     <div class="container">
+      <h2 class="h2 section-title">Experience</h2>
       <ul class="timeline">
         {experience.map((entry) => <ExperienceEntry entry={entry} />)}
       </ul>
@@ -73,8 +82,8 @@ const experience = (await getCollection('experience')).sort(byStartDesc);
   </section>
 
   <section id="skills" class="section section-tint">
-    <div class="container"><h2 class="h2 section-title">Skills</h2></div>
     <div class="container stack">
+      <h2 class="h2 section-title">Skills</h2>
       {skills.map((row) => (
         <div class="lrow">
           <p class="kicker">{row.category}</p>

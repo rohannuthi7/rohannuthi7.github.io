@@ -3,5 +3,6 @@ org: Wisconsin Tech Consulting
 dates: { start: "2026-02", end: present }
 photo: { src: ./img/wisconsin-tech-consulting.png, alt: "Wisconsin Tech Consulting logo" }
 bullets:
-  - "Lead a student team on a pro-bono engagement for PostBite: scope, timeline and client communication."
-  - "[Second contribution from resume]."
+  - Direct a six-analyst security and performance audit of PostBite, a consumer marketplace app built on Supabase, Vercel, and Stripe
+  - Closed a Supabase row-level security flaw that exposed every customer’s order records to any authenticated user, reproducing it with a proof-of-concept query and driving a per-user RLS policy fix through review and into production within a single release
+  - Own the eight-week plan and founder-facing deliverables, including a 118-item requirements checklist mapped to Apple App Store Review Guidelines, WCAG 2.1 AA, and FTC endorsement rules, plus a 500-concurrent-user load test on an isolated staging stack

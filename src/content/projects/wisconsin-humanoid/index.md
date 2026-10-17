@@ -12,6 +12,8 @@ repo: https://github.com/rohannuthi7
 private: false
 stack: [C++, Altium, Verilog]
 cover: { src: ./cover.svg, alt: "[Humanoid robot photo, square]" }
+stats:
+  - { label: degrees of freedom, value: "[n]", accent: true }
 collage:
   - { src: ./01.svg, alt: "[Actuator assembly]" }
   - { src: ./02.svg, alt: "[Sensor board]" }

@@ -11,6 +11,13 @@ import { site, navLinks } from '../data/site';
 </nav>
 
 <script>
+  // The nav is sticky, so anchors scroll to just below it. Measure it rather
+  // than guess, because the links wrap onto a second row on narrow screens.
+  const nav = document.querySelector<HTMLElement>('.nav');
+  const setNavHeight = () => nav && document.documentElement.style.setProperty('--nav-h', `${nav.offsetHeight}px`);
+  setNavHeight();
+  addEventListener('resize', setNavHeight, { passive: true });
+
   // On the home page, underline the nav link for the section in view.
   if (location.pathname === '/' && 'IntersectionObserver' in window) {
     const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.nav a[data-section]'));

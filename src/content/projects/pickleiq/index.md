@@ -12,6 +12,13 @@ repo: https://github.com/rohannuthi7
 private: false
 stack: [Python, PyTorch, React, FastAPI]
 cover: { src: ./cover-app.png, alt: "PickleIQ court view with four tracked players, their pose skeletons and the ball trajectory" }
+stats:
+  - { label: ball detection, value: "0.5% → 34%" }
+  - { label: improvement, value: "68×", accent: true }
+frames:
+  - { src: ./02.svg, alt: "[Ball-tracking overlay]" }
+  - { src: ./03.svg, alt: "[Player pose and swing angles]" }
+  - { src: ./04.svg, alt: "[Coach feedback view]" }
 collage:
   - { src: ./01.svg, alt: "[Court-side capture rig at the facility]" }
   - { src: ./02.svg, alt: "[Ball-tracking overlay, square frame]" }

@@ -12,7 +12,7 @@ const { data } = project;
 ---
 <Base title={`${data.title} — ${site.name}`} description={data.tagline} page="case" ogImage={`/og/${project.id}.png`}>
   <div class="container case">
-    <Collage title={data.title} photos={data.collage} />
+    <Collage title={data.title} slug={project.id} photos={data.collage} />
     <article class="article">
       <header class="case-header">
         <h1>{data.title}</h1>

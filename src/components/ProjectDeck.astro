@@ -1,0 +1,81 @@
+---
+// Projects as a pinned card deck. The runway is one viewport-high segment per
+// card: the sticky stage is the first segment and holds the cards while the
+// remaining segments scroll underneath it.
+// The script only toggles the snap class on <html> and sets the current
+// index on the stage; the cards derive everything else from CSS.
+import type { CollectionEntry } from 'astro:content';
+import ProjectCard from './ProjectCard.astro';
+
+interface Props { projects: CollectionEntry<'projects'>[] }
+const { projects } = Astro.props;
+---
+<section id="projects" class="section deck" aria-labelledby="projects-title">
+  <div class="container deck-head">
+    <h2 id="projects-title" class="h2">Projects</h2>
+  </div>
+  <div class="deck-container runway">
+    <div class="stage">
+      <div class="cardbox">
+        {projects.map((p, i) => <ProjectCard project={p} index={i} />)}
+      </div>
+    </div>
+    {projects.map((p) => <div class="segment" id={`card-${p.id}`}></div>)}
+  </div>
+</section>
+
+<script>
+  const deck = document.querySelector<HTMLElement>('.deck');
+  const stage = deck?.querySelector<HTMLElement>('.stage');
+  const runway = deck?.querySelector<HTMLElement>('.runway');
+  if (deck && stage && runway && matchMedia('(min-width: 721px)').matches) {
+    const cards = Array.from(deck.querySelectorAll<HTMLAnchorElement>('.card'));
+    deck.setAttribute('data-js', '');
+    let index = -1;
+
+    const setIndex = (i: number) => {
+      if (i === index) return;
+      index = i;
+      stage.dataset.index = String(i);
+      stage.style.setProperty('--index', String(i));
+      cards.forEach((c, k) => {
+        c.classList.toggle('is-front', k === i);
+        c.classList.toggle('is-passed', k < i);
+        c.inert = k < i;
+      });
+    };
+
+    // The stage pins just under the sticky nav and snap points land there too,
+    // so distance travelled is measured from the nav's bottom edge.
+    const nav = document.querySelector<HTMLElement>('.nav');
+    const update = () => {
+      const r = runway.getBoundingClientRect();
+      // One segment per card follows the stage's own slot, so the last card
+      // holds for a full segment before the stage releases.
+      const segment = (r.height - stage.offsetHeight) / cards.length;
+      const travelled = (nav?.offsetHeight ?? 0) - r.top;
+      // +2px absorbs sub-pixel rounding when the scroll has snapped exactly to a boundary.
+      setIndex(Math.max(0, Math.min(cards.length - 1, Math.floor((2 + travelled) / segment))));
+    };
+
+    let ticking = false;
+    addEventListener('scroll', () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => { update(); ticking = false; });
+    }, { passive: true });
+
+    update();
+  }
+
+  // Photo strip: the hovered frame expands and the counter follows it. The
+  // active frame stays open after the pointer leaves the strip.
+  document.querySelectorAll<HTMLElement>('.card').forEach((card) => {
+    const frames = Array.from(card.querySelectorAll<HTMLElement>('.frame'));
+    const counter = card.querySelector<HTMLElement>('.card-counter-n');
+    frames.forEach((f, k) => f.addEventListener('pointerenter', () => {
+      frames.forEach((g, j) => g.classList.toggle('is-active', j === k));
+      if (counter) counter.textContent = String(k + 1).padStart(2, '0');
+    }));
+  });
+</script>

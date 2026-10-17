@@ -1,8 +1,12 @@
 :root {
-  --bg: #ECECEA; --surface: #E3E3E0; --fg: #141414; --muted: #5C5C5C; --line: #CFCFCB;
+  --bg: #ECECEA; --fg: #141414; --muted: #5C5C5C; --line: #CFCFCB;
+  --surface: #E3E3E0; --surface-line: #C4C4C0;
+  /* Card backs match the case-study page background, so the stack previews where a click lands. */
+  --card-bg: #FFFFFF; --card-fg: #141414; --card-back-bg: #3B4A66; --card-back-fg: #ECEEF2;
   --accent: #3B4A66; --accent-hover: #2C3850;
   --img-border: #CFCFCB;
   --radius: 4px;
+  --nav-h: 65px;
   --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-serif: Georgia, "Times New Roman", Times, serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
@@ -12,15 +16,17 @@
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
-  :root { --bg: #1C1C1C; --surface: #232323; --fg: #E6E6E3; --muted: #9C9C98; --line: #333331;
+  :root { --bg: #1C1C1C; --fg: #E6E6E3; --muted: #9C9C98; --line: #333331;
+          --surface: #232323; --surface-line: #3A3A38;
+          --card-bg: #111111; --card-fg: #E6E6E3; --card-back-bg: #2A3447; --card-back-fg: #ECEEF2;
           --accent: #9DB0C8; --accent-hover: #B8C7DA; --img-border: #333331; }
 }
-[data-page="case"], .band-case {
+[data-page="case"] {
   --bg: #3B4A66; --fg: #ECEEF2; --muted: #C3CAD6; --line: #56637E;
   --accent: #ECEEF2; --accent-hover: #FFFFFF; --code-bg: #2F3B53; --img-mat: #3B4A66; --img-border: transparent;
 }
 @media (prefers-color-scheme: dark) {
-  [data-page="case"], .band-case {
+  [data-page="case"] {
     --bg: #2A3447; --fg: #ECEEF2; --muted: #B4BDCB; --line: #46536B;
     --accent: #ECEEF2; --accent-hover: #FFFFFF; --code-bg: #1F2737; --img-mat: #2A3447; --img-border: #46536B;
   }

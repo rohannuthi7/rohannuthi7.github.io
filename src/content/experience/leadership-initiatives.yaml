@@ -1,0 +1,7 @@
+role: Data Management Analyst
+org: Leadership Initiatives
+dates: { start: "2024-08", end: "2025-03" }
+photo: { src: ./img/leadership-initiatives.png, alt: "Leadership Initiatives logo" }
+bullets:
+  - "[What data you managed and what it was used for]."
+  - "[Second contribution]."
