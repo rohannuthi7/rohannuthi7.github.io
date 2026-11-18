@@ -128,11 +128,48 @@ h1, h2, h3 { text-wrap: balance; }
    viewport while the runway (one 100vh segment per card) scrolls under it.
    Each card reads its distance from the front, --d, and positions itself. */
 .deck { padding-bottom: 0; }
-.deck-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 12px 24px; margin-bottom: var(--space-4); }
+/* Header: the section's oversized title, with the project count on the right. */
+.deck-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: var(--space-6); }
+.deck-title { font-size: clamp(64px, 11vw, 136px); line-height: 0.9; letter-spacing: -0.045em; font-weight: 750; padding: 0 0.12em 0.04em 0.02em; }
+.deck-total { font-size: 15px; line-height: 1.2; color: var(--muted); text-align: right; padding-bottom: 6px; }
+.deck-total-n { display: block; font-size: 48px; line-height: 1; letter-spacing: -0.03em; font-weight: 700; color: var(--fg); }
 /* The card's left edge lines up with the content column; the 140px right
    padding leaves room for three 40px stack slivers to overhang the column. */
 .deck-container { width: min(100%, calc(var(--container) + 120px)); margin-left: max(0px, calc((100% - var(--container)) / 2)); padding: 0 140px 0 20px; }
 .runway { position: relative; }
+/* Counter above the pinned deck: which card is in front, and jump buttons.
+   The stage stacks it over the card box, which gives up the height it takes. */
+.deck[data-js] .stage { flex-direction: column; justify-content: center; align-items: stretch; }
+.deck[data-js] .cardbox { flex: 0 0 auto; height: min(640px, calc(100vh - var(--nav-h) - 132px)); }
+.deck-now { display: flex; align-items: baseline; gap: 16px; margin: 0 120px 28px 0; font-size: 15px; line-height: 1.2; }
+.deck-now-count { color: var(--muted); font-variant-numeric: tabular-nums; }
+.deck-now-i { font-size: 22px; font-weight: 700; color: var(--fg); }
+.deck-now-name { font-weight: 600; }
+.deck-ticks { margin-left: auto; display: flex; gap: 6px; align-self: center; }
+.deck-tick { width: 28px; height: 6px; padding: 0; border: 0; border-radius: 0; background: var(--line); transform: skewX(-20deg); cursor: pointer; }
+.deck-tick[aria-current] { background: var(--fg); width: 44px; }
+.deck-tick:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; }
+/* Panel behind the front card: one step lighter than the page, curving down its
+   left side and wrapping the card on all four sides. It sweeps in from the left
+   on hover/focus while the card lifts forward. */
+.deck-panel {
+  --gutter: calc(max(0px, (100vw - var(--container)) / 2) + 12px);
+  position: absolute; z-index: 9; top: -16px; bottom: -14px; left: calc(-1 * min(44px, var(--gutter))); right: -16px;
+  clip-path: inset(0 100% 0 0); pointer-events: none;
+  transition: clip-path 160ms cubic-bezier(.4, 0, .6, 1);
+}
+.deck-panel-shape {
+  position: absolute; inset: 0; background: color-mix(in srgb, var(--fg) 6%, var(--bg));
+  border-radius: 72px 28px 28px 72px / 50% 28px 28px 50%;
+  transform: rotate(-0.8deg);
+}
+.stage[data-hot] .deck-panel { clip-path: inset(0 0 0 0); transition: clip-path 220ms cubic-bezier(.2, .9, .1, 1); }
+.stage[data-hot] .card.is-front {
+  transform: translate(6px, -6px);
+  box-shadow: -6px 14px 32px -12px rgb(0 0 0 / 0.55);
+  transition: transform 220ms cubic-bezier(.2, 1.3, .4, 1), box-shadow 220ms ease-out, opacity 200ms;
+}
+.deck:not([data-js]) .deck-panel, .deck:not([data-js]) .deck-now { display: none; }
 /* The stage is exactly the viewport below the sticky nav, so a centred card
    sits in the middle of what is actually visible, not half a nav too high. */
 .stage { position: sticky; top: var(--nav-h); height: calc(100vh - var(--nav-h)); display: flex; align-items: center; }
@@ -210,7 +247,10 @@ h1, h2, h3 { text-wrap: balance; }
   .deck .segment { display: none; }
   .deck .cardbox { height: auto; display: flex; flex-direction: column; gap: 24px; }
   .deck .card, .deck:not([data-js]) .card { position: relative; inset: auto; transform: none; opacity: 1; }
-  .deck .card-back { display: none; }
+  .deck .card-back, .deck .deck-panel, .deck .deck-now { display: none; }
+  .deck-head { flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: var(--space-4); }
+  .deck-total { text-align: left; padding-bottom: 0; }
+  .deck-total-n { display: inline; font-size: inherit; font-weight: 600; letter-spacing: 0; }
   /* Phones: no hover, so show the first photo whole, at its own shape. */
   .strip, .deck:not([data-js]) .strip { flex: 0 0 auto; height: auto; container-type: normal; }
   .frame:not(:first-child) { display: none; }
@@ -309,7 +349,7 @@ h1, h2, h3 { text-wrap: balance; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   @view-transition { navigation: none; }
-  a, button, .card, .card-back, .frame, .card-bar, .card-bar-arrow, .collage img { transition: none; }
+  a, button, .card, .card-back, .frame, .card-bar, .card-bar-arrow, .collage img, .deck-panel, .stage[data-hot] .card.is-front { transition: none; }
   .btn:active { transform: none; }
   .collage img:hover { transform: inherit; }
 }
@@ -420,7 +460,7 @@ h1, h2, h3 { text-wrap: balance; }
 @media print {
   :root { --bg: #FFFFFF; --fg: #000000; --muted: #444444; --line: #BBBBBB; --accent: #000000; --card-bg: #FFFFFF; --card-fg: #000000; --surface: #FFFFFF; }
   html { background: #FFFFFF; }
-  .nav, .skip, .btn-row, .card-bar, .card-back, .segment, .strip, .gt-glow, .gt-card, .intro-signature { display: none; }
+  .nav, .skip, .btn-row, .card-bar, .card-back, .segment, .strip, .gt-glow, .gt-card, .intro-signature, .deck-panel, .deck-now { display: none; }
   .section, .hero, .about { padding-top: 24px; padding-bottom: 24px; break-inside: avoid; }
   .section-tint { background: transparent; }
   .stage { position: static; height: auto; display: block; }
