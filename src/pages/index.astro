@@ -18,13 +18,12 @@ const experience = (await getCollection('experience')).sort(byStartDesc);
 // The signature again, large and faint behind the intro. Decorative: the
 // footer copy carries the accessible name.
 const watermark = signatureSvg.replace(/ role="img" aria-label="[^"]*" class="signature"/, ' aria-hidden="true" focusable="false" class="intro-signature"');
-const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber(a) - catalogNumber(b);
+const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber(b) - catalogNumber(a);
 ---
 <Base title={site.title} description={site.description} ogImage="/og/home.png" signature>
   <div class="intro">
   <Fragment set:html={watermark} />
   <header id="about" class="container hero">
-    <p class="kicker">{site.kicker}</p>
     <h1>{site.name}</h1>
     {site.currently && <p class="currently">Currently: {site.currently}</p>}
   </header>
@@ -34,11 +33,16 @@ const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber
       <Image class="headshot" src={site.headshot.src} alt={site.headshot.alt} width={320} height={598} loading="eager" />
     </div>
     <div class="about-text">
-      <p class="lede">{site.description}</p>
-      <p class="kicker honours">
-        <span class="mark"><span class="mark-badge"><Image src={site.fraternity.mark} alt={`${site.fraternity.name} logo`} width={160} height={160} /></span><span>{site.fraternity.name}</span></span>
-        {site.honours.map((h) => <><span aria-hidden="true">·</span><span>{h}</span></>)}
-      </p>
+      <p class="lede">{site.bio}</p>
+      <dl class="ledger hero-facts">
+        {site.facts.map((f) => (
+          <div class="ledger-row"><dt>{f.label}</dt><dd>{f.value}</dd></div>
+        ))}
+        <div class="ledger-row">
+          <dt>Fraternity</dt>
+          <dd class="mark"><span class="mark-badge"><Image src={site.fraternity.mark} alt={`${site.fraternity.name} logo`} width={160} height={160} /></span><span>{site.fraternity.name}</span></dd>
+        </div>
+      </dl>
       <div class="btn-row">
         <Button href={site.resume} external>View resume</Button>
         <Button href="#projects" variant="secondary">Selected projects</Button>
@@ -53,15 +57,32 @@ const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber
 
   <section id="coursework" class="section section-case">
     <div class="container">
-      <h2 class="h2 section-title">Relevant coursework</h2>
-      <ul class="courses">
-        {[...coursework].sort(byNumber).map((c) => (
-          <li class="course">
-            <span class="course-num">{c.number}</span>
-            <span class="course-title">{c.title}{c.term && <span class="kicker term">{c.term}</span>}</span>
-          </li>
-        ))}
-      </ul>
+      <h2 class="big-title">Relevant coursework</h2>
+      <table class="courses">
+        <thead>
+          <tr><th scope="col">Course</th><th scope="col">What I built</th><th scope="col">Used in</th></tr>
+        </thead>
+        <tbody>
+          {[...coursework].sort(byNumber).map((c) => {
+            const used = projects.find((p) => p.id === c.project);
+            return (
+              <tr>
+                <th scope="row" class="course-name">
+                  {c.name}
+                  <span class="course-num">{c.number}{c.term && ` (${c.term})`}</span>
+                </th>
+                <td class="course-built">
+                  <p>{c.built ?? '[One sentence in your words: what you built or solved in this class]'}</p>
+                  <p class="course-topics">{c.topics}</p>
+                </td>
+                <td class="course-used">
+                  {used ? <a href={`/projects/${used.id}`}>{used.data.title}</a> : <span class="todo-link">[Your project]</span>}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   </section>
 
@@ -70,7 +91,7 @@ const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber
 
   <section id="experience" class="section">
     <div class="container">
-      <h2 class="h2 section-title">Experience</h2>
+      <h2 class="big-title">Experience</h2>
       <ul class="timeline">
         {experience.map((entry) => <ExperienceEntry entry={entry} />)}
       </ul>
@@ -79,7 +100,7 @@ const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber
 
   <section id="skills" class="section section-tint">
     <div class="container stack">
-      <h2 class="h2 section-title">Skills</h2>
+      <h2 class="big-title">Skills</h2>
       {skills.map((row) => (
         <div class="lrow">
           <p class="kicker">{row.category}</p>

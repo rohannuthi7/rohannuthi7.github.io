@@ -79,8 +79,10 @@ h1, h2, h3 { text-wrap: balance; }
 .section-tint { background: var(--surface); --line: var(--surface-line); --img-border: var(--surface-line); }
 /* Slate-blue surface, the same --case-bg as the project pages and card hover
    bar. Text 7.7:1 and muted 5.4:1 on the light-mode blue (more in dark mode). */
-.section-case { background: var(--case-bg); color: var(--case-fg); --fg: var(--case-fg); --muted: #C3CAD6; --line: rgb(255 255 255 / 0.2); --img-border: transparent; }
+.section-case { background: var(--case-bg); color: var(--case-fg); --fg: var(--case-fg); --muted: #C3CAD6; --line: rgb(255 255 255 / 0.2); --img-border: transparent; --accent: var(--case-fg); --accent-hover: #FFFFFF; }
 .section-title { margin-bottom: var(--space-4); }
+/* The oversized title every home section opens with. */
+.big-title { font-size: clamp(64px, 11vw, 136px); line-height: 0.9; letter-spacing: -0.045em; font-weight: 750; padding: 0 0.12em 0.04em 0.02em; margin-bottom: var(--space-6); }
 @media (max-width: 720px) {
   .section { padding-top: var(--space-8); padding-bottom: var(--space-8); }
   .section-title { margin-bottom: var(--space-3); }
@@ -105,8 +107,9 @@ h1, h2, h3 { text-wrap: balance; }
    buttons), so the photo is a portrait rectangle rather than a square. */
 .headshot-frame { position: relative; align-self: stretch; width: 160px; min-height: 240px; border: 1px solid var(--img-border); border-radius: var(--radius); overflow: hidden; }
 .headshot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 35%; border-radius: 0; }
-.honours { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
-.honours .mark { display: inline-flex; align-items: center; gap: 6px; }
+/* Fact table under the bio, in the project cards' ledger style. */
+.hero-facts { max-width: 400px; }
+.hero-facts .mark { display: inline-flex; align-items: center; justify-content: flex-end; gap: 6px; }
 .mark-badge { position: relative; width: 20px; height: 20px; border-radius: 50%; overflow: hidden; flex: 0 0 20px; }
 .mark-badge img { position: absolute; top: 50%; left: 50%; width: 132%; height: 132%; max-width: none; transform: translate(-50%, -50%); border-radius: 0; }
 /* Phones: the pitch and button come first so they sit above the fold; the
@@ -120,21 +123,36 @@ h1, h2, h3 { text-wrap: balance; }
 }
 @media (max-width: 480px) { .hero h1 { font-size: 40px; } .lede { font-size: 17px; } .h2 { font-size: 25px; } .body { font-size: 16px; } }
 
-/* Coursework: a short list, lowest catalogue number first. */
-.courses { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
-.course { display: flex; flex-direction: column; gap: 2px; }
-.course-num { font-size: 16px; line-height: 1.4; font-weight: 600; }
-.course-title { font-family: var(--font-serif); font-size: 16px; line-height: 1.5; }
-.course-title .term { margin-left: 6px; white-space: nowrap; }
-@media (max-width: 720px) { .courses { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* Coursework: a three-column table on the slate-blue surface. Course name
+   and number, what was built (serif, with the topics underneath), and the
+   project that used it. Colours come from .section-case. */
+.courses { width: 100%; border-collapse: collapse; text-align: left; font-family: var(--font-sans); }
+.courses th, .courses td { padding: 16px 24px 16px 0; vertical-align: top; border-bottom: 1px solid var(--line); }
+.courses th:last-child, .courses td:last-child { padding-right: 0; }
+.courses tbody tr:last-child th, .courses tbody tr:last-child td { border-bottom: 0; padding-bottom: 0; }
+.courses thead th { padding-top: 0; padding-bottom: 8px; font-size: 13px; line-height: 1.4; font-weight: 400; color: var(--muted); }
+.course-name { width: 26%; font-size: 16px; line-height: 1.4; font-weight: 600; }
+.course-num { display: block; margin-top: 2px; font-size: 13px; font-weight: 400; color: var(--muted); }
+.course-built p:first-child { font-family: var(--font-serif); font-size: 17px; line-height: 1.6; max-width: 46ch; text-wrap: pretty; }
+.course-topics { margin-top: 4px; font-size: 13px; line-height: 1.4; color: var(--muted); }
+.course-used { width: 22%; font-size: 15px; line-height: 1.4; }
+.todo-link { color: var(--accent); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+/* Phones: each course stacks into one block; the column heads are kept for
+   screen readers only. */
+@media (max-width: 720px) {
+  .courses, .courses tbody, .courses tr, .courses th, .courses td { display: block; width: auto; }
+  .courses thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .courses tbody tr { padding: 16px 0; border-bottom: 1px solid var(--line); }
+  .courses tbody tr:first-child { padding-top: 0; }
+  .courses tbody tr:last-child { padding-bottom: 0; border-bottom: 0; }
+  .courses tbody th, .courses tbody td { padding: 0; border: 0; }
+  .course-built, .course-used { margin-top: 8px; }
+}
 
 /* Projects: pinned card deck. The sticky stage holds the card box in the
    viewport while the runway (one 100vh segment per card) scrolls under it.
    Each card reads its distance from the front, --d, and positions itself. */
 .deck { padding-bottom: 0; }
-/* Header: the section's oversized title. */
-.deck-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: var(--space-6); }
-.deck-title { font-size: clamp(64px, 11vw, 136px); line-height: 0.9; letter-spacing: -0.045em; font-weight: 750; padding: 0 0.12em 0.04em 0.02em; }
 /* The card's left edge lines up with the content column; the 140px right
    padding leaves room for three 40px stack slivers to overhang the column. */
 .deck-container { width: min(100%, calc(var(--container) + 120px)); margin-left: max(0px, calc((100% - var(--container)) / 2)); padding: 0 140px 0 20px; }
@@ -146,9 +164,9 @@ h1, h2, h3 { text-wrap: balance; }
 .deck-now { display: flex; align-items: baseline; gap: 16px; margin: 0 120px 32px 0; font-size: 15px; line-height: 1.2; }
 .deck-now-count { color: var(--muted); font-variant-numeric: tabular-nums; }
 .deck-now-i { font-size: 20px; font-weight: 600; color: var(--fg); }
-.deck-ticks { margin-left: auto; display: flex; gap: 6px; align-self: center; }
-.deck-tick { width: 28px; height: 6px; padding: 0; border: 0; border-radius: 0; background: var(--line); transform: skewX(-20deg); cursor: pointer; }
-.deck-tick[aria-current] { background: var(--fg); width: 44px; }
+.deck-ticks { margin-left: auto; display: flex; gap: 10px; align-self: center; }
+.deck-tick { width: 10px; height: 10px; padding: 0; border: 0; border-radius: 50%; background: var(--line); cursor: pointer; }
+.deck-tick[aria-current] { background: var(--fg); }
 .deck-tick:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; }
 /* Panel behind the front card: one step lighter than the page, curving down its
    left side and wrapping the card on all four sides. It sweeps in from the left
@@ -255,7 +273,7 @@ h1, h2, h3 { text-wrap: balance; }
   .deck .cardbox { height: auto; display: flex; flex-direction: column; gap: 24px; }
   .deck .card, .deck:not([data-js]) .card { position: relative; inset: auto; transform: none; opacity: 1; }
   .deck .card-back, .deck .deck-panel, .deck .deck-now { display: none; }
-  .deck-head { flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: var(--space-4); }
+  .big-title { margin-bottom: var(--space-4); }
   /* Phones: no hover, so show the first photo whole, at its own shape. */
   .strip, .deck:not([data-js]) .strip { flex: 0 0 auto; height: auto; container-type: normal; }
   .frame:not(:first-child) { display: none; }

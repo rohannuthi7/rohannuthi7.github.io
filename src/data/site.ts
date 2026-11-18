@@ -7,13 +7,21 @@ export const site = {
   name: 'Rohan Nuthi',
   url: 'https://rohannuthi7.github.io',
   title: 'Rohan Nuthi — Software Engineer',
-  kicker: 'CS + CompE @ UW-Madison · May 2028',
   // One line under your name, shown as "Currently: …". Leave empty to hide it.
   currently: '',
-  // ≤ 50 words. Also used as the meta description.
+  // TODO(Rohan): the visible bio under your name. 2-3 sentences in your own
+  // voice. Shown as bracketed placeholder text until you replace it.
+  bio: '[Write 2-3 sentences in your own voice: what you build, what you are looking for (Summer 2027 SWE internship), one personal detail. Say here that you study CS + CompE at UW-Madison and graduate May 2028.]',
+  // ≤ 50 words. The meta description for search and link previews only.
   description:
     'Co-founder and lead software engineer at Reaxe, a multi-tenant SaaS platform for home-remodeling contractors covering quoting, scheduling and customer portals. Software engineering lead at Wisconsin Tech Consulting.',
-  honours: ['GPA 3.83', "Dean's List"],
+  // The small fact table under the bio, label left and value right.
+  facts: [
+    { label: 'School', value: 'UW-Madison, CS + CompE' },
+    { label: 'GPA', value: '3.83' },
+    { label: 'Honors', value: "Dean's List" },
+    { label: 'Graduating', value: 'May 2028' },
+  ],
   fraternity: { name: 'Alpha Kappa Psi', mark: akpsiMark },
   headshot: { src: headshot, alt: 'Rohan Nuthi sitting on a lawn in front of a city skyline at night' },
   location: 'Madison, WI',

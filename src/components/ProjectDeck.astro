@@ -2,7 +2,7 @@
 // Projects as a pinned card deck. The runway is one viewport-high segment per
 // card: the sticky stage is the first segment and holds the cards while the
 // remaining segments scroll underneath it.
-// Above the cards, a counter shows which card is in front, with buttons to
+// Above the cards, a counter shows which card is in front, with dot buttons to
 // jump to each one. Hovering or focusing the front card sweeps a rounded panel
 // in behind it and lifts the card forward.
 // The script sets the current index on the stage; the cards derive everything
@@ -15,8 +15,8 @@ const { projects } = Astro.props;
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
 <section id="projects" class="section deck" aria-labelledby="projects-title">
-  <div class="container deck-head">
-    <h2 id="projects-title" class="deck-title">Projects</h2>
+  <div class="container">
+    <h2 id="projects-title" class="big-title">Projects</h2>
   </div>
   <div class="deck-container runway">
     <div class="stage">
