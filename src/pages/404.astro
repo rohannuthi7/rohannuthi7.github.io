@@ -1,9 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
 import { site } from '../data/site';
+import face from '../assets/pixel-face.svg?raw';
+const bigFace = face.replace('<svg ', '<svg role="img" aria-label="Pixel-art self-portrait" class="notfound-face" ').replace('width="16" height="16"', 'width="192" height="192"');
 ---
 <Base title={`Page not found — ${site.name}`} description="That page does not exist." ogImage="/og/home.png">
   <section class="container notfound">
+    <Fragment set:html={bigFace} />
     <h1 class="h2">Page not found</h1>
     <p class="body">There is nothing at this address. <a href="/">Go back to the home page</a>.</p>
   </section>

@@ -10,14 +10,12 @@ dates: { start: "2026-04", end: present }
 status: In use
 private: true
 stack: [Node.js, PostgreSQL, Docker, AWS]
-cover: { src: ./cover.svg, alt: "[Reaxe screenshot, square crop]" }
+cover: { src: ./quote-scope.webp, alt: "Reaxe quote for a basement remodel: a $13,857.50 total from an $11,086.00 subtotal at 25% markup, above the scope of work from cabinet demolition through the permit" }
 stats:
-  - { label: Businesses on the platform, value: "[n]", accent: true }
+  - { label: Contracts processed, value: "$300K+", accent: true }
+  - { label: Quote turnaround, value: "2 days to 5 min" }
 collage:
-  - { src: ./01.svg, alt: "[Reaxe scheduling view with a week of jobs]" }
-  - { src: ./02.svg, alt: "[Reaxe quoting screen]" }
-  - { src: ./03.svg, alt: "[Reaxe architecture diagram]" }
-  - { src: ./04.svg, alt: "[Reaxe customer portal]" }
+  - { src: ./quote-scope.webp, alt: "Reaxe quote for a basement remodel: a $13,857.50 total from an $11,086.00 subtotal at 25% markup, above the scope of work from cabinet demolition through the permit" }
 order: 4
 draft: false
 ---

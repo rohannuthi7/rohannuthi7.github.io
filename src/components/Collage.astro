@@ -1,5 +1,6 @@
 ---
-// Four-photo pinboard for the case-study page. Positions, widths and
+// Pinboard of up to four photos for the case-study page; a single photo
+// simply fills the column. Positions, widths and
 // rotations live in site.css (.collage img:nth-child(n)); each photo keeps its
 // own aspect ratio, so nothing is cropped. The first photo
 // shares a view-transition-name with the project's card image on the home
@@ -10,7 +11,7 @@ interface Props { title: string; slug: string; photos: { src: ImageMetadata; alt
 const { title, slug, photos } = Astro.props;
 const widths = [340, 280, 320, 320];
 ---
-<div class="collage" role="img" aria-label={`${title} photographs`}>
+<div class={photos.length === 1 ? 'collage collage-single' : 'collage'} role="img" aria-label={`${title} photographs`}>
   {photos.map((p, i) => (
     <Image src={p.src} alt={p.alt} width={Math.min(widths[i] * 2, p.src.width)} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" style={i === 0 ? `view-transition-name: cover-${slug}` : undefined} />
   ))}

@@ -1,18 +1,33 @@
 ---
-// The homepage footer carries the handwritten signature (traced from a scan,
-// drawn in currentColor so it follows the theme); other pages omit it.
+// Footer on every page: the pixel face and copyright on the left, icon links
+// to GitHub, LinkedIn and email in the centre, the guestbook on the right.
+// The homepage also carries the handwritten signature (traced from a scan,
+// drawn in currentColor so it follows the theme).
+import Icon from './Icon.astro';
 import signature from '../assets/signature.svg?raw';
+import face from '../assets/pixel-face.svg?raw';
 import { site } from '../data/site';
+const smallFace = face.replace('<svg ', '<svg aria-hidden="true" focusable="false" class="footer-face" ').replace('width="16" height="16"', 'width="32" height="32"');
 const year = new Date().getFullYear();
 interface Props { signature?: boolean }
 const { signature: showSignature = false } = Astro.props;
+const links = [
+  { label: 'GitHub', href: site.github.href, icon: 'github', rel: 'me noopener', external: true },
+  { label: 'LinkedIn', href: site.linkedin.href, icon: 'linkedin', rel: 'me noopener', external: true },
+  { label: `Email ${site.email}`, href: `mailto:${site.email}`, icon: 'envelope', rel: undefined, external: false },
+] as const;
 ---
 <footer class="footer">
   <div class="container footer-row">
     <div class="footer-sign">
       {showSignature && <Fragment set:html={signature} />}
-      <p>© {year} {site.name}</p>
+      <p class="footer-copy"><Fragment set:html={smallFace} />© {year} {site.name}</p>
     </div>
-    <a href="/guestbook">Guestbook</a>
+    <ul class="footer-links">
+      {links.map((l) => (
+        <li><a href={l.href} aria-label={l.label} title={l.label} rel={l.rel} target={l.external ? '_blank' : undefined}><Icon name={l.icon} size={20} /></a></li>
+      ))}
+    </ul>
+    <a class="footer-guestbook" href="/guestbook">Guestbook</a>
   </div>
 </footer>

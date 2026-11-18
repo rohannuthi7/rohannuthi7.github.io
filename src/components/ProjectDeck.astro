@@ -2,7 +2,7 @@
 // Projects as a pinned card deck. The runway is one viewport-high segment per
 // card: the sticky stage is the first segment and holds the cards while the
 // remaining segments scroll underneath it.
-// Above the cards, a counter shows which project is in front, with buttons to
+// Above the cards, a counter shows which card is in front, with buttons to
 // jump to each one. Hovering or focusing the front card sweeps a rounded panel
 // in behind it and lifts the card forward.
 // The script sets the current index on the stage; the cards derive everything
@@ -17,13 +17,11 @@ const pad = (n: number) => String(n).padStart(2, '0');
 <section id="projects" class="section deck" aria-labelledby="projects-title">
   <div class="container deck-head">
     <h2 id="projects-title" class="deck-title">Projects</h2>
-    <p class="deck-total"><span class="deck-total-n">{pad(projects.length)}</span> projects</p>
   </div>
   <div class="deck-container runway">
     <div class="stage">
       <div class="deck-now">
         <p class="deck-now-count"><span class="deck-now-i">01</span> / {pad(projects.length)}</p>
-        <p class="deck-now-name">{projects[0].data.title}</p>
         <div class="deck-ticks">
           {projects.map((p, i) => <button type="button" class="deck-tick" aria-label={`Show ${p.data.title}`} aria-current={i === 0 ? 'true' : undefined}></button>)}
         </div>
@@ -45,7 +43,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
     const cards = Array.from(deck.querySelectorAll<HTMLAnchorElement>('.card'));
     const ticks = Array.from(deck.querySelectorAll<HTMLButtonElement>('.deck-tick'));
     const nowI = deck.querySelector<HTMLElement>('.deck-now-i')!;
-    const nowName = deck.querySelector<HTMLElement>('.deck-now-name')!;
     // The stage pins just under the sticky nav and snap points land there too,
     // so distance travelled is measured from the nav's bottom edge.
     const nav = document.querySelector<HTMLElement>('.nav');
@@ -72,7 +69,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
       });
       ticks.forEach((t, k) => (k === i ? t.setAttribute('aria-current', 'true') : t.removeAttribute('aria-current')));
       nowI.textContent = String(i + 1).padStart(2, '0');
-      nowName.textContent = cards[i].querySelector('.card-title')?.textContent ?? '';
       stage.removeAttribute('data-hot');
       requestAnimationFrame(setHot);
     };

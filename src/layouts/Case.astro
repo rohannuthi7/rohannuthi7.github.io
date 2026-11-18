@@ -1,5 +1,8 @@
 ---
 // Case-study page: collage left, article right, shared nav and footer.
+// Behind it, faint and decorative: a drawing taken from the project
+// (<slug>/art.svg) and, on wide screens, a strip of the project's real code
+// in the right margin (<slug>/excerpt.txt). Either file may be absent.
 import type { CollectionEntry } from 'astro:content';
 import Base from './Base.astro';
 import Collage from '../components/Collage.astro';
@@ -9,8 +12,15 @@ import { formatRange } from '../lib/dates';
 interface Props { project: CollectionEntry<'projects'>; next: CollectionEntry<'projects'> }
 const { project, next } = Astro.props;
 const { data } = project;
+const arts = import.meta.glob<string>('../content/projects/*/art.svg', { query: '?raw', import: 'default', eager: true });
+const codes = import.meta.glob<string>('../content/projects/*/excerpt.txt', { query: '?raw', import: 'default', eager: true });
+const art = arts[`../content/projects/${project.id}/art.svg`]?.replace('<svg ', '<svg aria-hidden="true" focusable="false" ');
+const code = codes[`../content/projects/${project.id}/excerpt.txt`];
 ---
 <Base title={`${data.title} — ${site.name}`} description={data.tagline} page="case" ogImage={`/og/${project.id}.png`}>
+  <div class="case-page">
+  {art && <div class="case-art"><Fragment set:html={art} /></div>}
+  {code && <pre class="case-code" aria-hidden="true">{code}</pre>}
   <div class="container case" style={`--project-link: var(--project-${project.id}-link)`}>
     <Collage title={data.title} slug={project.id} photos={data.collage} />
     <article class="article">
@@ -34,5 +44,6 @@ const { data } = project;
       <slot />
       <p class="kicker next">Next: <a href={`/projects/${next.id}`}>{next.data.title}</a></p>
     </article>
+  </div>
   </div>
 </Base>

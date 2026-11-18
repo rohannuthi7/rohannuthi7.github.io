@@ -7,6 +7,7 @@
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import Icon from './Icon.astro';
+import reaxeRound from '../assets/reaxe-round.svg?raw';
 
 interface Props { project: CollectionEntry<'projects'>; index: number }
 const { project, index } = Astro.props;
@@ -16,6 +17,10 @@ const { data } = project;
 const frames = data.frames ?? data.collage.slice(0, 3);
 // The stack is always the last row of the ledger.
 const rows = [...data.stats, { label: 'Stack', value: data.stack.join(', '), accent: false }];
+
+// A project's own round logo beside its title.
+const logos: Record<string, string> = { reaxe: reaxeRound };
+const logo = logos[project.id]?.replace('<svg ', '<svg aria-hidden="true" focusable="false" ');
 
 // Back-face icons on the waiting cards' tabs: generic line drawings, never logos.
 const backIcons: Record<string, string> = {
@@ -41,7 +46,9 @@ const backIcons: Record<string, string> = {
   </div>
   <div class="card-info">
     <div class="card-text">
-      <h3 class="card-title">{data.title}</h3>
+      {logo
+        ? <div class="card-title-row"><span class="card-logo" set:html={logo} /><h3 class="card-title">{data.title}</h3></div>
+        : <h3 class="card-title">{data.title}</h3>}
       <p class="card-blurb">{data.summary}</p>
     </div>
     <dl class="ledger">

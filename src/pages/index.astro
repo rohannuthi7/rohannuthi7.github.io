@@ -51,11 +51,9 @@ const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber
   </section>
   </div>
 
-  <ProjectDeck projects={projects} />
-
-  <section id="coursework" class="section section-tint">
+  <section id="coursework" class="section section-case">
     <div class="container">
-      <h2 class="h2 section-title">Coursework</h2>
+      <h2 class="h2 section-title">Relevant coursework</h2>
       <ul class="courses">
         {[...coursework].sort(byNumber).map((c) => (
           <li class="course">
@@ -66,6 +64,9 @@ const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber
       </ul>
     </div>
   </section>
+
+  <ProjectDeck projects={projects} />
+
 
   <section id="experience" class="section">
     <div class="container">

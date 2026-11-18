@@ -3,7 +3,8 @@
 // the SVG is drawn from the pixels themselves, and every PNG is a whole-number
 // multiple of 16 enlarged with nearest-neighbour sampling.
 //
-// Writes public/favicon.svg, favicon-32.png, favicon.ico, apple-touch-icon.png
+// Writes public/favicon.svg, favicon-32.png, favicon.ico, apple-touch-icon.png,
+// src/assets/pixel-face.svg (for the page)
 // and icon-512.png. Runs before every build.
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -58,6 +59,10 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${N} ${N}" wid
   `<style>.f{fill:${LIGHT.face}}.i{fill:${LIGHT.ink}}@media (prefers-color-scheme:dark){.f{fill:${DARK.face}}.i{fill:${DARK.ink}}}</style>` +
   `<path class="f" d="${runs('face')}"/><path class="i" d="${runs('ink')}"/></svg>\n`;
 writeFileSync(join(pub, 'favicon.svg'), svg);
+// The same drawing for use on the page: ink only, in currentColor, so it
+// follows the text colour of wherever it is placed.
+writeFileSync(join(root, 'src', 'assets', 'pixel-face.svg'),
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${N} ${N}" width="${N}" height="${N}" shape-rendering="crispEdges" fill="currentColor"><path d="${runs('ink')}"/></svg>\n`);
 
 // 4. Raster versions: build the 16px image pixel by pixel, then enlarge by whole numbers.
 const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));

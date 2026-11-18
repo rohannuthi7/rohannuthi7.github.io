@@ -37,7 +37,7 @@ h1, h2, h3 { text-wrap: balance; }
 .col-head { font-size: 16px; line-height: 1.4; font-weight: 600; }
 
 /* Nav */
-.nav { position: sticky; top: 0; z-index: 20; padding: 24px 0; border-bottom: 1px solid var(--line); background: var(--bg); background: color-mix(in srgb, var(--bg) 85%, transparent); }
+.nav { position: sticky; top: 0; z-index: 20; padding: 24px 0; border-bottom: 1px solid var(--line); background: var(--bg); }
 .nav .container { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 12px 24px; }
 .nav a { color: var(--fg); text-decoration: none; font-size: 15px; line-height: 1; }
 .nav a:hover, .nav a[aria-current] { text-decoration: underline; text-underline-offset: 3px; }
@@ -77,6 +77,9 @@ h1, h2, h3 { text-wrap: balance; }
    surface edge is the boundary, so there are no hairlines between sections. */
 .section { padding-top: var(--space-12); padding-bottom: var(--space-12); }
 .section-tint { background: var(--surface); --line: var(--surface-line); --img-border: var(--surface-line); }
+/* Slate-blue surface, the same --case-bg as the project pages and card hover
+   bar. Text 7.7:1 and muted 5.4:1 on the light-mode blue (more in dark mode). */
+.section-case { background: var(--case-bg); color: var(--case-fg); --fg: var(--case-fg); --muted: #C3CAD6; --line: rgb(255 255 255 / 0.2); --img-border: transparent; }
 .section-title { margin-bottom: var(--space-4); }
 @media (max-width: 720px) {
   .section { padding-top: var(--space-8); padding-bottom: var(--space-8); }
@@ -84,8 +87,9 @@ h1, h2, h3 { text-wrap: balance; }
 }
 
 /* About. The intro wraps the hero and About so the signature can sit behind
-   both, very faint; it is clipped so it never causes sideways scrolling. */
-.intro { position: relative; overflow: clip; }
+   both, very faint. It is clipped at the sides (no sideways scrolling) but
+   hangs down over the top of the next section, above its background. */
+.intro { position: relative; z-index: 1; overflow-x: clip; overflow-y: visible; }
 .intro > :not(.intro-signature) { position: relative; z-index: 1; }
 .intro-signature { position: absolute; z-index: 0; top: 0; left: 50%; transform: translateX(-46%); width: min(1240px, 118%); max-width: none; height: auto; color: var(--fg); opacity: 0.06; pointer-events: none; }
 @media (max-width: 720px) { .intro-signature { top: 24px; width: 160%; transform: translateX(-52%); } }
@@ -128,11 +132,9 @@ h1, h2, h3 { text-wrap: balance; }
    viewport while the runway (one 100vh segment per card) scrolls under it.
    Each card reads its distance from the front, --d, and positions itself. */
 .deck { padding-bottom: 0; }
-/* Header: the section's oversized title, with the project count on the right. */
+/* Header: the section's oversized title. */
 .deck-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: var(--space-6); }
 .deck-title { font-size: clamp(64px, 11vw, 136px); line-height: 0.9; letter-spacing: -0.045em; font-weight: 750; padding: 0 0.12em 0.04em 0.02em; }
-.deck-total { font-size: 15px; line-height: 1.2; color: var(--muted); text-align: right; padding-bottom: 6px; }
-.deck-total-n { display: block; font-size: 48px; line-height: 1; letter-spacing: -0.03em; font-weight: 700; color: var(--fg); }
 /* The card's left edge lines up with the content column; the 140px right
    padding leaves room for three 40px stack slivers to overhang the column. */
 .deck-container { width: min(100%, calc(var(--container) + 120px)); margin-left: max(0px, calc((100% - var(--container)) / 2)); padding: 0 140px 0 20px; }
@@ -144,7 +146,6 @@ h1, h2, h3 { text-wrap: balance; }
 .deck-now { display: flex; align-items: baseline; gap: 16px; margin: 0 120px 28px 0; font-size: 15px; line-height: 1.2; }
 .deck-now-count { color: var(--muted); font-variant-numeric: tabular-nums; }
 .deck-now-i { font-size: 22px; font-weight: 700; color: var(--fg); }
-.deck-now-name { font-weight: 600; }
 .deck-ticks { margin-left: auto; display: flex; gap: 6px; align-self: center; }
 .deck-tick { width: 28px; height: 6px; padding: 0; border: 0; border-radius: 0; background: var(--line); transform: skewX(-20deg); cursor: pointer; }
 .deck-tick[aria-current] { background: var(--fg); width: 44px; }
@@ -200,11 +201,17 @@ h1, h2, h3 { text-wrap: balance; }
 .frame { flex: 1 1 0; min-width: 0; transition: flex 200ms cubic-bezier(.2, .7, .2, 1); }
 .frame.is-active { flex: 0 0 min(calc(100cqh * var(--ar, 1.6)), calc(100cqw - 152px)); }
 .frame img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius); }
+/* A project with one photo: it takes the whole strip. */
+.frame:only-child, .frame.is-active:only-child { flex: 1 1 auto; }
+.frame:only-child img { object-position: left top; }
 /* 2. Info area: title + blurb left, stats ledger right. */
 .card-info { flex: 0 0 auto; display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; padding: 36px 40px 32px; }
 .card-text { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
 /* Card type follows the page scale: 25px sans heading (the case-study h2
    size), 17px serif body, 13px sans kickers, 15px sans values. No mono. */
+.card-title-row { display: flex; align-items: center; gap: 12px; }
+.card-logo { flex: 0 0 auto; display: block; width: 36px; height: 36px; }
+.card-logo svg { display: block; width: 100%; height: 100%; }
 .card-title { font-size: 25px; line-height: 1.2; letter-spacing: -0.01em; font-weight: 600; }
 .card-blurb { font-family: var(--font-serif); font-size: 17px; line-height: 1.55; text-wrap: pretty; }
 .ledger { display: flex; flex-direction: column; justify-content: center; font-family: var(--font-sans); font-size: 15px; line-height: 1.4; }
@@ -249,8 +256,6 @@ h1, h2, h3 { text-wrap: balance; }
   .deck .card, .deck:not([data-js]) .card { position: relative; inset: auto; transform: none; opacity: 1; }
   .deck .card-back, .deck .deck-panel, .deck .deck-now { display: none; }
   .deck-head { flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: var(--space-4); }
-  .deck-total { text-align: left; padding-bottom: 0; }
-  .deck-total-n { display: inline; font-size: inherit; font-weight: 600; letter-spacing: 0; }
   /* Phones: no hover, so show the first photo whole, at its own shape. */
   .strip, .deck:not([data-js]) .strip { flex: 0 0 auto; height: auto; container-type: normal; }
   .frame:not(:first-child) { display: none; }
@@ -291,12 +296,24 @@ h1, h2, h3 { text-wrap: balance; }
 
 /* Footer */
 .footer { border-top: 1px solid var(--line); padding: var(--space-6) 0; font-size: 14px; line-height: 1.4; color: var(--muted); }
-.footer-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; }
+.footer-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 24px; }
+.footer-links { display: flex; gap: 4px; }
+.footer-links a { display: grid; place-items: center; width: 44px; height: 44px; border-radius: var(--radius); }
+.footer-guestbook { justify-self: end; }
+@media (max-width: 600px) {
+  .footer-row { grid-template-columns: 1fr auto; gap: 16px 24px; }
+  .footer-links { grid-column: 1 / -1; justify-self: center; }
+  .footer-guestbook { grid-row: 1; grid-column: 2; }
+}
 .footer-sign { display: flex; flex-direction: column; gap: 8px; }
 .footer p { margin: 0; }
 .footer a { color: var(--muted); }
 .footer a:hover { color: var(--fg); }
 .signature { display: block; width: 140px; height: 81px; }
+.footer-copy { display: flex; align-items: center; gap: 10px; }
+.footer-face, .notfound-face { flex: 0 0 auto; image-rendering: pixelated; shape-rendering: crispEdges; }
+.footer-face { width: 32px; height: 32px; }
+.notfound-face { width: 192px; height: 192px; margin-bottom: 16px; color: var(--fg); }
 
 /* Case-study page */
 .case { padding-top: var(--space-12); padding-bottom: var(--space-16); display: flex; gap: 64px; align-items: flex-start; }
@@ -307,6 +324,17 @@ h1, h2, h3 { text-wrap: balance; }
 .collage img:nth-child(3) { left: 0; top: 440px; width: 320px; height: auto; transform: rotate(-0.8deg); z-index: 3; }
 .collage img:nth-child(4) { left: 120px; top: 640px; width: 320px; height: auto; transform: rotate(1deg); z-index: 4; }
 .collage img:hover { transform: rotate(0deg); z-index: 5; }
+.collage-single { height: auto; }
+.collage-single img:nth-child(1) { position: static; width: 100%; }
+/* Decorative layers behind a case study: the project's drawing behind the
+   header, and its code in the right margin on wide screens. */
+.case-page { position: relative; overflow: clip; }
+.case-page > .case { position: relative; z-index: 1; }
+.case-art { position: absolute; z-index: 0; top: 56px; right: max(16px, calc((100% - var(--container)) / 2)); width: min(560px, 52%); display: flex; justify-content: flex-end; color: var(--fg); opacity: 0.08; pointer-events: none; }
+.case-art svg { width: 100%; height: auto; max-height: 360px; }
+.case-code { position: absolute; z-index: 0; top: 140px; right: 0; width: calc((100% - var(--container)) / 2 - 32px); max-height: calc(100% - 180px); overflow: hidden; margin: 0; font: 11px/1.7 var(--font-mono); color: var(--fg); opacity: 0.14; white-space: pre; pointer-events: none; }
+@media (max-width: 1359px) { .case-code { display: none; } }
+@media (max-width: 960px) { .case-art { top: 24px; width: 80%; opacity: 0.06; } }
 .article { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 48px; }
 .case-header { display: flex; flex-direction: column; gap: 20px; }
 .case-header h1 { font-size: 39px; line-height: 1.1; letter-spacing: -0.02em; font-weight: 650; }
@@ -331,6 +359,7 @@ h1, h2, h3 { text-wrap: balance; }
   .case { flex-direction: column; padding-top: var(--space-8); padding-bottom: var(--space-12); }
   .collage { position: static; width: 100%; height: auto; flex: 1 1 auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   .collage img, .collage img:nth-child(n) { position: static; transform: none; width: 100%; height: auto; border-width: 0; }
+  .collage-single { grid-template-columns: minmax(0, 1fr); }
   .case-header h1 { font-size: 32px; }
   .prose h2 { font-size: 22px; }
   .prose p, .prose ul, .prose ol { font-size: 17px; }
@@ -460,7 +489,7 @@ h1, h2, h3 { text-wrap: balance; }
 @media print {
   :root { --bg: #FFFFFF; --fg: #000000; --muted: #444444; --line: #BBBBBB; --accent: #000000; --card-bg: #FFFFFF; --card-fg: #000000; --surface: #FFFFFF; }
   html { background: #FFFFFF; }
-  .nav, .skip, .btn-row, .card-bar, .card-back, .segment, .strip, .gt-glow, .gt-card, .intro-signature, .deck-panel, .deck-now { display: none; }
+  .nav, .skip, .btn-row, .card-bar, .card-back, .segment, .strip, .gt-glow, .gt-card, .intro-signature, .deck-panel, .deck-now, .case-art, .case-code { display: none; }
   .section, .hero, .about { padding-top: 24px; padding-bottom: 24px; break-inside: avoid; }
   .section-tint { background: transparent; }
   .stage { position: static; height: auto; display: block; }
