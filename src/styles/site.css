@@ -41,7 +41,7 @@ h1, h2, h3 { text-wrap: balance; }
 .nav .container { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 12px 24px; }
 .nav a { color: var(--fg); text-decoration: none; font-size: 15px; line-height: 1; }
 .nav a:hover, .nav a[aria-current] { text-decoration: underline; text-underline-offset: 3px; }
-.nav-name { font-weight: 600; font-size: 16px; }
+.nav .nav-name { font-weight: 600; font-size: 16px; }
 .nav-links { display: flex; flex-wrap: wrap; gap: 12px 24px; }
 @media (max-width: 480px) { .nav-name { flex: 0 0 100%; } }
 
@@ -113,8 +113,8 @@ h1, h2, h3 { text-wrap: balance; }
    photo shrinks and sits beside the contact list underneath. */
 @media (max-width: 720px) {
   .hero { padding-top: var(--space-6); gap: 8px; }
-  .about { grid-template-columns: 120px minmax(0, 1fr); grid-template-areas: "text text" "photo contact"; gap: 32px 20px; padding-top: 20px; padding-bottom: var(--space-8); }
-  .about-text { grid-area: text; gap: 20px; }
+  .about { grid-template-columns: 120px minmax(0, 1fr); grid-template-areas: "text text" "photo contact"; gap: 32px 24px; padding-top: 24px; padding-bottom: var(--space-8); }
+  .about-text { grid-area: text; gap: 24px; }
   .headshot-frame { grid-area: photo; width: 120px; align-self: start; aspect-ratio: 8 / 15; min-height: 0; }
   .about-contact { grid-area: contact; }
 }
@@ -124,7 +124,7 @@ h1, h2, h3 { text-wrap: balance; }
 .courses { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
 .course { display: flex; flex-direction: column; gap: 2px; }
 .course-num { font-size: 16px; line-height: 1.4; font-weight: 600; }
-.course-title { font-family: var(--font-serif); font-size: 16px; line-height: 1.4; }
+.course-title { font-family: var(--font-serif); font-size: 16px; line-height: 1.5; }
 .course-title .term { margin-left: 6px; white-space: nowrap; }
 @media (max-width: 720px) { .courses { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
@@ -143,9 +143,9 @@ h1, h2, h3 { text-wrap: balance; }
    The stage stacks it over the card box, which gives up the height it takes. */
 .deck[data-js] .stage { flex-direction: column; justify-content: center; align-items: stretch; }
 .deck[data-js] .cardbox { flex: 0 0 auto; height: min(640px, calc(100vh - var(--nav-h) - 132px)); }
-.deck-now { display: flex; align-items: baseline; gap: 16px; margin: 0 120px 28px 0; font-size: 15px; line-height: 1.2; }
+.deck-now { display: flex; align-items: baseline; gap: 16px; margin: 0 120px 32px 0; font-size: 15px; line-height: 1.2; }
 .deck-now-count { color: var(--muted); font-variant-numeric: tabular-nums; }
-.deck-now-i { font-size: 22px; font-weight: 700; color: var(--fg); }
+.deck-now-i { font-size: 20px; font-weight: 600; color: var(--fg); }
 .deck-ticks { margin-left: auto; display: flex; gap: 6px; align-self: center; }
 .deck-tick { width: 28px; height: 6px; padding: 0; border: 0; border-radius: 0; background: var(--line); transform: skewX(-20deg); cursor: pointer; }
 .deck-tick[aria-current] { background: var(--fg); width: 44px; }
@@ -205,15 +205,15 @@ h1, h2, h3 { text-wrap: balance; }
 .frame:only-child, .frame.is-active:only-child { flex: 1 1 auto; }
 .frame:only-child img { object-position: left top; }
 /* 2. Info area: title + blurb left, stats ledger right. */
-.card-info { flex: 0 0 auto; display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; padding: 36px 40px 32px; }
-.card-text { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.card-info { flex: 0 0 auto; display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; padding: 32px 40px; }
+.card-text { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
 /* Card type follows the page scale: 25px sans heading (the case-study h2
    size), 17px serif body, 13px sans kickers, 15px sans values. No mono. */
 .card-title-row { display: flex; align-items: center; gap: 12px; }
 .card-logo { flex: 0 0 auto; display: block; width: 36px; height: 36px; }
 .card-logo svg { display: block; width: 100%; height: 100%; }
-.card-title { font-size: 25px; line-height: 1.2; letter-spacing: -0.01em; font-weight: 600; }
-.card-blurb { font-family: var(--font-serif); font-size: 17px; line-height: 1.55; text-wrap: pretty; }
+.card-title { font-size: 31px; line-height: 1.15; letter-spacing: -0.015em; font-weight: 600; }
+.card-blurb { font-family: var(--font-serif); font-size: 17px; line-height: 1.6; text-wrap: pretty; }
 .ledger { display: flex; flex-direction: column; justify-content: center; font-family: var(--font-sans); font-size: 15px; line-height: 1.4; }
 .ledger-row { display: flex; justify-content: space-between; gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--line); }
 .ledger-row:last-child { border-bottom: 0; }
@@ -221,7 +221,7 @@ h1, h2, h3 { text-wrap: balance; }
 .ledger dd { text-align: right; }
 .ledger dd.is-accent { color: var(--accent); }
 /* 3. Action bar: the click indicator. Fills with the accent on card hover. */
-.card-bar { flex: 0 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 14px 40px; border-top: 1px solid var(--line); font-family: var(--font-sans); font-size: 13px; line-height: 1.4; color: var(--muted); background: var(--card-bg); transition: background-color 120ms ease-out, color 120ms ease-out, border-color 120ms ease-out; }
+.card-bar { flex: 0 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 16px 40px; border-top: 1px solid var(--line); font-family: var(--font-sans); font-size: 13px; line-height: 1.4; color: var(--muted); background: var(--card-bg); transition: background-color 120ms ease-out, color 120ms ease-out, border-color 120ms ease-out; }
 .card-bar-arrow { display: flex; transform: translateX(-6px); transition: transform 120ms ease-out; }
 /* Hover: the bar fills with the project's own colour (navy if it has none). */
 .card:hover .card-bar { background: var(--project, var(--case-bg)); color: var(--project-on, var(--case-fg)); border-top-color: var(--project, var(--case-bg)); }
@@ -262,8 +262,8 @@ h1, h2, h3 { text-wrap: balance; }
   .frame, .frame.is-active { flex: 1 1 auto; }
   .frame img { height: auto; }
   .card-info { grid-template-columns: minmax(0, 1fr); gap: 24px; padding: 24px; }
-  .card-title { font-size: 32px; }
-  .card-bar { padding: 14px 24px; }
+  .card-title { font-size: 25px; }
+  .card-bar { padding: 16px 24px; }
 }
 
 /* Experience timeline */
@@ -336,15 +336,15 @@ h1, h2, h3 { text-wrap: balance; }
 @media (max-width: 1359px) { .case-code { display: none; } }
 @media (max-width: 960px) { .case-art { top: 24px; width: 80%; opacity: 0.06; } }
 .article { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 48px; }
-.case-header { display: flex; flex-direction: column; gap: 20px; }
+.case-header { display: flex; flex-direction: column; gap: 24px; }
 .case-header h1 { font-size: 39px; line-height: 1.1; letter-spacing: -0.02em; font-weight: 650; }
 .meta { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 6px 16px; }
 .meta dd { font-size: 15px; line-height: 1.4; }
 .links-row { display: flex; gap: 24px; flex-wrap: wrap; font-size: 15px; }
 .links-row a, .next a, .prose a { color: var(--project-link, var(--fg)); }
 .links-row a:hover, .next a:hover, .prose a:hover { color: var(--accent-hover); }
-.prose { display: flex; flex-direction: column; gap: 12px; }
-.prose h2 { font-size: 25px; line-height: 1.2; letter-spacing: -0.01em; font-weight: 600; margin-top: 36px; }
+.prose { display: flex; flex-direction: column; gap: 16px; }
+.prose h2 { font-size: 25px; line-height: 1.2; letter-spacing: -0.01em; font-weight: 600; margin-top: 32px; }
 .prose h2:first-child { margin-top: 0; }
 .prose p, .prose ul, .prose ol { font-family: var(--font-serif); font-size: 18px; line-height: 1.65; max-width: var(--measure); }
 .prose ul { list-style: disc; padding-left: 20px; }
