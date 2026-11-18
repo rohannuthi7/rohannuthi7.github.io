@@ -17,7 +17,7 @@ export const site = {
   location: 'Madison, WI',
   resume: '/rohan-nuthi-resume.pdf',
   resumeJson: '/resume.json',
-  source: 'https://github.com/rohannuthi7/Personal-Portfolio-Website',
+  source: 'https://github.com/rohannuthi7/rohannuthi7.github.io',
   github: { label: 'github.com/rohannuthi7', href: 'https://github.com/rohannuthi7' },
   linkedin: { label: 'linkedin.com/in/rohan-nuthi', href: 'https://linkedin.com/in/rohan-nuthi' },
   email: 'rohannuthi.rn@gmail.com',
