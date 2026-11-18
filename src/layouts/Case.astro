@@ -11,14 +11,14 @@ const { project, next } = Astro.props;
 const { data } = project;
 ---
 <Base title={`${data.title} — ${site.name}`} description={data.tagline} page="case" ogImage={`/og/${project.id}.png`}>
-  <div class="container case">
+  <div class="container case" style={`--project-link: var(--project-${project.id}-link)`}>
     <Collage title={data.title} slug={project.id} photos={data.collage} />
     <article class="article">
       <header class="case-header">
         <h1>{data.title}</h1>
         <p class="lede">{data.tagline}</p>
         <dl class="meta">
-          <dt class="kicker">Role</dt><dd>{data.role}</dd>
+          {data.role && <><dt class="kicker">Role</dt><dd>{data.role}</dd></>}
           <dt class="kicker">Team</dt><dd>{data.team}</dd>
           <dt class="kicker">Dates</dt><dd>{formatRange(data.dates.start, data.dates.end)}</dd>
           <dt class="kicker">Status</dt><dd>{data.status}</dd>

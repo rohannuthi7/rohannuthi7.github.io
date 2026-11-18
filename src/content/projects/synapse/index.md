@@ -4,7 +4,6 @@ tagline: Reads a digit from an 8×8 grid of light cells, with the weighted sums 
 summary: >-
   A digit classifier built as hardware. Light on 64 analog cells becomes brightness bytes,
   and a SystemVerilog datapath on an FPGA scores all ten digits and picks the winner.
-role: "[Your role on Synapse]"
 team: "2"
 dates: { start: "2026-10", end: ongoing }
 status: In progress

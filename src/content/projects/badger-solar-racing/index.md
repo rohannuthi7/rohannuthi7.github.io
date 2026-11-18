@@ -4,10 +4,10 @@ tagline: Embedded firmware and board bring-up for a student-built solar race car
 summary: >-
   Embedded firmware and board bring-up for a student-built solar race car, from sensor
   interfaces to the CAN bus that ties the vehicle together.
-role: Embedded systems engineer
+role: Embedded software engineer
 team: "[number]"
-dates: { start: "2025-09", end: present }
-status: In progress
+dates: { start: "2025-09", end: "2026-05" }
+status: Archived
 repo: https://github.com/rohannuthi7
 private: false
 stack: [C, Altium, CAN]

@@ -37,7 +37,7 @@ h1, h2, h3 { text-wrap: balance; }
 .col-head { font-size: 16px; line-height: 1.4; font-weight: 600; }
 
 /* Nav */
-.nav { position: sticky; top: 0; z-index: 20; min-height: var(--nav-h); padding: 24px 0; border-bottom: 1px solid var(--line); background: var(--bg); }
+.nav { position: sticky; top: 0; z-index: 20; padding: 24px 0; border-bottom: 1px solid var(--line); background: var(--bg); }
 .nav .container { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 12px 24px; }
 .nav a { color: var(--fg); text-decoration: none; font-size: 15px; line-height: 1; }
 .nav a:hover, .nav a[aria-current] { text-decoration: underline; text-underline-offset: 3px; }
@@ -85,6 +85,7 @@ h1, h2, h3 { text-wrap: balance; }
 
 /* About */
 .hero { padding-top: var(--space-12); display: flex; flex-direction: column; gap: 16px; }
+.currently { font-family: var(--font-serif); font-size: 17px; line-height: 1.5; color: var(--muted); }
 .hero h1 { font-size: 64px; line-height: 1.02; letter-spacing: -0.02em; font-weight: 650; }
 .about { padding-top: 48px; padding-bottom: var(--space-12); display: grid; grid-template-columns: 160px minmax(0, 1fr) 200px; gap: 32px; align-items: start; }
 .about-text { display: flex; flex-direction: column; gap: 24px; }
@@ -97,32 +98,24 @@ h1, h2, h3 { text-wrap: balance; }
 .honours .mark { display: inline-flex; align-items: center; gap: 6px; }
 .mark-badge { position: relative; width: 20px; height: 20px; border-radius: 50%; overflow: hidden; flex: 0 0 20px; }
 .mark-badge img { position: absolute; top: 50%; left: 50%; width: 132%; height: 132%; max-width: none; transform: translate(-50%, -50%); border-radius: 0; }
+/* Phones: the pitch and button come first so they sit above the fold; the
+   photo shrinks and sits beside the contact list underneath. */
 @media (max-width: 720px) {
-  .hero { padding-top: var(--space-8); }
-  .about { grid-template-columns: minmax(0, 1fr); padding-bottom: var(--space-8); }
-  .headshot-frame { align-self: start; aspect-ratio: 8 / 15; min-height: 0; }
+  .hero { padding-top: var(--space-6); gap: 8px; }
+  .about { grid-template-columns: 120px minmax(0, 1fr); grid-template-areas: "text text" "photo contact"; gap: 32px 20px; padding-top: 20px; padding-bottom: var(--space-8); }
+  .about-text { grid-area: text; gap: 20px; }
+  .headshot-frame { grid-area: photo; width: 120px; align-self: start; aspect-ratio: 8 / 15; min-height: 0; }
+  .about-contact { grid-area: contact; }
 }
 @media (max-width: 480px) { .hero h1 { font-size: 40px; } .lede { font-size: 17px; } .h2 { font-size: 25px; } .body { font-size: 16px; } }
 
-/* Coursework: level ruler. One rule under the header row; empty cells stay
-   empty so the gaps show where each sequence is heading. */
-.ruler-head, .ruler-row { display: grid; grid-template-columns: 220px repeat(4, minmax(0, 1fr)); gap: 0 24px; align-items: start; }
-.ruler-head { padding-top: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
-.ruler-row { margin-top: 24px; }
-.ruler-row + .ruler-row { margin-top: 32px; }
-.ruler-dept { padding-top: 3px; }
-.ruler-cell { display: flex; flex-direction: column; gap: 16px; }
+/* Coursework: a short list, lowest catalogue number first. */
+.courses { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
 .course { display: flex; flex-direction: column; gap: 2px; }
 .course-num { font-size: 16px; line-height: 1.4; font-weight: 600; }
 .course-title { font-family: var(--font-serif); font-size: 16px; line-height: 1.4; }
 .course-title .term { margin-left: 6px; white-space: nowrap; }
-@media (max-width: 720px) {
-  .ruler-head { display: none; }
-  .ruler-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 24px; margin-top: 0; }
-  .ruler-row + .ruler-row { margin-top: 32px; }
-  .ruler-dept { grid-column: 1 / -1; padding: 0; }
-  .ruler-cell { display: contents; }
-}
+@media (max-width: 720px) { .courses { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
 /* Projects: pinned card deck. The sticky stage holds the card box in the
    viewport while the runway (one 100vh segment per card) scrolls under it.
@@ -152,6 +145,7 @@ h1, h2, h3 { text-wrap: balance; }
   transition: transform 200ms cubic-bezier(.2, .7, .2, 1), opacity 200ms cubic-bezier(.2, .7, .2, 1);
 }
 .card:hover { color: var(--card-fg); }
+.card { border-color: var(--project, var(--line)); }
 .card.is-passed { pointer-events: none; }
 /* 1. Photo strip: a thin contact-sheet frame on a slightly darker ground. The
    hovered frame takes 5 parts of the width, the other two 1 part each. In the
@@ -178,14 +172,9 @@ h1, h2, h3 { text-wrap: balance; }
 .ledger dd.is-accent { color: var(--accent); }
 /* 3. Action bar: the click indicator. Fills with the accent on card hover. */
 .card-bar { flex: 0 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 14px 40px; border-top: 1px solid var(--line); font-family: var(--font-sans); font-size: 13px; line-height: 1.4; color: var(--muted); background: var(--card-bg); transition: background-color 120ms ease-out, color 120ms ease-out, border-color 120ms ease-out, box-shadow 120ms ease-out; }
-.card-bar-label { display: grid; }
-.card-bar-label > span { grid-area: 1 / 1; transition: opacity 120ms ease-out; }
-.card-bar-hover { opacity: 0; }
 .card-bar-arrow { display: flex; transform: translateX(-6px); transition: transform 120ms ease-out; }
 /* Hover: the bar fills with the case-study navy and bleeds a soft glow upward. */
 .card:hover .card-bar { background: var(--case-bg); color: var(--case-fg); border-top-color: var(--case-bg); box-shadow: 0 -28px 56px -20px var(--case-bg); }
-.card:hover .card-bar-rest { opacity: 0; }
-.card:hover .card-bar-hover { opacity: 1; }
 .card:hover .card-bar-arrow { transform: translateX(0); }
 .card-back { position: absolute; inset: 0; background: var(--surface); color: var(--fg); border-radius: var(--radius); opacity: clamp(0, var(--d), 1); transition: opacity 200ms cubic-bezier(.2, .7, .2, 1); pointer-events: none; }
 .card-back svg { position: absolute; top: 12px; right: 9px; }
@@ -207,8 +196,6 @@ h1, h2, h3 { text-wrap: balance; }
 /* No hover on touch screens: the action bar always shows its filled state. */
 @media (hover: none) {
   .card-bar { background: var(--case-bg); color: var(--case-fg); border-top-color: var(--case-bg); }
-  .card-bar-rest { opacity: 0; }
-  .card-bar-hover { opacity: 1; }
   .card-bar-arrow { transform: none; }
 }
 @media (max-width: 720px) {
@@ -258,8 +245,12 @@ h1, h2, h3 { text-wrap: balance; }
 
 /* Footer */
 .footer { border-top: 1px solid var(--line); padding: var(--space-6) 0; font-size: 14px; line-height: 1.4; color: var(--muted); }
-.footer .container { text-align: center; }
+.footer-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; }
+.footer-sign { display: flex; flex-direction: column; gap: 8px; }
 .footer p { margin: 0; }
+.footer a { color: var(--muted); }
+.footer a:hover { color: var(--fg); }
+.signature { display: block; width: 140px; height: 81px; }
 
 /* Case-study page */
 .case { padding-top: var(--space-12); padding-bottom: var(--space-16); display: flex; gap: 64px; align-items: flex-start; }
@@ -276,7 +267,7 @@ h1, h2, h3 { text-wrap: balance; }
 .meta { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 6px 16px; }
 .meta dd { font-size: 15px; line-height: 1.4; }
 .links-row { display: flex; gap: 24px; flex-wrap: wrap; font-size: 15px; }
-.links-row a, .next a, .prose a { color: var(--fg); }
+.links-row a, .next a, .prose a { color: var(--project-link, var(--fg)); }
 .links-row a:hover, .next a:hover, .prose a:hover { color: var(--accent-hover); }
 .prose { display: flex; flex-direction: column; gap: 12px; }
 .prose h2 { font-size: 25px; line-height: 1.2; letter-spacing: -0.01em; font-weight: 600; margin-top: 36px; }
@@ -312,7 +303,7 @@ h1, h2, h3 { text-wrap: balance; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   @view-transition { navigation: none; }
-  a, button, .card, .card-back, .frame, .card-bar, .card-bar-label > span, .card-bar-arrow, .collage img { transition: none; }
+  a, button, .card, .card-back, .frame, .card-bar, .card-bar-arrow, .collage img { transition: none; }
   .btn:active { transform: none; }
   .collage img:hover { transform: inherit; }
 }
@@ -323,7 +314,7 @@ h1, h2, h3 { text-wrap: balance; }
   .card, .card-back, .headshot-frame, .btn, .chip, .frame img { border: 1px solid CanvasText; }
   .card:hover .card-bar { box-shadow: none; border-top: 2px solid Highlight; }
   .card-back::before { background: CanvasText; }
-  .ruler-head, .ledger-row { border-color: CanvasText; }
+  .ledger-row { border-color: CanvasText; }
 }
 @media (prefers-contrast: more) {
   :root { --muted: #3A3A3A; --line: #8A8A86; }

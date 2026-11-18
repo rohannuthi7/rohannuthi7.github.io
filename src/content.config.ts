@@ -17,7 +17,7 @@ const projects = defineCollection({
       title: z.string(),
       tagline: z.string(),
       summary: z.string(),
-      role: z.string(),
+      role: z.string().optional(),
       team: z.string(),
       dates: z.object({ start: yearMonth, end: endDate }),
       status: z.enum(['Shipped', 'In use', 'In progress', 'Archived']),
@@ -44,7 +44,7 @@ const experience = defineCollection({
   loader: glob({ pattern: '*.yaml', base: './src/content/experience' }),
   schema: ({ image }) =>
     z.object({
-      role: z.string(),
+      role: z.string().optional(),
       org: z.string(),
       dates: z.object({ start: yearMonth, end: endDate }),
       photo: picture(image),

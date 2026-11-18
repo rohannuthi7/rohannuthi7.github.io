@@ -6,11 +6,13 @@ import akpsiMark from '../assets/akpsi-mark.png';
 export const site = {
   name: 'Rohan Nuthi',
   url: 'https://rohannuthi7.github.io',
-  title: 'Rohan Nuthi — Software & Embedded Engineer',
+  title: 'Rohan Nuthi — Software Engineer',
   kicker: 'CS + CompE @ UW-Madison · May 2028',
+  // One line under your name, shown as "Currently: …". Leave empty to hide it.
+  currently: '',
   // ≤ 50 words. Also used as the meta description.
   description:
-    'Co-founder and lead software engineer at Reaxe, a multi-tenant SaaS platform for home-remodeling contractors. Hardware on Wisconsin Humanoid and embedded systems on Badger Solar Racing. Interested in systems that touch real hardware and real users, and looking for a Summer 2027 software engineering internship.',
+    'Co-founder and lead software engineer at Reaxe, a multi-tenant SaaS platform for home-remodeling contractors covering quoting, scheduling and customer portals. Software engineering lead at Wisconsin Tech Consulting. Looking for a Summer 2027 software engineering internship.',
   honours: ['GPA 3.83', "Dean's List"],
   fraternity: { name: 'Alpha Kappa Psi', mark: akpsiMark },
   headshot: { src: headshot, alt: 'Rohan Nuthi sitting on a lawn in front of a city skyline at night' },
@@ -23,8 +25,8 @@ export const site = {
 
 export const navLinks = [
   { label: 'About', href: '/#about' },
-  { label: 'Coursework', href: '/#coursework' },
   { label: 'Projects', href: '/#projects' },
+  { label: 'Coursework', href: '/#coursework' },
   { label: 'Experience', href: '/#experience' },
   { label: 'Skills', href: '/#skills' },
 ] as const;

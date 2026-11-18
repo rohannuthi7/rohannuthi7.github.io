@@ -6,8 +6,8 @@ summary: >-
   and testing that gets a limb from schematic to moving part.
 role: Robotics hardware engineer
 team: "[number]"
-dates: { start: "2025-11", end: present }
-status: In progress
+dates: { start: "2025-11", end: "2026-08" }
+status: Archived
 repo: https://github.com/rohannuthi7
 private: false
 stack: [C++, Altium, Verilog]

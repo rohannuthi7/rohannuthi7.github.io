@@ -4,7 +4,7 @@ tagline: Multi-tenant platform for home-remodeling contractors covering quoting,
 summary: >-
   Multi-tenant platform for home-remodeling contractors: quoting, scheduling and customer
   portals on a Postgres backend, deployed on AWS for paying businesses.
-role: Co-founder, lead software engineer
+role: Lead software engineer and co-founder
 team: "[number]"
 dates: { start: "2026-04", end: present }
 status: In use

@@ -5,11 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "node scripts/og.mjs && astro build && node scripts/csp.mjs",
+    "build": "node scripts/favicon.mjs && node scripts/og.mjs && astro build && node scripts/csp.mjs",
     "preview": "astro preview",
     "check": "astro check",
     "test": "node --test \"src/**/*.test.ts\"",
     "og": "node scripts/og.mjs",
+    "favicon": "node scripts/favicon.mjs",
     "validate:html": "html-validate \"dist/**/*.html\"",
     "validate": "npm run validate:html"
   },

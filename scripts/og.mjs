@@ -1,6 +1,5 @@
-// Generates public/og/home.png, public/og/<slug>.png, public/favicon-32.png,
-// public/apple-touch-icon.png (180px, opaque) and public/icon-512.png (maskable).
-// from the site data and project front matter. Runs before every build.
+// Generates public/og/home.png and public/og/<slug>.png from the site data and
+// project front matter. Runs before every build. Favicons: scripts/favicon.mjs.
 import { readFileSync, readdirSync, mkdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -64,10 +63,4 @@ for (const slug of readdirSync(projectsDir)) {
     .png().toFile(join(out, `${slug}.png`));
 }
 
-const favicon = readFileSync(join(root, 'public', 'favicon.svg'));
-await sharp(favicon).resize(32, 32).png().toFile(join(root, 'public', 'favicon-32.png'));
-// Apple ignores alpha, so flatten onto the light page colour. The maskable 512
-// keeps the mark inside the 80% safe zone.
-await sharp(favicon).resize(150, 150).extend({ top: 15, bottom: 15, left: 15, right: 15, background: '#ECECEA' }).flatten({ background: '#ECECEA' }).png().toFile(join(root, 'public', 'apple-touch-icon.png'));
-await sharp(favicon).resize(400, 400).extend({ top: 56, bottom: 56, left: 56, right: 56, background: '#ECECEA' }).flatten({ background: '#ECECEA' }).png().toFile(join(root, 'public', 'icon-512.png'));
-console.log('OG images and favicon written');
+console.log('OG images written');

@@ -4,8 +4,8 @@ import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import { site } from '../data/site';
 
-interface Props { title: string; description: string; page?: 'home' | 'case'; ogImage: string }
-const { title, description, page = 'home', ogImage } = Astro.props;
+interface Props { title: string; description: string; page?: 'home' | 'case'; ogImage: string; signature?: boolean }
+const { title, description, page = 'home', ogImage, signature = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogUrl = new URL(ogImage, Astro.site);
 // Structured data: one Person record built from the same data the page renders.
@@ -15,7 +15,7 @@ const person = {
   name: site.name,
   url: site.url,
   email: `mailto:${site.email}`,
-  jobTitle: 'Software and embedded engineer',
+  jobTitle: 'Software engineer',
   description: site.description,
   address: { '@type': 'PostalAddress', addressLocality: 'Madison', addressRegion: 'WI', addressCountry: 'US' },
   alumniOf: { '@type': 'CollegeOrUniversity', name: 'University of Wisconsin–Madison' },
@@ -34,6 +34,7 @@ const speculation = { prerender: [{ where: { href_matches: '/projects/*' }, eage
     <link rel="canonical" href={canonical} />
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ECECEA" />
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1C1C1C" />
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any" />
     <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
@@ -60,6 +61,6 @@ const speculation = { prerender: [{ where: { href_matches: '/projects/*' }, eage
     <main id="main">
       <slot />
     </main>
-    <Footer />
+    <Footer signature={signature} />
   </body>
 </html>

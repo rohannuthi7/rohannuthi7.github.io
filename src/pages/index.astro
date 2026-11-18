@@ -8,7 +8,7 @@ import ProjectDeck from '../components/ProjectDeck.astro';
 import ExperienceEntry from '../components/ExperienceEntry.astro';
 import Tag from '../components/Tag.astro';
 import { site } from '../data/site';
-import { coursework, levels, levelOf, catalogNumber } from '../data/coursework';
+import { coursework, catalogNumber } from '../data/coursework';
 import { skills } from '../data/skills';
 import { byStartDesc } from '../lib/dates';
 
@@ -16,10 +16,11 @@ const projects = (await getCollection('projects', ({ data }) => !data.draft)).so
 const experience = (await getCollection('experience')).sort(byStartDesc);
 const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber(a) - catalogNumber(b);
 ---
-<Base title={site.title} description={site.description} ogImage="/og/home.png">
+<Base title={site.title} description={site.description} ogImage="/og/home.png" signature>
   <header id="about" class="container hero">
     <p class="kicker">{site.kicker}</p>
     <h1>{site.name}</h1>
+    {site.currently && <p class="currently">Currently: {site.currently}</p>}
   </header>
 
   <section class="container about" aria-label="About">
@@ -29,7 +30,7 @@ const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber
     <div class="about-text">
       <p class="lede">{site.description}</p>
       <p class="kicker honours">
-        <span class="mark"><span class="mark-badge"><Image src={site.fraternity.mark} alt="" width={160} height={160} /></span><span>{site.fraternity.name}</span></span>
+        <span class="mark"><span class="mark-badge"><Image src={site.fraternity.mark} alt={`${site.fraternity.name} logo`} width={160} height={160} /></span><span>{site.fraternity.name}</span></span>
         {site.honours.map((h) => <><span aria-hidden="true">·</span><span>{h}</span></>)}
       </p>
       <div class="btn-row">
@@ -42,36 +43,23 @@ const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber
     </div>
   </section>
 
+  <ProjectDeck projects={projects} />
+
   <section id="coursework" class="section section-tint">
     <div class="container">
       <h2 class="h2 section-title">Coursework</h2>
-      <div class="ruler">
-        <div class="ruler-head" aria-hidden="true">
-          <span></span>
-          {levels.map((l) => <span class="kicker">{l}-level</span>)}
-        </div>
-        {coursework.map((group) => (
-          <div class="ruler-row">
-            <p class="kicker ruler-dept">{group.department}</p>
-            {levels.map((l) => (
-              <ul class="ruler-cell" aria-label={`${group.department}, ${l}-level`}>
-                {group.courses.filter((c) => levelOf(c) === l).sort(byNumber).map((c) => (
-                  <li class="course">
-                    <span class="course-num">{c.number}</span>
-                    <span class="course-title">{c.title}{c.term && <span class="kicker term">{c.term}</span>}</span>
-                  </li>
-                ))}
-              </ul>
-            ))}
-          </div>
+      <ul class="courses">
+        {[...coursework].sort(byNumber).map((c) => (
+          <li class="course">
+            <span class="course-num">{c.number}</span>
+            <span class="course-title">{c.title}{c.term && <span class="kicker term">{c.term}</span>}</span>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   </section>
 
-  <ProjectDeck projects={projects} />
-
-  <section id="experience" class="section section-tint">
+  <section id="experience" class="section">
     <div class="container">
       <h2 class="h2 section-title">Experience</h2>
       <ul class="timeline">
@@ -80,7 +68,7 @@ const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber
     </div>
   </section>
 
-  <section id="skills" class="section">
+  <section id="skills" class="section section-tint">
     <div class="container stack">
       <h2 class="h2 section-title">Skills</h2>
       {skills.map((row) => (
