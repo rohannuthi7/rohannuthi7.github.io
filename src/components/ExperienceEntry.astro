@@ -14,8 +14,10 @@ const range = formatRange(data.dates.start, data.dates.end);
   <div class="entry-body">
     <p class="kicker entry-date-m">{range}</p>
     <p class="entry-role"><b>{data.role}</b><span> @ {data.org}</span></p>
-    <ul class="bullets">
-      {data.bullets.map((b) => <li>{b}</li>)}
-    </ul>
+    {data.bullets.length > 0 && (
+      <ul class="bullets">
+        {data.bullets.map((b) => <li>{b}</li>)}
+      </ul>
+    )}
   </div>
 </li>

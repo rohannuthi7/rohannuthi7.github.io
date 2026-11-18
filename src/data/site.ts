@@ -15,15 +15,10 @@ export const site = {
   fraternity: { name: 'Alpha Kappa Psi', mark: akpsiMark },
   headshot: { src: headshot, alt: 'Rohan Nuthi sitting on a lawn in front of a city skyline at night' },
   location: 'Madison, WI',
-  resume: '/rohan-nuthi-resume.pdf',
-  resumeJson: '/resume.json',
   source: 'https://github.com/rohannuthi7/rohannuthi7.github.io',
   github: { label: 'github.com/rohannuthi7', href: 'https://github.com/rohannuthi7' },
   linkedin: { label: 'linkedin.com/in/rohan-nuthi', href: 'https://linkedin.com/in/rohan-nuthi' },
   email: 'rohannuthi.rn@gmail.com',
-  phone: { label: '262-444-2159', href: 'tel:+12624442159' },
-  // Footer line.
-  footer: 'CS + CompE @ UW-Madison · May 2028',
 } as const;
 
 export const navLinks = [

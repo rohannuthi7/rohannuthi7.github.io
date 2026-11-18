@@ -27,8 +27,6 @@ jobs:
       - name: Unit tests
         run: npm test
       - run: npm run build
-      - name: Validate resume.json against the JSON Resume schema
-        run: npm run validate:resume
       - name: Validate HTML
         run: npm run validate:html
       - name: Check internal links

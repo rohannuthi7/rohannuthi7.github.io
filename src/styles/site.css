@@ -258,9 +258,8 @@ h1, h2, h3 { text-wrap: balance; }
 
 /* Footer */
 .footer { border-top: 1px solid var(--line); padding: var(--space-6) 0; font-size: 14px; line-height: 1.4; color: var(--muted); }
-.footer .container { text-align: center; display: flex; flex-direction: column; gap: 8px; }
-.footer .colophon { font-size: 13px; }
-.footer code { font-family: var(--font-mono); font-size: 12px; }
+.footer .container { text-align: center; }
+.footer p { margin: 0; }
 
 /* Case-study page */
 .case { padding-top: var(--space-12); padding-bottom: var(--space-16); display: flex; gap: 64px; align-items: flex-start; }
@@ -424,7 +423,7 @@ h1, h2, h3 { text-wrap: balance; }
 @media print {
   :root { --bg: #FFFFFF; --fg: #000000; --muted: #444444; --line: #BBBBBB; --accent: #000000; --card-bg: #FFFFFF; --card-fg: #000000; --surface: #FFFFFF; }
   html { background: #FFFFFF; }
-  .nav, .skip, .btn-row, .card-bar, .card-back, .segment, .strip, .colophon a[href="/api/health"], .gt-glow, .gt-card { display: none; }
+  .nav, .skip, .btn-row, .card-bar, .card-back, .segment, .strip, .gt-glow, .gt-card { display: none; }
   .section, .hero, .about { padding-top: 24px; padding-bottom: 24px; break-inside: avoid; }
   .section-tint { background: transparent; }
   .stage { position: static; height: auto; display: block; }
