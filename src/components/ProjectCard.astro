@@ -2,7 +2,7 @@
 // One card in the Projects deck. The whole card is a link to the case study.
 // Three bands: a photo strip whose hovered frame expands, a two-column info
 // area (title + blurb, stats ledger) that is always visible, and a "View
-// project" bar that fills with the navy case-study colour on hover (always
+// project" bar that fills with the project's own colour on hover (always
 // filled on touch screens).
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
@@ -31,7 +31,7 @@ const backIcons: Record<string, string> = {
   reaxe: '<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/><path d="M10 20v-6h4v6"/>',
 };
 ---
-<a class="card" href={`/projects/${project.id}`} style={`--i:${index}; --project: var(--project-${project.id})`}>
+<a class="card" href={`/projects/${project.id}`} style={`--i:${index}; --project: var(--project-${project.id}); --project-on: var(--project-${project.id}-on)`}>
   <div class="strip">
     {frames.map((f, k) => (
       <div class={`frame${k === 0 ? ' is-active' : ''}`} data-frame={k} style={`--ar:${(f.src.width / f.src.height).toFixed(3)}`}>

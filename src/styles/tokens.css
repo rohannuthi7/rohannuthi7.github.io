@@ -6,13 +6,14 @@
   --accent: #3B4A66; --accent-hover: #2C3850;
   --img-border: #CFCFCB;
   /* One colour per project, sampled from its own screenshots (Reaxe: its logo,
-     until the screenshots are final). The plain value is the card border and
-     passes 3:1 on the card; the -link value is for text on the navy project
-     page and passes 4.5:1 there in both themes. */
-  --project-pickleiq: #EF2E3C; --project-pickleiq-link: #F8A4AB;
-  --project-surg-f: #3DA299;   --project-surg-f-link: #6DC8C0;
-  --project-synapse: #0E63F7;  --project-synapse-link: #98BCFC;
-  --project-reaxe: #044CAC;    --project-reaxe-link: #8FBEFC;
+     until the screenshots are final). The plain value fills the card's
+     "View project" bar on hover; -on is the bar's label colour on that fill
+     (4.5:1 or better). The -link value is for text on the navy project page
+     and passes 4.5:1 there in both themes. */
+  --project-pickleiq: #EF2E3C; --project-pickleiq-on: #000000; --project-pickleiq-link: #F8A4AB;
+  --project-surg-f: #3DA299;   --project-surg-f-on: #141414;   --project-surg-f-link: #6DC8C0;
+  --project-synapse: #0E63F7;  --project-synapse-on: #FFFFFF;  --project-synapse-link: #98BCFC;
+  --project-reaxe: #044CAC;    --project-reaxe-on: #FFFFFF;    --project-reaxe-link: #8FBEFC;
   --radius: 4px;
   --nav-h: 65px;
   --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -27,9 +28,7 @@
   :root { --bg: #1C1C1C; --fg: #E6E6E3; --muted: #9C9C98; --line: #333331;
           --surface: #232323; --surface-line: #3A3A38;
           --card-bg: #111111; --card-fg: #E6E6E3; --case-bg: #2A3447; --case-fg: #ECEEF2;
-          --accent: #9DB0C8; --accent-hover: #B8C7DA; --img-border: #333331;
-          /* Reaxe's logo blue is too dark for a border on the #111 card; lightened to 3:1. */
-          --project-reaxe: #055BCF; }
+          --accent: #9DB0C8; --accent-hover: #B8C7DA; --img-border: #333331; }
 }
 [data-page="case"] {
   --bg: #3B4A66; --fg: #ECEEF2; --muted: #C3CAD6; --line: #56637E;

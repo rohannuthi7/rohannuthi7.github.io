@@ -11,12 +11,18 @@ import { site } from '../data/site';
 import { coursework, catalogNumber } from '../data/coursework';
 import { skills } from '../data/skills';
 import { byStartDesc } from '../lib/dates';
+import signatureSvg from '../assets/signature.svg?raw';
 
 const projects = (await getCollection('projects', ({ data }) => !data.draft)).sort((a, b) => a.data.order - b.data.order);
 const experience = (await getCollection('experience')).sort(byStartDesc);
+// The signature again, large and faint behind the intro. Decorative: the
+// footer copy carries the accessible name.
+const watermark = signatureSvg.replace(/ role="img" aria-label="[^"]*" class="signature"/, ' aria-hidden="true" focusable="false" class="intro-signature"');
 const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber(a) - catalogNumber(b);
 ---
 <Base title={site.title} description={site.description} ogImage="/og/home.png" signature>
+  <div class="intro">
+  <Fragment set:html={watermark} />
   <header id="about" class="container hero">
     <p class="kicker">{site.kicker}</p>
     <h1>{site.name}</h1>
@@ -42,6 +48,7 @@ const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber
       <ContactList />
     </div>
   </section>
+  </div>
 
   <ProjectDeck projects={projects} />
 

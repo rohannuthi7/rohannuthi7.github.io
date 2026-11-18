@@ -83,6 +83,13 @@ h1, h2, h3 { text-wrap: balance; }
   .section-title { margin-bottom: var(--space-3); }
 }
 
+/* About. The intro wraps the hero and About so the signature can sit behind
+   both, very faint; it is clipped so it never causes sideways scrolling. */
+.intro { position: relative; overflow: clip; }
+.intro > :not(.intro-signature) { position: relative; z-index: 1; }
+.intro-signature { position: absolute; z-index: 0; top: 24px; right: max(-40px, calc((100% - var(--container)) / 2 - 80px)); width: min(880px, 92%); height: auto; color: var(--fg); opacity: 0.06; pointer-events: none; }
+@media (max-width: 720px) { .intro-signature { top: 40px; right: -24px; width: 120%; } }
+
 /* About */
 .hero { padding-top: var(--space-12); display: flex; flex-direction: column; gap: 16px; }
 .currently { font-family: var(--font-serif); font-size: 17px; line-height: 1.5; color: var(--muted); }
@@ -145,7 +152,6 @@ h1, h2, h3 { text-wrap: balance; }
   transition: transform 200ms cubic-bezier(.2, .7, .2, 1), opacity 200ms cubic-bezier(.2, .7, .2, 1);
 }
 .card:hover { color: var(--card-fg); }
-.card { border-color: var(--project, var(--line)); }
 .card.is-passed { pointer-events: none; }
 /* 1. Photo strip: a thin contact-sheet frame on a slightly darker ground. The
    hovered frame takes 5 parts of the width, the other two 1 part each. In the
@@ -171,10 +177,10 @@ h1, h2, h3 { text-wrap: balance; }
 .ledger dd { text-align: right; }
 .ledger dd.is-accent { color: var(--accent); }
 /* 3. Action bar: the click indicator. Fills with the accent on card hover. */
-.card-bar { flex: 0 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 14px 40px; border-top: 1px solid var(--line); font-family: var(--font-sans); font-size: 13px; line-height: 1.4; color: var(--muted); background: var(--card-bg); transition: background-color 120ms ease-out, color 120ms ease-out, border-color 120ms ease-out, box-shadow 120ms ease-out; }
+.card-bar { flex: 0 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 14px 40px; border-top: 1px solid var(--line); font-family: var(--font-sans); font-size: 13px; line-height: 1.4; color: var(--muted); background: var(--card-bg); transition: background-color 120ms ease-out, color 120ms ease-out, border-color 120ms ease-out; }
 .card-bar-arrow { display: flex; transform: translateX(-6px); transition: transform 120ms ease-out; }
-/* Hover: the bar fills with the case-study navy and bleeds a soft glow upward. */
-.card:hover .card-bar { background: var(--case-bg); color: var(--case-fg); border-top-color: var(--case-bg); box-shadow: 0 -28px 56px -20px var(--case-bg); }
+/* Hover: the bar fills with the project's own colour (navy if it has none). */
+.card:hover .card-bar { background: var(--project, var(--case-bg)); color: var(--project-on, var(--case-fg)); border-top-color: var(--project, var(--case-bg)); }
 .card:hover .card-bar-arrow { transform: translateX(0); }
 .card-back { position: absolute; inset: 0; background: var(--surface); color: var(--fg); border-radius: var(--radius); opacity: clamp(0, var(--d), 1); transition: opacity 200ms cubic-bezier(.2, .7, .2, 1); pointer-events: none; }
 .card-back svg { position: absolute; top: 12px; right: 9px; }
@@ -195,7 +201,7 @@ h1, h2, h3 { text-wrap: balance; }
 .deck:not([data-js]) .card-back { display: none; }
 /* No hover on touch screens: the action bar always shows its filled state. */
 @media (hover: none) {
-  .card-bar { background: var(--case-bg); color: var(--case-fg); border-top-color: var(--case-bg); }
+  .card-bar { background: var(--project, var(--case-bg)); color: var(--project-on, var(--case-fg)); border-top-color: var(--project, var(--case-bg)); }
   .card-bar-arrow { transform: none; }
 }
 @media (max-width: 720px) {
@@ -312,7 +318,7 @@ h1, h2, h3 { text-wrap: balance; }
    carry meaning. Focus stays on outline, which forced-colors preserves. */
 @media (forced-colors: active) {
   .card, .card-back, .headshot-frame, .btn, .chip, .frame img { border: 1px solid CanvasText; }
-  .card:hover .card-bar { box-shadow: none; border-top: 2px solid Highlight; }
+  .card:hover .card-bar { border-top: 2px solid Highlight; }
   .card-back::before { background: CanvasText; }
   .ledger-row { border-color: CanvasText; }
 }
@@ -414,7 +420,7 @@ h1, h2, h3 { text-wrap: balance; }
 @media print {
   :root { --bg: #FFFFFF; --fg: #000000; --muted: #444444; --line: #BBBBBB; --accent: #000000; --card-bg: #FFFFFF; --card-fg: #000000; --surface: #FFFFFF; }
   html { background: #FFFFFF; }
-  .nav, .skip, .btn-row, .card-bar, .card-back, .segment, .strip, .gt-glow, .gt-card { display: none; }
+  .nav, .skip, .btn-row, .card-bar, .card-back, .segment, .strip, .gt-glow, .gt-card, .intro-signature { display: none; }
   .section, .hero, .about { padding-top: 24px; padding-bottom: 24px; break-inside: avoid; }
   .section-tint { background: transparent; }
   .stage { position: static; height: auto; display: block; }
