@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+  schedule:
+    # Weekly external link check; the push/PR runs only check internal links.
+    - cron: '17 6 * * 1'
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # the footer reads the last commit date
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24 # runs the TypeScript tests directly, no build step
+          cache: npm
+      - run: npm ci
+      - name: Unit tests
+        run: npm test
+      - run: npm run build
+      - name: Validate resume.json against the JSON Resume schema
+        run: npm run validate:resume
+      - name: Validate HTML
+        run: npm run validate:html
+      - name: Check internal links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --offline --root-dir "${{ github.workspace }}/dist" --no-progress "dist/**/*.html"
+          fail: true
+      - name: Check external links (weekly)
+        if: github.event_name == 'schedule'
+        id: external
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --root-dir "${{ github.workspace }}/dist" --no-progress --exclude "linkedin.com" --exclude "x.com" --exclude "localhost" "dist/**/*.html"
+          fail: false
+      - name: Open an issue for broken external links
+        if: github.event_name == 'schedule' && steps.external.outputs.exit_code != 0
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: Broken external links
+          content-filepath: ./lychee/out.md

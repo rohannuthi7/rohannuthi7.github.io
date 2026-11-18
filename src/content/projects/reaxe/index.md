@@ -12,13 +12,13 @@ private: true
 stack: [Node.js, PostgreSQL, Docker, AWS]
 cover: { src: ./cover.svg, alt: "[Reaxe screenshot, square crop]" }
 stats:
-  - { label: businesses on the platform, value: "[n]", accent: true }
+  - { label: Businesses on the platform, value: "[n]", accent: true }
 collage:
   - { src: ./01.svg, alt: "[Reaxe scheduling view with a week of jobs]" }
   - { src: ./02.svg, alt: "[Reaxe quoting screen]" }
   - { src: ./03.svg, alt: "[Reaxe architecture diagram]" }
   - { src: ./04.svg, alt: "[Reaxe customer portal]" }
-order: 2
+order: 4
 draft: false
 ---
 

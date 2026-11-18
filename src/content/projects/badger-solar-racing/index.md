@@ -13,14 +13,14 @@ private: false
 stack: [C, Altium, CAN]
 cover: { src: ./cover.svg, alt: "[Solar car hardware photo, square]" }
 stats:
-  - { label: boards brought up, value: "[n]", accent: true }
+  - { label: Boards brought up, value: "[n]", accent: true }
 collage:
   - { src: ./01.svg, alt: "[Solar car on the track]" }
   - { src: ./02.svg, alt: "[Board on the bench]" }
   - { src: ./03.svg, alt: "[CAN bus harness]" }
   - { src: ./04.svg, alt: "[Team at the shop]" }
-order: 3
-draft: false
+order: 5
+draft: true
 ---
 
 ## Overview

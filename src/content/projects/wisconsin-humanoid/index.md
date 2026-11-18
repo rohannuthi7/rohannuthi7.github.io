@@ -13,14 +13,14 @@ private: false
 stack: [C++, Altium, Verilog]
 cover: { src: ./cover.svg, alt: "[Humanoid robot photo, square]" }
 stats:
-  - { label: degrees of freedom, value: "[n]", accent: true }
+  - { label: Degrees of freedom, value: "[n]", accent: true }
 collage:
   - { src: ./01.svg, alt: "[Actuator assembly]" }
   - { src: ./02.svg, alt: "[Sensor board]" }
   - { src: ./03.svg, alt: "[Limb test rig]" }
   - { src: ./04.svg, alt: "[Full robot]" }
-order: 4
-draft: false
+order: 6
+draft: true
 ---
 
 ## Overview

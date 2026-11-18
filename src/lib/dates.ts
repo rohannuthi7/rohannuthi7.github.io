@@ -10,6 +10,7 @@ function parse(value: string): YearMonth {
 /**
  * "2025-09" + "present"  -> "Sep 2025 – present"
  * "2026-04" + "ongoing"  -> "Apr 2026 – ongoing"
+ * "2026-11" + "2026-11"  -> "Nov 2026"
  * "2026-01" + "2026-05"  -> "Jan – May 2026"
  * "2025-09" + "2026-05"  -> "Sep 2025 – May 2026"
  */
@@ -17,6 +18,7 @@ export function formatRange(start: string, end: string): string {
   const s = parse(start);
   if (end === 'present' || end === 'ongoing') return `${s.month} ${s.year} – ${end}`;
   const e = parse(end);
+  if (start === end) return `${s.month} ${s.year}`;
   if (s.year === e.year) return `${s.month} – ${e.month} ${e.year}`;
   return `${s.month} ${s.year} – ${e.month} ${e.year}`;
 }

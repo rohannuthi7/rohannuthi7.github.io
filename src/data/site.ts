@@ -5,7 +5,7 @@ import akpsiMark from '../assets/akpsi-mark.png';
 
 export const site = {
   name: 'Rohan Nuthi',
-  url: 'https://rohannuthi.com',
+  url: 'https://rohannuthi7.github.io',
   title: 'Rohan Nuthi — Software & Embedded Engineer',
   kicker: 'CS + CompE @ UW-Madison · May 2028',
   // ≤ 50 words. Also used as the meta description.
@@ -15,7 +15,9 @@ export const site = {
   fraternity: { name: 'Alpha Kappa Psi', mark: akpsiMark },
   headshot: { src: headshot, alt: 'Rohan Nuthi sitting on a lawn in front of a city skyline at night' },
   location: 'Madison, WI',
-  resume: '/resume.pdf',
+  resume: '/rohan-nuthi-resume.pdf',
+  resumeJson: '/resume.json',
+  source: 'https://github.com/rohannuthi7/Personal-Portfolio-Website',
   github: { label: 'github.com/rohannuthi7', href: 'https://github.com/rohannuthi7' },
   linkedin: { label: 'linkedin.com/in/rohan-nuthi', href: 'https://linkedin.com/in/rohan-nuthi' },
   email: 'rohannuthi.rn@gmail.com',

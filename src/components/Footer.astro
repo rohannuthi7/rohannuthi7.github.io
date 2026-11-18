@@ -1,8 +1,23 @@
 ---
+// Colophon. The commit and date come from Cloudflare Pages' build environment
+// (CF_PAGES_COMMIT_SHA) or, locally, from git; both fall back quietly.
+import { execSync } from 'node:child_process';
 import { site } from '../data/site';
+
+const git = (args: string) => { try { return execSync(`git ${args}`, { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim(); } catch { return ''; } };
+const sha = process.env.CF_PAGES_COMMIT_SHA || git('rev-parse HEAD');
+const updated = git('log -1 --format=%cs') || new Date().toISOString().slice(0, 10);
+const updatedLabel = new Date(`${updated}T00:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 ---
 <footer class="footer">
   <div class="container">
-    <span>{site.footer}</span>
+    <p>{site.footer}</p>
+    <p class="colophon">
+      Built with <a href="https://astro.build" rel="noopener">Astro</a>, hand-written CSS and system fonts. Hosted on <a href="https://pages.cloudflare.com" rel="noopener">Cloudflare Pages</a>. No tracking, no cookies.{" "}
+      <a href="/guestbook">Guestbook</a> · <a href={site.source} rel="noopener">Source</a> · <a href={site.resumeJson}>resume.json</a>
+    </p>
+    <p class="colophon">
+      Updated <time datetime={updated}>{updatedLabel}</time>{sha && <> · commit <a href={`${site.source}/commit/${sha}`} rel="noopener"><code>{sha.slice(0, 7)}</code></a></>}
+    </p>
   </div>
 </footer>

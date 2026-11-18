@@ -1,5 +1,7 @@
 # rohannuthi.com
 
+[![CI](https://github.com/rohannuthi7/Personal-Portfolio-Website/actions/workflows/ci.yml/badge.svg)](https://github.com/rohannuthi7/Personal-Portfolio-Website/actions/workflows/ci.yml)
+
 Static portfolio built with Astro, hand-written CSS and a few kilobytes of JavaScript (the Projects deck, the nav scroll-spy). The design spec is `DESIGN_UPGRADE.md`; `DESIGN.md` is the earlier version it supersedes.
 
 ## Commands
@@ -9,7 +11,10 @@ npm install      # once
 npm run dev      # local dev server with live reload
 npm run build    # generates OG images, then builds to dist/
 npm run preview  # serves dist/ locally
+npm run validate # resume.json against the JSON Resume schema, then dist/ HTML
 ```
+
+CI (`.github/workflows/ci.yml`) builds, validates `resume.json` and the HTML, and link-checks `dist/` on every push; a weekly run checks external links. `scripts/csp.mjs` runs after the build and writes a Content-Security-Policy with hashes of the inline scripts into `dist/_headers`. `functions/api/health.js` is a Cloudflare Pages Function at `/api/health` that reports the live commit.
 
 Deploy on Cloudflare Pages with framework preset Astro, build command `npm run build`, output directory `dist`.
 
@@ -25,7 +30,8 @@ Everything you will ever edit is under `src/content/` and `src/data/`. Component
 | Name, bio, contact links, headshot | `src/data/site.ts` | |
 | Courses | `src/data/coursework.ts` | Number and title only; the level column is read from the catalogue number. |
 | Skill chips | `src/data/skills.ts` | |
-| Resume | `public/resume.pdf` | Replace the file; the path never changes. |
+| Resume | `public/rohan-nuthi-resume.pdf` and `public/resume.json` | Replace the PDF (the path never changes; `/resume.pdf` redirects to it) and keep the JSON Resume in step with it. |
+| Guestbook (/guestbook) | `src/data/tree.ts` | Tree capacity, where your pinned leaves sit, and the plaque text. |
 | Colours, spacing, radius | `src/styles/tokens.css` | |
 | Everything visual | `src/styles/site.css` | The only stylesheet. |
 
@@ -47,4 +53,4 @@ When replacing an image, save it under a new filename and update the reference. 
 
 ## Placeholders still to replace
 
-Search the repo for `[` inside `src/content/` and `src/data/` to find bracketed text that needs real content. Also still placeholders: the collage photos and most covers, `public/resume.pdf`, and the `[n]` card numbers for the three projects other than PickleIQ.
+Search the repo for `[` inside `src/content/` and `src/data/` to find bracketed text that needs real content. Also still placeholders: the collage photos and most covers, `public/rohan-nuthi-resume.pdf`, and the `[n]` card numbers for the three projects other than PickleIQ.

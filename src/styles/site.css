@@ -33,6 +33,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 .lede { font-family: var(--font-serif); font-size: 19px; line-height: 1.55; max-width: var(--measure); }
 .body { font-family: var(--font-serif); font-size: 17px; line-height: 1.6; max-width: var(--measure); }
 .h2 { font-size: 31px; line-height: 1.15; letter-spacing: -0.015em; font-weight: 600; }
+h1, h2, h3 { text-wrap: balance; }
 .col-head { font-size: 16px; line-height: 1.4; font-weight: 600; }
 
 /* Nav */
@@ -95,7 +96,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 .honours { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
 .honours .mark { display: inline-flex; align-items: center; gap: 6px; }
 .mark-badge { position: relative; width: 20px; height: 20px; border-radius: 50%; overflow: hidden; flex: 0 0 20px; }
-.mark-badge img { position: absolute; top: 50%; left: 50%; width: 132%; height: 132%; transform: translate(-50%, -50%); border-radius: 0; }
+.mark-badge img { position: absolute; top: 50%; left: 50%; width: 132%; height: 132%; max-width: none; transform: translate(-50%, -50%); border-radius: 0; }
 @media (max-width: 720px) {
   .hero { padding-top: var(--space-8); }
   .about { grid-template-columns: minmax(0, 1fr); padding-bottom: var(--space-8); }
@@ -128,18 +129,24 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
    Each card reads its distance from the front, --d, and positions itself. */
 .deck { padding-bottom: 0; }
 .deck-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 12px 24px; margin-bottom: var(--space-4); }
-.deck-container { width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 140px 0 20px; }
+/* The card's left edge lines up with the content column; the 140px right
+   padding leaves room for three 40px stack slivers to overhang the column. */
+.deck-container { width: min(100%, calc(var(--container) + 120px)); margin-left: max(0px, calc((100% - var(--container)) / 2)); padding: 0 140px 0 20px; }
 .runway { position: relative; }
 /* The stage is exactly the viewport below the sticky nav, so a centred card
    sits in the middle of what is actually visible, not half a nav too high. */
 .stage { position: sticky; top: var(--nav-h); height: calc(100vh - var(--nav-h)); display: flex; align-items: center; }
 .segment { height: 50vh; }
+/* Each segment's anchor (#card-<slug>) must land where that card is in front: k
+   segments into the runway. The segment itself sits one stage-height further
+   down, so that offset is given back as scroll margin (scroll-padding supplies the nav). */
+.segment { scroll-margin-top: calc(100vh - var(--nav-h)); }
 .cardbox { position: relative; width: 100%; height: min(680px, calc(100vh - var(--nav-h) - 80px)); }
 .card {
   --d: calc(var(--i) - var(--index, 0));
   position: absolute; inset: 0; display: flex; flex-direction: column; overflow: hidden;
-  background: var(--card-bg); color: var(--card-fg); border: 1px solid var(--line); border-radius: 6px; text-decoration: none;
-  transform: translate(calc(40px * max(var(--d), 0)), calc(-8px * clamp(0, calc(0 - var(--d)), 1)));
+  background: var(--card-bg); color: var(--card-fg); border: 1px solid var(--line); border-radius: var(--radius); text-decoration: none;
+  transform: translate(calc(40px * min(max(var(--d), 0), 3)), calc(-8px * clamp(0, calc(0 - var(--d)), 1)));
   opacity: clamp(0, calc(var(--d) + 1), 1);
   z-index: calc(10 - max(var(--d), calc(0 - var(--d))));
   transition: transform 200ms cubic-bezier(.2, .7, .2, 1), opacity 200ms cubic-bezier(.2, .7, .2, 1);
@@ -149,43 +156,47 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 /* 1. Photo strip: a thin contact-sheet frame on a slightly darker ground. The
    hovered frame takes 5 parts of the width, the other two 1 part each. In the
    pinned deck the strip takes whatever height the info area and bar leave. */
-.strip { flex: 1 1 360px; min-height: 0; display: flex; gap: 6px; padding: 6px; background: var(--surface); }
-.frame { flex: 1; min-width: 0; transition: flex .55s cubic-bezier(.2, .7, .2, 1); }
-.frame.is-active { flex: 5; }
-.frame img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 2px; }
+/* The open frame is exactly as wide as its photo needs at the strip's height
+   (--ar is the photo's width / height), so it is never cropped. The two closed
+   frames share what is left, and never shrink below 72px each. */
+.strip { flex: 1 1 360px; min-height: 0; display: flex; gap: 4px; padding: 4px; background: var(--surface); container-type: size; }
+.frame { flex: 1 1 0; min-width: 0; transition: flex 200ms cubic-bezier(.2, .7, .2, 1); }
+.frame.is-active { flex: 0 0 min(calc(100cqh * var(--ar, 1.6)), calc(100cqw - 152px)); }
+.frame img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius); }
 /* 2. Info area: title + blurb left, stats ledger right. */
 .card-info { flex: 0 0 auto; display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; padding: 36px 40px 32px; }
 .card-text { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
-.card-title-row { display: flex; align-items: baseline; gap: 14px; }
-.card-title { font-size: 39px; line-height: 1; letter-spacing: -0.02em; font-weight: 650; }
-.card-counter { font-family: var(--font-mono); font-size: 13px; line-height: 1.6; color: var(--muted); white-space: nowrap; }
-.card-blurb { font-family: var(--font-serif); font-size: 19px; line-height: 1.45; text-wrap: pretty; }
-.ledger { display: flex; flex-direction: column; justify-content: center; font-family: var(--font-mono); font-size: 13px; line-height: 1.6; }
+/* Card type follows the page scale: 25px sans heading (the case-study h2
+   size), 17px serif body, 13px sans kickers, 15px sans values. No mono. */
+.card-title { font-size: 25px; line-height: 1.2; letter-spacing: -0.01em; font-weight: 600; }
+.card-blurb { font-family: var(--font-serif); font-size: 17px; line-height: 1.55; text-wrap: pretty; }
+.ledger { display: flex; flex-direction: column; justify-content: center; font-family: var(--font-sans); font-size: 15px; line-height: 1.4; }
 .ledger-row { display: flex; justify-content: space-between; gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--line); }
 .ledger-row:last-child { border-bottom: 0; }
-.ledger dt { color: var(--muted); }
+.ledger dt { color: var(--muted); font-size: 13px; }
 .ledger dd { text-align: right; }
 .ledger dd.is-accent { color: var(--accent); }
 /* 3. Action bar: the click indicator. Fills with the accent on card hover. */
-.card-bar { flex: 0 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 14px 40px; border-top: 1px solid var(--line); font-family: var(--font-mono); font-size: 13px; line-height: 1.6; color: var(--muted); background: var(--card-bg); transition: all .3s; }
+.card-bar { flex: 0 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 14px 40px; border-top: 1px solid var(--line); font-family: var(--font-sans); font-size: 13px; line-height: 1.4; color: var(--muted); background: var(--card-bg); transition: background-color 120ms ease-out, color 120ms ease-out, border-color 120ms ease-out, box-shadow 120ms ease-out; }
 .card-bar-label { display: grid; }
-.card-bar-label > span { grid-area: 1 / 1; transition: opacity .3s; }
+.card-bar-label > span { grid-area: 1 / 1; transition: opacity 120ms ease-out; }
 .card-bar-hover { opacity: 0; }
-.card-bar-arrow { transform: translateX(-6px); transition: transform .35s; }
-.card:hover .card-bar { background: var(--accent); color: var(--card-bg); border-top-color: var(--accent); }
+.card-bar-arrow { display: flex; transform: translateX(-6px); transition: transform 120ms ease-out; }
+/* Hover: the bar fills with the case-study navy and bleeds a soft glow upward. */
+.card:hover .card-bar { background: var(--case-bg); color: var(--case-fg); border-top-color: var(--case-bg); box-shadow: 0 -28px 56px -20px var(--case-bg); }
 .card:hover .card-bar-rest { opacity: 0; }
 .card:hover .card-bar-hover { opacity: 1; }
 .card:hover .card-bar-arrow { transform: translateX(0); }
-.card-back { position: absolute; inset: 0; background: var(--card-back-bg); color: var(--card-back-fg); border-radius: 6px; opacity: clamp(0, var(--d), 1); transition: opacity 200ms cubic-bezier(.2, .7, .2, 1); pointer-events: none; }
+.card-back { position: absolute; inset: 0; background: var(--surface); color: var(--fg); border-radius: var(--radius); opacity: clamp(0, var(--d), 1); transition: opacity 200ms cubic-bezier(.2, .7, .2, 1); pointer-events: none; }
 .card-back svg { position: absolute; top: 12px; right: 9px; }
 /* The back face hides at once when a card comes forward (no accent flash) and
    returns only after the card in front of it is opaque again. */
 .card-back { transition: opacity 0s 200ms; }
 .card.is-front .card-back { transition: opacity 0s; }
 /* Cards waiting behind the front one show as 40px slivers on the right; a
-   hairline on each one's right edge (the edge the next card peeks out from) keeps the
-   slivers readable as separate cards. The front card's back is transparent, so it has none. */
-.card-back::before { content: ""; position: absolute; top: 0; bottom: 0; right: 0; width: 1px; background: var(--card-back-fg); opacity: 0.55; }
+   page-background hairline on each one's right edge (the edge the next card peeks
+   out from) keeps the slivers readable as separate cards. */
+.card-back::before { content: ""; position: absolute; top: 0; bottom: 0; right: 0; width: 1px; background: var(--bg); }
 /* Without the script, or on narrow screens, the cards simply stack. */
 .deck:not([data-js]) .stage { position: static; height: auto; display: block; }
 .deck:not([data-js]) .segment { display: none; }
@@ -195,19 +206,23 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 .deck:not([data-js]) .card-back { display: none; }
 /* No hover on touch screens: the action bar always shows its filled state. */
 @media (hover: none) {
-  .card-bar { background: var(--accent); color: var(--card-bg); border-top-color: var(--accent); }
+  .card-bar { background: var(--case-bg); color: var(--case-fg); border-top-color: var(--case-bg); }
   .card-bar-rest { opacity: 0; }
   .card-bar-hover { opacity: 1; }
   .card-bar-arrow { transform: none; }
 }
 @media (max-width: 720px) {
-  .deck-container { padding: 0 20px; }
+  .deck-container { width: 100%; margin-left: 0; padding: 0 20px; }
   .deck .stage { position: static; height: auto; margin: 0; display: block; }
   .deck .segment { display: none; }
   .deck .cardbox { height: auto; display: flex; flex-direction: column; gap: 24px; }
   .deck .card, .deck:not([data-js]) .card { position: relative; inset: auto; transform: none; opacity: 1; }
   .deck .card-back { display: none; }
-  .strip, .deck:not([data-js]) .strip { flex: 0 0 auto; height: 240px; }
+  /* Phones: no hover, so show the first photo whole, at its own shape. */
+  .strip, .deck:not([data-js]) .strip { flex: 0 0 auto; height: auto; container-type: normal; }
+  .frame:not(:first-child) { display: none; }
+  .frame, .frame.is-active { flex: 1 1 auto; }
+  .frame img { height: auto; }
   .card-info { grid-template-columns: minmax(0, 1fr); gap: 24px; padding: 24px; }
   .card-title { font-size: 32px; }
   .card-bar { padding: 14px 24px; }
@@ -243,16 +258,18 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 
 /* Footer */
 .footer { border-top: 1px solid var(--line); padding: var(--space-6) 0; font-size: 14px; line-height: 1.4; color: var(--muted); }
-.footer .container { text-align: center; }
+.footer .container { text-align: center; display: flex; flex-direction: column; gap: 8px; }
+.footer .colophon { font-size: 13px; }
+.footer code { font-family: var(--font-mono); font-size: 12px; }
 
 /* Case-study page */
 .case { padding-top: var(--space-12); padding-bottom: var(--space-16); display: flex; gap: 64px; align-items: flex-start; }
 .collage { position: relative; width: 440px; height: 980px; flex: 0 0 440px; }
 .collage img { position: absolute; border: 4px solid var(--img-mat); object-fit: cover; transition: transform 200ms ease-out; }
-.collage img:nth-child(1) { left: 0; top: 0; width: 340px; height: 240px; transform: rotate(-1.5deg); z-index: 1; }
-.collage img:nth-child(2) { left: 160px; top: 200px; width: 280px; height: 280px; transform: rotate(1.2deg); z-index: 2; }
-.collage img:nth-child(3) { left: 0; top: 440px; width: 320px; height: 220px; transform: rotate(-0.8deg); z-index: 3; }
-.collage img:nth-child(4) { left: 120px; top: 640px; width: 320px; height: 300px; transform: rotate(1deg); z-index: 4; }
+.collage img:nth-child(1) { left: 0; top: 0; width: 340px; height: auto; transform: rotate(-1.5deg); z-index: 1; }
+.collage img:nth-child(2) { left: 160px; top: 200px; width: 280px; height: auto; transform: rotate(1.2deg); z-index: 2; }
+.collage img:nth-child(3) { left: 0; top: 440px; width: 320px; height: auto; transform: rotate(-0.8deg); z-index: 3; }
+.collage img:nth-child(4) { left: 120px; top: 640px; width: 320px; height: auto; transform: rotate(1deg); z-index: 4; }
 .collage img:hover { transform: rotate(0deg); z-index: 5; }
 .article { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 48px; }
 .case-header { display: flex; flex-direction: column; gap: 20px; }
@@ -277,7 +294,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 @media (max-width: 960px) {
   .case { flex-direction: column; padding-top: var(--space-8); padding-bottom: var(--space-12); }
   .collage { position: static; width: 100%; height: auto; flex: 1 1 auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-  .collage img, .collage img:nth-child(n) { position: static; transform: none; width: 100%; height: auto; aspect-ratio: 4 / 3; border-width: 0; }
+  .collage img, .collage img:nth-child(n) { position: static; transform: none; width: 100%; height: auto; border-width: 0; }
   .case-header h1 { font-size: 32px; }
   .prose h2 { font-size: 22px; }
   .prose p, .prose ul, .prose ol { font-size: 17px; }
@@ -299,4 +316,123 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   a, button, .card, .card-back, .frame, .card-bar, .card-bar-label > span, .card-bar-arrow, .collage img { transition: none; }
   .btn:active { transform: none; }
   .collage img:hover { transform: inherit; }
+}
+
+/* Windows High Contrast strips backgrounds and shadows: restore the edges that
+   carry meaning. Focus stays on outline, which forced-colors preserves. */
+@media (forced-colors: active) {
+  .card, .card-back, .headshot-frame, .btn, .chip, .frame img { border: 1px solid CanvasText; }
+  .card:hover .card-bar { box-shadow: none; border-top: 2px solid Highlight; }
+  .card-back::before { background: CanvasText; }
+  .ruler-head, .ledger-row { border-color: CanvasText; }
+}
+@media (prefers-contrast: more) {
+  :root { --muted: #3A3A3A; --line: #8A8A86; }
+  @media (prefers-color-scheme: dark) { :root { --muted: #C8C8C4; --line: #6A6A66; } }
+}
+
+/* ── Guestbook page (/guestbook) ────────────────────────────────────────────
+   Intro and plaque on the left (sticky on desktop), the tree in its own panel
+   on the right. Palette from the guestbook spec for dark mode; the light
+   palette is derived so the tree still recedes on #ECECEA. */
+.guestbook {
+  --gt-bark: #c9c0b3; --gt-soil: #5a4636;
+  --gt-sage: #6f8a69; --gt-slate: #5b7ba8; --gt-clay: #a8745a; --gt-cream: #b4a17a;
+  --gt-pot: #8a5a44; --gt-rim: #9c6a52;
+  --gt-leaf-opacity: 0.72;
+  padding-top: var(--space-8); padding-bottom: var(--space-12);
+  display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 48px; align-items: start;
+}
+@media (prefers-color-scheme: dark) {
+  .guestbook {
+    --gt-bark: #4a4036; --gt-soil: #2a221c;
+    --gt-sage: #8fa58a; --gt-slate: #7f9cc4; --gt-clay: #c09276; --gt-cream: #e8e4da;
+    --gt-leaf-opacity: 0.65;
+  }
+}
+.gb-intro { position: sticky; top: calc(var(--nav-h) + 32px); display: flex; flex-direction: column; gap: 16px; }
+.gb-title { font-size: 39px; line-height: 1.1; letter-spacing: -0.02em; font-weight: 650; }
+.gb-intro .lede { font-size: 17px; }
+.gb-legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; line-height: 1.4; color: var(--muted); }
+.gb-legend li { display: flex; align-items: center; gap: 6px; }
+.gb-dot, .gt-card-dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 8px; background: var(--gt-sage); }
+.gb-dot[data-kind="fun_fact"], .gt-card[data-kind="fun_fact"] .gt-card-dot { background: var(--gt-slate); }
+.gb-dot[data-kind="other"], .gt-card[data-kind="other"] .gt-card-dot { background: var(--gt-clay); }
+.gb-dot[data-kind="pinned"], .gt-card[data-kind="pinned"] .gt-card-dot { background: var(--gt-cream); }
+.gb-plaque { display: flex; flex-direction: column; gap: 10px; padding-top: 16px; border-top: 1px solid var(--line); }
+.gb-plaque-text { font-family: var(--font-serif); font-size: 15px; line-height: 1.55; color: var(--fg); }
+.gb-tree { min-width: 0; }
+@media (max-width: 720px) {
+  .guestbook { grid-template-columns: minmax(0, 1fr); gap: 32px; padding-top: var(--space-6); }
+  .gb-intro { position: static; }
+}
+
+/* The tree */
+.gt-stage { position: relative; width: 100%; }
+.gt-stage svg { display: block; overflow: visible; }
+.gt-trunk { fill: var(--gt-bark); }
+.gt-branch { fill: none; stroke: var(--gt-bark); stroke-linecap: round; }
+.gt-branch.gt-depth-3, .gt-branch.gt-depth-4, .gt-branch.gt-depth-5 { opacity: 0.8; }
+.gt-leaf { opacity: var(--gt-leaf-opacity); pointer-events: auto; transition: opacity 400ms ease; }
+.gt-leaf.is-lit { opacity: 0.88; }
+.gt-leaf:hover, .gt-leaf.is-active { opacity: 1; transition-duration: 120ms; }
+.gt-leaf--encouragement { fill: var(--gt-sage); }
+.gt-leaf--fun_fact { fill: var(--gt-slate); }
+.gt-leaf--other { fill: var(--gt-clay); }
+.gt-leaf--pinned { fill: var(--gt-cream); }
+.gt-midrib { fill: none; stroke: var(--bg); stroke-opacity: 0.35; stroke-width: 0.8; stroke-linecap: round; }
+.gt-fallen .gt-leaf { opacity: 0.55; pointer-events: none; }
+.gt-pot-body { fill: var(--gt-pot); }
+.gt-pot-rim { fill: var(--gt-rim); }
+.gt-soil { fill: var(--gt-soil); }
+
+/* Idle sway: leaves on or near screen rock a couple of degrees around their
+   stem. It pauses while the page scrolls (SVG transforms cost a layout). */
+.gt-sway { transform-box: view-box; transform-origin: 0 0; }
+.gt-leaf.is-near .gt-sway { animation: gt-sway var(--sd, 7s) ease-in-out var(--sl, 0s) infinite alternate; }
+.gt-stage.is-scrolling .gt-sway { animation-play-state: paused; }
+@keyframes gt-sway { from { transform: rotate(-2.2deg); } to { transform: rotate(2.2deg); } }
+
+/* Scroll glow: a soft halo fixed at the middle of the viewport, moved along the
+   trunk by script. Dark mode is the spec's amber light. On the light theme a
+   light halo washes out, so it darkens instead (multiply) and a short amber
+   band marks the exact point on the trunk. */
+.gt-glow { position: fixed; top: 50%; left: 0; z-index: 0; width: 180px; height: 180px; margin: -90px 0 0 -90px; border-radius: 50%; pointer-events: none; opacity: 0; transition: opacity 600ms ease;
+  mix-blend-mode: multiply; background: radial-gradient(circle, rgba(222, 150, 40, 0.3) 0, rgba(222, 150, 40, 0.1) 38%, transparent 70%); }
+.gt-glow.is-ready { opacity: 1; }
+.gt-glow.is-off { opacity: 0; }
+.gt-glow-band { position: absolute; left: 50%; top: 50%; width: 4px; height: 52px; margin: -26px 0 0 -2px; border-radius: 2px; background: linear-gradient(transparent, #c98516, transparent); opacity: 0.75; }
+@media (prefers-color-scheme: dark) {
+  .gt-glow { mix-blend-mode: normal; background: radial-gradient(circle, rgba(242, 196, 109, 0.26) 0, rgba(242, 196, 109, 0.09) 38%, transparent 70%); }
+  .gt-glow-band { display: none; }
+}
+
+/* A note's card: the site's own card colours and fonts, never wider than the screen. */
+.gt-card { position: fixed; z-index: 30; left: 0; top: 0; width: max-content; max-width: min(280px, calc(100vw - 16px)); padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--card-bg); color: var(--card-fg); pointer-events: none; opacity: 0; transition: opacity 120ms ease-out; }
+.gt-card.is-open { opacity: 1; }
+.gt-card-kind { display: flex; align-items: center; gap: 6px; font-family: var(--font-sans); font-size: 12px; line-height: 1.4; color: var(--muted); }
+.gt-card-body { margin-top: 6px; font-family: var(--font-serif); font-size: 15px; line-height: 1.5; overflow-wrap: anywhere; }
+.gt-card-meta { margin-top: 6px; font-family: var(--font-sans); font-size: 12px; line-height: 1.4; color: var(--muted); }
+
+@media (prefers-reduced-motion: reduce) {
+  .gt-leaf.is-near .gt-sway { animation: none; }
+  .gt-leaf, .gt-glow, .gt-card { transition: none; }
+}
+
+/* Print: a plain document. The nav, the deck chrome and the hover-only
+   affordances go; project cards stack with their URLs expanded. */
+@media print {
+  :root { --bg: #FFFFFF; --fg: #000000; --muted: #444444; --line: #BBBBBB; --accent: #000000; --card-bg: #FFFFFF; --card-fg: #000000; --surface: #FFFFFF; }
+  html { background: #FFFFFF; }
+  .nav, .skip, .btn-row, .card-bar, .card-back, .segment, .strip, .colophon a[href="/api/health"], .gt-glow, .gt-card { display: none; }
+  .section, .hero, .about { padding-top: 24px; padding-bottom: 24px; break-inside: avoid; }
+  .section-tint { background: transparent; }
+  .stage { position: static; height: auto; display: block; }
+  .cardbox { height: auto; display: block; }
+  .card { position: static; display: block; transform: none; opacity: 1; border: 1px solid var(--line); margin-bottom: 16px; break-inside: avoid; }
+  .card::after { content: "rohannuthi7.github.io" attr(href); display: block; padding: 0 40px 16px; font-size: 12px; color: var(--muted); }
+  .contact a[href^="http"]::after, .prose a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 12px; color: var(--muted); }
+  .headshot-frame { border: 1px solid var(--line); }
+  a { color: inherit; text-decoration: none; }
+  .deck-container { width: 100%; margin: 0; padding: 0 20px; }
 }

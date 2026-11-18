@@ -1,16 +1,17 @@
 ---
-// Four-photo pinboard for the case-study page. Positions, sizes and
-// rotations live in site.css (.collage img:nth-child(n)). The first photo
+// Four-photo pinboard for the case-study page. Positions, widths and
+// rotations live in site.css (.collage img:nth-child(n)); each photo keeps its
+// own aspect ratio, so nothing is cropped. The first photo
 // shares a view-transition-name with the project's card image on the home
 // page so the two morph during navigation.
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 interface Props { title: string; slug: string; photos: { src: ImageMetadata; alt: string }[] }
 const { title, slug, photos } = Astro.props;
-const sizes = [[340, 240], [280, 280], [320, 220], [320, 300]];
+const widths = [340, 280, 320, 320];
 ---
 <div class="collage" role="img" aria-label={`${title} photographs`}>
   {photos.map((p, i) => (
-    <Image src={p.src} alt={p.alt} width={sizes[i][0] * 2} height={sizes[i][1] * 2} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" style={i === 0 ? `view-transition-name: cover-${slug}` : undefined} />
+    <Image src={p.src} alt={p.alt} width={Math.min(widths[i] * 2, p.src.width)} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" style={i === 0 ? `view-transition-name: cover-${slug}` : undefined} />
   ))}
 </div>

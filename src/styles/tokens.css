@@ -1,8 +1,8 @@
 :root {
   --bg: #ECECEA; --fg: #141414; --muted: #5C5C5C; --line: #CFCFCB;
   --surface: #E3E3E0; --surface-line: #C4C4C0;
-  /* Card backs match the case-study page background, so the stack previews where a click lands. */
-  --card-bg: #FFFFFF; --card-fg: #141414; --card-back-bg: #3B4A66; --card-back-fg: #ECEEF2;
+  /* --case-bg/--case-fg mirror the case-study page palette for use on the home page (card hover bar). */
+  --card-bg: #FFFFFF; --card-fg: #141414; --case-bg: #3B4A66; --case-fg: #ECEEF2;
   --accent: #3B4A66; --accent-hover: #2C3850;
   --img-border: #CFCFCB;
   --radius: 4px;
@@ -18,7 +18,7 @@
 @media (prefers-color-scheme: dark) {
   :root { --bg: #1C1C1C; --fg: #E6E6E3; --muted: #9C9C98; --line: #333331;
           --surface: #232323; --surface-line: #3A3A38;
-          --card-bg: #111111; --card-fg: #E6E6E3; --card-back-bg: #2A3447; --card-back-fg: #ECEEF2;
+          --card-bg: #111111; --card-fg: #E6E6E3; --case-bg: #2A3447; --case-fg: #ECEEF2;
           --accent: #9DB0C8; --accent-hover: #B8C7DA; --img-border: #333331; }
 }
 [data-page="case"] {
