@@ -73,19 +73,17 @@ h1, h2, h3 { text-wrap: balance; }
 @media (max-width: 720px) { .lrow { grid-template-columns: minmax(0, 1fr); } .lrow .kicker { padding-bottom: 8px; } }
 
 /* Section rhythm: every section after About has 96px above and below, the
-   h2, then 32px to content. Coursework sits on the page background
-   under a hairline; Skills keeps the tinted surface. */
+   h2, then 32px to content. Surfaces alternate page / tint / page; the
+   surface edge is the boundary, so there are no hairlines between sections. */
 .section { padding-top: var(--space-12); padding-bottom: var(--space-12); }
 .section-tint { background: var(--surface); --line: var(--surface-line); --img-border: var(--surface-line); }
-/* A section on the page background, set off from the one above by a hairline
-   the width of the content column. */
-.section-ruled { padding-top: 0; }
-.section-ruled > .container::before { content: ""; display: block; border-top: 1px solid var(--line); margin-bottom: var(--space-12); }
+/* Slate-blue surface, the same --case-bg as the project pages and card hover
+   bar. Text 7.7:1 and muted 5.4:1 on the light-mode blue (more in dark mode). */
+.section-case { background: var(--case-bg); color: var(--case-fg); --fg: var(--case-fg); --muted: #C3CAD6; --line: rgb(255 255 255 / 0.2); --img-border: transparent; }
 .section-title { margin-bottom: var(--space-4); }
 @media (max-width: 720px) {
   .section { padding-top: var(--space-8); padding-bottom: var(--space-8); }
   .section-title { margin-bottom: var(--space-3); }
-  .section-ruled > .container::before { margin-bottom: var(--space-8); }
 }
 
 /* About. The intro wraps the hero and About so the signature can sit behind
@@ -122,34 +120,21 @@ h1, h2, h3 { text-wrap: balance; }
 }
 @media (max-width: 480px) { .hero h1 { font-size: 40px; } .lede { font-size: 17px; } .h2 { font-size: 25px; } .body { font-size: 16px; } }
 
-/* Coursework: a three-column table. Course name and number, what was built
-   (serif, with the topics underneath), and the project that used it. */
-.courses { width: 100%; border-collapse: collapse; text-align: left; font-family: var(--font-sans); }
-.courses th, .courses td { padding: 16px 24px 16px 0; vertical-align: top; border-bottom: 1px solid var(--line); }
-.courses th:last-child, .courses td:last-child { padding-right: 0; }
-.courses thead th { padding-top: 0; padding-bottom: 8px; font-size: 13px; line-height: 1.4; font-weight: 400; color: var(--muted); }
-.course-name { width: 26%; font-size: 16px; line-height: 1.4; font-weight: 600; }
-.course-num { display: block; margin-top: 2px; font-size: 13px; font-weight: 400; color: var(--muted); }
-.course-built p:first-child { font-family: var(--font-serif); font-size: 17px; line-height: 1.6; max-width: 46ch; text-wrap: pretty; }
-.course-topics { margin-top: 4px; font-size: 13px; line-height: 1.4; color: var(--muted); }
-.course-used { width: 22%; font-size: 15px; line-height: 1.4; }
-.todo-link { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
-/* Phones: each course stacks into one block; the column heads are kept for
-   screen readers only. */
-@media (max-width: 720px) {
-  .courses, .courses tbody, .courses tr, .courses th, .courses td { display: block; width: auto; }
-  .courses thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-  .courses tbody tr { padding: 16px 0; border-bottom: 1px solid var(--line); }
-  .courses tbody tr:first-child { border-top: 1px solid var(--line); }
-  .courses tbody th, .courses tbody td { padding: 0; border: 0; }
-  .course-built, .course-used { margin-top: 8px; }
-}
+/* Coursework: a short list, lowest catalogue number first. */
+.courses { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+.course { display: flex; flex-direction: column; gap: 2px; }
+.course-num { font-size: 16px; line-height: 1.4; font-weight: 600; }
+.course-title { font-family: var(--font-serif); font-size: 16px; line-height: 1.5; }
+.course-title .term { margin-left: 6px; white-space: nowrap; }
+@media (max-width: 720px) { .courses { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
 /* Projects: pinned card deck. The sticky stage holds the card box in the
    viewport while the runway (one 100vh segment per card) scrolls under it.
    Each card reads its distance from the front, --d, and positions itself. */
 .deck { padding-bottom: 0; }
-/* Header: the same h2 as every other section. */
+/* Header: the section's oversized title. */
+.deck-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: var(--space-6); }
+.deck-title { font-size: clamp(64px, 11vw, 136px); line-height: 0.9; letter-spacing: -0.045em; font-weight: 750; padding: 0 0.12em 0.04em 0.02em; }
 /* The card's left edge lines up with the content column; the 140px right
    padding leaves room for three 40px stack slivers to overhang the column. */
 .deck-container { width: min(100%, calc(var(--container) + 120px)); margin-left: max(0px, calc((100% - var(--container)) / 2)); padding: 0 140px 0 20px; }
@@ -270,6 +255,7 @@ h1, h2, h3 { text-wrap: balance; }
   .deck .cardbox { height: auto; display: flex; flex-direction: column; gap: 24px; }
   .deck .card, .deck:not([data-js]) .card { position: relative; inset: auto; transform: none; opacity: 1; }
   .deck .card-back, .deck .deck-panel, .deck .deck-now { display: none; }
+  .deck-head { flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: var(--space-4); }
   /* Phones: no hover, so show the first photo whole, at its own shape. */
   .strip, .deck:not([data-js]) .strip { flex: 0 0 auto; height: auto; container-type: normal; }
   .frame:not(:first-child) { display: none; }
