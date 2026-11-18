@@ -13,8 +13,7 @@ private: false
 stack: [Python, PyTorch, React, FastAPI]
 cover: { src: ./court-overlay.webp, alt: "PickleIQ court overlay with four tracked player skeletons and the ball's trail" }
 stats:
-  - { label: Ball detection, value: "0.5% → 34%" }
-  - { label: Improvement, value: "68×", accent: true }
+  - { label: Ball detection, value: "0.5% → 34%", accent: true }
   - { label: Rally segmentation, value: "85% faster" }
 frames:
   - { src: ./results.webp, alt: "PickleIQ results screen: per-player takeaways on the left, the match video and timestamped tips on the right" }

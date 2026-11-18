@@ -2,3 +2,5 @@ role: Data Management Analyst
 org: Leadership Initiatives
 dates: { start: "2024-08", end: "2025-03" }
 photo: { src: ./img/leadership-initiatives.png, alt: "Leadership Initiatives logo" }
+# TODO(Rohan): add two past-tense bullets under `bullets:`, or delete this file
+# to remove the entry. Add `stack:` and `team:` to show those rows.

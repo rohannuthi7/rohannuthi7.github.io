@@ -3,7 +3,7 @@ title: surg+f
 tagline: Search surgical videos. Ask when something happens in an operation and jump straight to that moment.
 summary: >-
   A search engine for surgery video. A model labels every second of an operation,
-  so you can ask in plain words and land on the exact clip. A MadHacks 2026 Databricks winner.
+  so you can ask in plain words and land on the exact clip.
 team: "4"
 dates: { start: "2026-11", end: "2026-11" }
 status: Shipped

@@ -3,7 +3,9 @@ org: Reaxe LLC
 dates: { start: "2026-04", end: present }
 photo: { src: ./img/reaxe.png, alt: "Reaxe logo" }
 photoShape: circle
+stack: [React, Node.js, PostgreSQL, Anthropic API]
+# TODO(Rohan): add `team:` (for example "3 engineers") to show a Team row.
+project: reaxe
 bullets:
-  - Build a multi-tenant SaaS platform (React, Node.js, Postgres) that home-remodeling contractors use to process $300K+ in contracts
-  - Reduce quote turnaround from two days to five minutes and improve quote accuracy by 58% for every contractor on the platform
+  - Improve quote accuracy by 58% for every contractor on the platform
   - Develop AI quoting and material-estimation pipelines on the Anthropic API, tuned by comparing quoted totals to final job costs
