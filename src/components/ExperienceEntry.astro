@@ -1,35 +1,23 @@
 ---
-// One role in the Experience list, laid out like a project card's info area:
-// logo, role, organisation and bullets on the left; a fact table on the right
-// (Dates always; Stack, Team and Project when the entry has them).
 import { Image } from 'astro:assets';
-import { getEntry, type CollectionEntry } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
 import { formatRange, isoMonth } from '../lib/dates';
 
 interface Props { entry: CollectionEntry<'experience'> }
-const { entry } = Astro.props;
-const { data } = entry;
+const { data } = Astro.props.entry;
 const range = formatRange(data.dates.start, data.dates.end);
-const project = data.project ? await getEntry('projects', data.project) : undefined;
-if (data.project && !project) throw new Error(`experience/${entry.id}: no project "${data.project}"`);
 ---
-<li class="entry" id={`exp-${entry.id}`}>
-  <div class="entry-main">
-    <div class="entry-head">
-      <Image class={`entry-photo${data.photoShape === 'circle' ? ' entry-photo-circle' : ''}`} src={data.photo.src} alt={data.photo.alt} width={192} height={192} loading="lazy" decoding="async" />
-      <div>
-        <h3 class="entry-role">{data.role}</h3>
-        <p class="entry-org">{data.org}</p>
-      </div>
-    </div>
-    {data.bullets.length > 0
-      ? <ul class="bullets">{data.bullets.map((b) => <li>{b}</li>)}</ul>
-      : <p class="entry-todo">[Two bullets in your words, or delete this entry]</p>}
+<li class="entry">
+  <p class="kicker entry-date"><time datetime={isoMonth(data.dates.start)}>{range}</time></p>
+  <div class="tl" aria-hidden="true"></div>
+  <Image class={`entry-photo${data.photoShape === 'circle' ? ' entry-photo-circle' : ''}`} src={data.photo.src} alt={data.photo.alt} width={192} height={192} loading="lazy" decoding="async" />
+  <div class="entry-body">
+    <p class="kicker entry-date-m">{range}</p>
+    <p class="entry-role"><b>{data.role}</b><span> @ {data.org}</span></p>
+    {data.bullets.length > 0 && (
+      <ul class="bullets">
+        {data.bullets.map((b) => <li>{b}</li>)}
+      </ul>
+    )}
   </div>
-  <dl class="ledger entry-facts">
-    <div class="ledger-row"><dt>Dates</dt><dd><time datetime={isoMonth(data.dates.start)}>{range}</time></dd></div>
-    {data.stack && <div class="ledger-row"><dt>Stack</dt><dd>{data.stack.join(', ')}</dd></div>}
-    {data.team && <div class="ledger-row"><dt>Team</dt><dd>{data.team}</dd></div>}
-    {project && <div class="ledger-row"><dt>Project</dt><dd><a href={`/projects/${project.id}`}>{project.data.title}</a></dd></div>}
-  </dl>
 </li>

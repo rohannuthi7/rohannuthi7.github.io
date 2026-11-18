@@ -1,5 +1,5 @@
 :root {
-  --bg: #ECECEA; --fg: #141414; --muted: #4D4D4D; --line: #CFCFCB;
+  --bg: #ECECEA; --fg: #141414; --muted: #5C5C5C; --line: #CFCFCB;
   --surface: #E3E3E0; --surface-line: #C4C4C0;
   /* --case-bg/--case-fg mirror the case-study page palette for use on the home page (card hover bar). */
   --card-bg: #FFFFFF; --card-fg: #141414; --case-bg: #3B4A66; --case-fg: #ECEEF2;
@@ -18,16 +18,13 @@
   --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-serif: Georgia, "Times New Roman", Times, serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-  /* Type scale. Every font size on the home page comes from here. */
-  --text-name: 64px; --text-heading: 31px; --text-subhead: 25px; --text-lede: 19px;
-  --text-body: 17px; --text-base: 16px; --text-ui: 15px; --text-small: 13px;
   --space-1: 8px; --space-2: 16px; --space-3: 24px; --space-4: 32px;
   --space-6: 48px; --space-8: 64px; --space-12: 96px; --space-16: 128px;
   --container: 1040px; --measure: 62ch;
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
-  :root { --bg: #1C1C1C; --fg: #E6E6E3; --muted: #ABABA7; --line: #333331;
+  :root { --bg: #1C1C1C; --fg: #E6E6E3; --muted: #9C9C98; --line: #333331;
           --surface: #232323; --surface-line: #3A3A38;
           --card-bg: #111111; --card-fg: #E6E6E3; --case-bg: #2A3447; --case-fg: #ECEEF2;
           --accent: #9DB0C8; --accent-hover: #B8C7DA; --img-border: #333331; }

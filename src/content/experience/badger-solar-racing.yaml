@@ -2,7 +2,5 @@ role: Embedded Software Engineer
 org: Badger Solar Racing
 dates: { start: "2025-09", end: "2026-05" }
 photo: { src: ./img/badger-solar-racing.png, alt: "Badger Solar Racing logo" }
-stack: [C, CAN bus]
-# TODO(Rohan): add `team:` to show a Team row.
 bullets:
   - Wrote embedded C firmware that kept turn-signal and safety-light state in sync over the CAN bus, falling back to hazards-on when messages timed out

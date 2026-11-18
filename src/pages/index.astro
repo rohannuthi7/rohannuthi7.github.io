@@ -6,9 +6,10 @@ import Button from '../components/Button.astro';
 import ContactList from '../components/ContactList.astro';
 import ProjectDeck from '../components/ProjectDeck.astro';
 import ExperienceEntry from '../components/ExperienceEntry.astro';
+import Tag from '../components/Tag.astro';
 import { site } from '../data/site';
 import { coursework, catalogNumber } from '../data/coursework';
-import { skills, type Skill } from '../data/skills';
+import { skills } from '../data/skills';
 import { byStartDesc } from '../lib/dates';
 import signatureSvg from '../assets/signature.svg?raw';
 
@@ -17,25 +18,13 @@ const experience = (await getCollection('experience')).sort(byStartDesc);
 // The signature again, large and faint behind the intro. Decorative: the
 // footer copy carries the accessible name.
 const watermark = signatureSvg.replace(/ role="img" aria-label="[^"]*" class="signature"/, ' aria-hidden="true" focusable="false" class="intro-signature"');
-// Where each skill was used: project pages first, then jobs on this page.
-const usesOf = (skill: Skill) => [
-  ...(skill.projects ?? []).map((id) => {
-    const p = projects.find((x) => x.id === id);
-    if (!p) throw new Error(`skills: no project "${id}"`);
-    return { href: `/projects/${p.id}`, label: p.data.title };
-  }),
-  ...(skill.jobs ?? []).map((id) => {
-    const e = experience.find((x) => x.id === id);
-    if (!e) throw new Error(`skills: no job "${id}"`);
-    return { href: `#exp-${e.id}`, label: e.data.org };
-  }),
-];
 const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber(b) - catalogNumber(a);
 ---
 <Base title={site.title} description={site.description} ogImage="/og/home.png" signature>
   <div class="intro">
   <Fragment set:html={watermark} />
   <header id="about" class="container hero">
+    <p class="kicker">{site.kicker}</p>
     <h1>{site.name}</h1>
     {site.currently && <p class="currently">Currently: {site.currently}</p>}
   </header>
@@ -45,16 +34,11 @@ const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber
       <Image class="headshot" src={site.headshot.src} alt={site.headshot.alt} width={320} height={598} loading="eager" />
     </div>
     <div class="about-text">
-      <p class="lede">{site.bio}</p>
-      <dl class="ledger hero-facts">
-        {site.facts.map((f) => (
-          <div class="ledger-row"><dt>{f.label}</dt><dd>{f.value}</dd></div>
-        ))}
-        <div class="ledger-row">
-          <dt>Fraternity</dt>
-          <dd class="mark"><span class="mark-badge"><Image src={site.fraternity.mark} alt={`${site.fraternity.name} logo`} width={160} height={160} /></span><span>{site.fraternity.name}</span></dd>
-        </div>
-      </dl>
+      <p class="lede">{site.description}</p>
+      <p class="kicker honours">
+        <span class="mark"><span class="mark-badge"><Image src={site.fraternity.mark} alt={`${site.fraternity.name} logo`} width={160} height={160} /></span><span>{site.fraternity.name}</span></span>
+        {site.honours.map((h) => <><span aria-hidden="true">·</span><span>{h}</span></>)}
+      </p>
       <div class="btn-row">
         <Button href={site.resume} external>View resume</Button>
         <Button href="#projects" variant="secondary">Selected projects</Button>
@@ -101,28 +85,24 @@ const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber
   <ProjectDeck projects={projects} />
 
 
-  <section id="experience" class="section section-ruled">
+  <section id="experience" class="section">
     <div class="container">
       <h2 class="h2 section-title">Experience</h2>
-      <ul class="entries">
+      <ul class="timeline">
         {experience.map((entry) => <ExperienceEntry entry={entry} />)}
       </ul>
     </div>
   </section>
 
-  <section id="skills" class="section section-ruled">
-    <div class="container">
+  <section id="skills" class="section section-tint">
+    <div class="container stack">
       <h2 class="h2 section-title">Skills</h2>
-      <dl class="skills">
-        {skills.map((skill) => (
-          <div class="skill-row">
-            <dt>{skill.name}</dt>
-            <dd>
-              {usesOf(skill).map((u, i) => <>{i > 0 && ', '}<a href={u.href}>{u.label}</a></>)}
-            </dd>
-          </div>
-        ))}
-      </dl>
+      {skills.map((row) => (
+        <div class="lrow">
+          <p class="kicker">{row.category}</p>
+          <ul class="chips">{row.items.map((s) => <Tag label={s} />)}</ul>
+        </div>
+      ))}
     </div>
   </section>
 </Base>

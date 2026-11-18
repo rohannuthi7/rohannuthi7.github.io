@@ -53,12 +53,7 @@ const experience = defineCollection({
       // round brand mark (like Reaxe's circular badge) can opt into a full
       // circle crop instead so it reads as the actual logo shape.
       photoShape: z.enum(['square', 'circle']).default('square'),
-      bullets: z.array(z.string()).max(5).default([]),
-      // Rows of the entry's fact table, beside Dates. Each is left out when unset.
-      stack: z.array(z.string()).max(6).optional(),
-      team: z.string().optional(),
-      // Slug of this role's project on the site, linked from the fact table.
-      project: z.string().optional(),
+      bullets: z.array(z.string()).max(3).default([]),
     }),
 });
 

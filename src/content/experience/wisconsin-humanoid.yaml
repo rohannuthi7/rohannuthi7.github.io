@@ -2,7 +2,5 @@ role: Robotics Hardware Engineer
 org: Wisconsin Humanoid
 dates: { start: "2025-11", end: "2026-08" }
 photo: { src: ./img/wisconsin-humanoid.png, alt: "Wisconsin Humanoid logo" }
-# TODO(Rohan): replace with two past-tense bullets in your words, or delete this
-# file to remove the entry. Add `stack:` and `team:` to show those rows.
 bullets:
   - Electrical design and testing for actuator and sensor hardware on a student humanoid platform.
