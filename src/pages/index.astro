@@ -40,6 +40,7 @@ const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber
         {site.honours.map((h) => <><span aria-hidden="true">·</span><span>{h}</span></>)}
       </p>
       <div class="btn-row">
+        <Button href={site.resume} external>View resume</Button>
         <Button href="#projects" variant="secondary">Selected projects</Button>
       </div>
     </div>

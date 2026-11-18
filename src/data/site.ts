@@ -12,11 +12,12 @@ export const site = {
   currently: '',
   // ≤ 50 words. Also used as the meta description.
   description:
-    'Co-founder and lead software engineer at Reaxe, a multi-tenant SaaS platform for home-remodeling contractors covering quoting, scheduling and customer portals. Software engineering lead at Wisconsin Tech Consulting. Looking for a Summer 2027 software engineering internship.',
+    'Co-founder and lead software engineer at Reaxe, a multi-tenant SaaS platform for home-remodeling contractors covering quoting, scheduling and customer portals. Software engineering lead at Wisconsin Tech Consulting.',
   honours: ['GPA 3.83', "Dean's List"],
   fraternity: { name: 'Alpha Kappa Psi', mark: akpsiMark },
   headshot: { src: headshot, alt: 'Rohan Nuthi sitting on a lawn in front of a city skyline at night' },
   location: 'Madison, WI',
+  resume: '/rohan-nuthi-resume.pdf',
   source: 'https://github.com/rohannuthi7/rohannuthi7.github.io',
   github: { label: 'github.com/rohannuthi7', href: 'https://github.com/rohannuthi7' },
   linkedin: { label: 'linkedin.com/in/rohan-nuthi', href: 'https://linkedin.com/in/rohan-nuthi' },

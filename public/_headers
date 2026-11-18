@@ -16,3 +16,5 @@
 # Hand-managed files that change rarely but keep their names.
 /og/*
   Cache-Control: public, max-age=86400
+/rohan-nuthi-resume.pdf
+  Cache-Control: public, max-age=3600

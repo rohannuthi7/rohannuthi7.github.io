@@ -28,6 +28,7 @@ const { data } = project;
             ? <span>Private repository: architecture and screenshots below</span>
             : data.repo && <a href={data.repo} target="_blank" rel="noopener">Code on GitHub</a>}
           {data.demo && <a href={data.demo} target="_blank" rel="noopener">Live</a>}
+          <a href={site.resume} target="_blank" rel="noopener">Resume</a>
         </div>
       </header>
       <slot />

@@ -37,7 +37,7 @@ h1, h2, h3 { text-wrap: balance; }
 .col-head { font-size: 16px; line-height: 1.4; font-weight: 600; }
 
 /* Nav */
-.nav { position: sticky; top: 0; z-index: 20; padding: 24px 0; border-bottom: 1px solid var(--line); background: var(--bg); }
+.nav { position: sticky; top: 0; z-index: 20; padding: 24px 0; border-bottom: 1px solid var(--line); background: var(--bg); background: color-mix(in srgb, var(--bg) 85%, transparent); }
 .nav .container { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 12px 24px; }
 .nav a { color: var(--fg); text-decoration: none; font-size: 15px; line-height: 1; }
 .nav a:hover, .nav a[aria-current] { text-decoration: underline; text-underline-offset: 3px; }
@@ -87,8 +87,8 @@ h1, h2, h3 { text-wrap: balance; }
    both, very faint; it is clipped so it never causes sideways scrolling. */
 .intro { position: relative; overflow: clip; }
 .intro > :not(.intro-signature) { position: relative; z-index: 1; }
-.intro-signature { position: absolute; z-index: 0; top: 24px; right: max(-40px, calc((100% - var(--container)) / 2 - 80px)); width: min(880px, 92%); height: auto; color: var(--fg); opacity: 0.06; pointer-events: none; }
-@media (max-width: 720px) { .intro-signature { top: 40px; right: -24px; width: 120%; } }
+.intro-signature { position: absolute; z-index: 0; top: 0; left: 50%; transform: translateX(-46%); width: min(1240px, 118%); max-width: none; height: auto; color: var(--fg); opacity: 0.06; pointer-events: none; }
+@media (max-width: 720px) { .intro-signature { top: 24px; width: 160%; transform: translateX(-52%); } }
 
 /* About */
 .hero { padding-top: var(--space-12); display: flex; flex-direction: column; gap: 16px; }
