@@ -558,10 +558,69 @@ h1, h2, h3 { text-wrap: balance; }
 
 /* Print: a plain document. The nav, the deck chrome and the hover-only
    affordances go; project cards stack with their URLs expanded. */
+/* Guestbook tree on the home page (src/components/WordTree.astro). The tree is
+   drawn in a 1040 x 600 box that scales with the column. Its greens and browns
+   are its own colours; everything else comes from the page. */
+.wt { position: relative;
+  --wt-wood: #6B5D52; --wt-wood-line: #4A3F36;
+  --wt-c0: #2F7D4F; --wt-c1: #3F8F5F; --wt-c2: #256B43; --wt-c3: #4A9A68;
+  --wt-d0: #5FA878; --wt-d1: #4E9A6B; --wt-d2: #7DB98F; --wt-d3: #5FA878; }
+.wt[data-season="fall"] { --wt-c0: #B8862A; --wt-c1: #C4632A; --wt-c2: #A8452F; --wt-c3: #7A4B2E;
+  --wt-d0: #B8862A; --wt-d1: #C4632A; --wt-d2: #A8452F; --wt-d3: #7A4B2E; }
+@media (prefers-color-scheme: dark) {
+  .wt { --wt-wood: #4A423B; --wt-wood-line: #2E251E;
+    --wt-c0: #8FC79A; --wt-c1: #6FAF7F; --wt-c2: #A3D4A8; --wt-c3: #5FA878;
+    --wt-d0: #4E9A6B; --wt-d1: #3F7F5A; --wt-d2: #6FAF7F; --wt-d3: #4E9A6B; }
+  .wt[data-season="fall"] { --wt-c0: #E2B04A; --wt-c1: #D9772E; --wt-c2: #C4553A; --wt-c3: #8F5A3C;
+    --wt-d0: #E2B04A; --wt-d1: #D9772E; --wt-d2: #C4553A; --wt-d3: #8F5A3C; }
+}
+.wt-stage { position: relative; border-bottom: 1px solid var(--line); }
+.wt-open { position: absolute; inset: 0; width: 100%; height: 100%; background: transparent; border: 0; padding: 0; border-radius: var(--radius); cursor: pointer; }
+.wt-svg { position: relative; display: block; width: 100%; height: auto; pointer-events: none; overflow: visible; }
+.wt-wood { fill: var(--wt-wood); }
+.wt-outline { fill: none; stroke: var(--wt-wood-line); stroke-width: 3; stroke-linejoin: round; transition: stroke 150ms; }
+.wt-d0 { fill: var(--wt-d0); } .wt-d1 { fill: var(--wt-d1); } .wt-d2 { fill: var(--wt-d2); } .wt-d3 { fill: var(--wt-d3); }
+.wt-decor { fill-opacity: 0.85; }
+.wt[data-season="fall"] .wt-decor { fill-opacity: 0.7; }
+.wt-glyph { font: 13px/1 var(--font-sans); fill: var(--muted); text-anchor: middle; dominant-baseline: central; }
+.wt-glyph.is-lit { fill: var(--fg); }
+.wt-leaf { pointer-events: auto; cursor: pointer; outline: none; }
+.wt-c0 { color: var(--wt-c0); } .wt-c1 { color: var(--wt-c1); } .wt-c2 { color: var(--wt-c2); } .wt-c3 { color: var(--wt-c3); }
+.wt-hit { fill: transparent; }
+.wt-leaf-fill { fill: currentColor; fill-opacity: 0.5; stroke: transparent; stroke-width: 2.5; stroke-linejoin: round; transition: stroke 150ms; }
+.wt-leaf-ink { fill: currentColor; }
+.wt-leaf.is-selected .wt-leaf-ink { fill: var(--fg); }
+.wt-leaf:focus-visible .wt-leaf-fill { stroke: var(--accent); }
+/* Hover, or the note form open: a light outline around the wood and each note leaf. */
+.wt-stage:hover .wt-outline, .wt.is-composing .wt-outline { stroke: var(--muted); }
+.wt-stage:hover .wt-leaf:not(.is-selected) .wt-leaf-fill, .wt.is-composing .wt-leaf:not(.is-selected) .wt-leaf-fill { stroke: var(--muted); }
+.wt-note { position: absolute; z-index: 1; width: min(280px, calc(100% - 16px)); padding: 16px; background: var(--card-bg); color: var(--card-fg); border: 1px solid var(--line); border-radius: var(--radius); pointer-events: none; }
+.wt-note-kind { font-size: 13px; line-height: 1.4; color: var(--muted); margin-bottom: 8px; }
+.wt-note-text { font-family: var(--font-serif); font-size: 17px; line-height: 1.6; overflow-wrap: anywhere; }
+.wt-desc { max-width: var(--measure); margin-top: var(--space-2); font-family: var(--font-serif); font-size: 17px; line-height: 1.6; }
+.wt-form { display: flex; flex-direction: column; gap: 12px; max-width: 340px; margin-top: var(--space-2); padding: 16px; background: var(--card-bg); color: var(--card-fg); border: 1px solid var(--line); border-radius: var(--radius); }
+.wt-form[hidden], .wt-note[hidden] { display: none; }
+.wt-form-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.wt-form label { font-size: 15px; font-weight: 500; line-height: 1.4; }
+.wt-count, .wt-hint { font-size: 13px; line-height: 1.4; color: var(--muted); }
+.wt-form input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.wt-form input { width: 100%; height: 44px; padding: 0 12px; background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: var(--radius); font-family: var(--font-serif); font-size: 17px; }
+/* Wide screens with a mouse: the description fades in over the tree's lower
+   right on hover, and the form sits over its lower left. Phones and touch
+   screens keep both under the tree, always visible. */
+@media (min-width: 721px) and (hover: hover) {
+  .wt.is-ready .wt-desc { position: absolute; right: 0; bottom: 24px; width: 380px; margin: 0; opacity: 0; pointer-events: none; transition: opacity 150ms; }
+  .wt.is-ready:hover .wt-desc, .wt.is-ready:focus-within .wt-desc { opacity: 1; }
+  .wt.is-ready.is-composing .wt-desc { opacity: 0; }
+  .wt-form { position: absolute; left: 0; bottom: 24px; width: 340px; margin: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .wt-outline, .wt-leaf-fill, .wt.is-ready .wt-desc { transition: none; } }
+@media (forced-colors: active) { .wt-wood { fill: CanvasText; } .wt-leaf, .wt-decor { color: CanvasText; fill: CanvasText; } }
+
 @media print {
   :root { --bg: #FFFFFF; --fg: #000000; --muted: #444444; --line: #BBBBBB; --accent: #000000; --card-bg: #FFFFFF; --card-fg: #000000; --surface: #FFFFFF; }
   html { background: #FFFFFF; }
-  .nav, .skip, .btn-row, .card-bar, .card-back, .segment, .strip, .gt-glow, .gt-card, .intro-signature, .deck-panel, .deck-now, .case-art, .case-code, .pager { display: none; }
+  .nav, .skip, .btn-row, .card-bar, .card-back, .segment, .strip, .gt-glow, .gt-card, .wt-form, .wt-open, .intro-signature, .deck-panel, .deck-now, .case-art, .case-code, .pager { display: none; }
   .section, .hero, .about { padding-top: 24px; padding-bottom: 24px; break-inside: avoid; }
   .section-tint { background: transparent; }
   .stage { position: static; height: auto; display: block; }

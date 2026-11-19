@@ -7,6 +7,7 @@ import ContactList from '../components/ContactList.astro';
 import ProjectDeck from '../components/ProjectDeck.astro';
 import ExperienceEntry from '../components/ExperienceEntry.astro';
 import Tag from '../components/Tag.astro';
+import WordTree from '../components/WordTree.astro';
 import { site } from '../data/site';
 import { coursework, catalogNumber } from '../data/coursework';
 import { skills } from '../data/skills';
@@ -106,6 +107,13 @@ const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber
       <ul class="timeline">
         {experience.map((entry) => <ExperienceEntry entry={entry} />)}
       </ul>
+    </div>
+  </section>
+
+  <section id="guestbook" class="section">
+    <div class="container">
+      <h2 class="big-title">Guestbook</h2>
+      <WordTree />
     </div>
   </section>
 

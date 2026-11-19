@@ -1,0 +1,260 @@
+---
+// The guestbook tree on the home page. Notes are sorted into a radix tree over
+// words (src/lib/word-tree.ts) and drawn as a tree: notes that start with the
+// same words share a branch, and every leaf is one note. Hover outlines it,
+// clicking it opens the note form, and clicking a leaf shows its note.
+// Notes are not saved yet: see `saving` in src/data/word-tree.ts.
+import { wordTree } from '../data/word-tree';
+---
+<div class="wt" data-season={wordTree.season}>
+  <div class="wt-stage">
+    <button type="button" class="wt-open" aria-label="Leave a note on the tree" aria-expanded="false" aria-controls="wt-form"></button>
+    <svg class="wt-svg" viewBox="0 0 1040 600" role="group" aria-label="Guestbook tree. Each leaf is a note.">
+      <path class="wt-outline" />
+      <path class="wt-wood" />
+      <path class="wt-decor wt-d0" />
+      <path class="wt-decor wt-d1" />
+      <path class="wt-decor wt-d2" />
+      <path class="wt-decor wt-d3" />
+      <g class="wt-labels" aria-hidden="true"></g>
+      <g class="wt-leaves"></g>
+    </svg>
+    <div class="wt-note" role="status" hidden>
+      <p class="wt-note-kind">Note</p>
+      <p class="wt-note-text"></p>
+    </div>
+  </div>
+  <p class="wt-desc">This tree is a guestbook. It’s also a radix tree: notes that start with the same words share a branch, and every leaf is one note. Click a leaf to read it, or click anywhere to leave your own.</p>
+  <form class="wt-form" id="wt-form" hidden>
+    <div class="wt-form-head">
+      <label for="wt-input">Leave a note</label>
+      <span class="wt-count" aria-hidden="true">0/{wordTree.maxLength}</span>
+    </div>
+    <input id="wt-input" type="text" maxlength={wordTree.maxLength} autocomplete="off" />
+    {!wordTree.saving && <p class="wt-hint">Notes aren’t saved yet, so yours stays on your screen only.</p>}
+    <div class="btn-row">
+      <button type="submit" class="btn btn-primary">Add leaf</button>
+      <button type="button" class="btn btn-secondary wt-cancel">Cancel</button>
+    </div>
+  </form>
+  <noscript><p class="wt-desc">The guestbook tree needs JavaScript to grow.</p></noscript>
+</div>
+
+<script>
+  import { wordTree } from '../data/word-tree.ts';
+  import { leafShapes } from '../data/leaf-shapes.ts';
+  import { along, blend, bounds, decorPaths, ease, layoutTree, leafPose, woodPath, type Glyph, type Layout, type Note } from '../lib/word-tree.ts';
+
+  const SVG = 'http://www.w3.org/2000/svg';
+  const root = document.querySelector<HTMLElement>('.wt');
+  const stage = root?.querySelector<HTMLElement>('.wt-stage');
+  const svg = root?.querySelector<SVGSVGElement>('.wt-svg');
+  const form = root?.querySelector<HTMLFormElement>('.wt-form');
+  const input = root?.querySelector<HTMLInputElement>('#wt-input');
+  const openBtn = root?.querySelector<HTMLButtonElement>('.wt-open');
+  const noteCard = root?.querySelector<HTMLElement>('.wt-note');
+
+  if (root && stage && svg && form && input && openBtn && noteCard) {
+    const cone = wordTree.season === 'christmas';
+    const outline = svg.querySelector('.wt-outline')!;
+    const wood = svg.querySelector('.wt-wood')!;
+    const decor = [...svg.querySelectorAll('.wt-decor')];
+    const labels = svg.querySelector('.wt-labels')!;
+    const leavesG = svg.querySelector('.wt-leaves')!;
+    const count = form.querySelector('.wt-count')!;
+    const noteText = noteCard.querySelector('.wt-note-text')!;
+
+    // Leaf outlines as path strings, built once.
+    const d = (poly: number[][]) => 'M' + poly.map((q) => q[0] + ' ' + q[1]).join('L') + 'Z';
+    const shapes = leafShapes.map((polys) => ({ polys, fillD: d(polys[0]), inkD: polys.map(d).join('') }));
+
+    let notes: Note[] = wordTree.starter.map((text, i) => ({ id: i + 1, text }));
+    let nextId = notes.length + 1;
+    let selected: number | null = null;
+    let anim: { from: Layout; flyId: number; t: number; pop: number } | null = null;
+    let raf = 0;
+    let view = { x: 0, w: 1040 };
+    const leafEls = new Map<number, SVGGElement>();
+    const shown = () => notes.slice(-wordTree.capacity);
+
+    // Letter widths in the page's own font, measured once per letter.
+    const widths = new Map<string, number>();
+    const ctx = document.createElement('canvas').getContext('2d');
+    if (ctx) ctx.font = `13px ${getComputedStyle(root).fontFamily}`;
+    const charW = (ch: string) => {
+      if (!widths.has(ch)) widths.set(ch, ctx ? ctx.measureText(ch).width : ch === ' ' ? 3.6 : 7);
+      return widths.get(ch)!;
+    };
+
+    // The same notes always give the same tree, so keep the last layout.
+    let cache: { sig: string; out: Layout } | null = null;
+    const layoutNow = () => {
+      const list = shown();
+      const sig = list.map((n) => n.id + ':' + n.text).join('|');
+      if (!cache || cache.sig !== sig) cache = { sig, out: layoutTree(list, cone) };
+      return cache.out;
+    };
+
+    // On a narrow screen, show only the part of the box the tree fills, so it
+    // is drawn larger. On a wide one, show the whole box.
+    const fitView = (L: Layout) => {
+      if (root.clientWidth >= 720) { view = { x: 0, w: 1040 }; }
+      else {
+        const b = bounds(L);
+        const w = Math.max(380, b.x1 - b.x0 + 24);
+        view = { x: Math.max(0, Math.min(1040 - w, (b.x0 + b.x1) / 2 - w / 2)), w };
+      }
+      svg.setAttribute('viewBox', `${view.x.toFixed(0)} 0 ${view.w.toFixed(0)} 600`);
+    };
+
+    const makeLeaf = (n: Note) => {
+      const g = document.createElementNS(SVG, 'g');
+      const shape = shapes[(n.id * 5 + 2) % 4];
+      g.setAttribute('class', `wt-leaf wt-c${(n.id * 3 + 1) % 4}`);
+      g.setAttribute('tabindex', '0');
+      g.setAttribute('role', 'button');
+      g.setAttribute('aria-label', `Read note: ${n.text}`);
+      g.dataset.id = String(n.id);
+      const hit = document.createElementNS(SVG, 'circle');
+      hit.setAttribute('class', 'wt-hit'); hit.setAttribute('cy', '-14'); hit.setAttribute('r', '17');
+      const fill = document.createElementNS(SVG, 'path');
+      fill.setAttribute('class', 'wt-leaf-fill'); fill.setAttribute('d', shape.fillD);
+      const ink = document.createElementNS(SVG, 'path');
+      ink.setAttribute('class', 'wt-leaf-ink'); ink.setAttribute('d', shape.inkD);
+      g.append(hit, fill, ink);
+      return g;
+    };
+
+    const draw = () => {
+      const to = layoutNow();
+      const L = anim ? blend(anim.from, to, ease(anim.t)) : to;
+      const path = woodPath(L);
+      outline.setAttribute('d', path);
+      wood.setAttribute('d', path);
+      decorPaths(L, shapes, cone).forEach((p, i) => decor[i].setAttribute('d', p));
+
+      const byLeaf = new Map<number, (typeof L.nodes)[string]>();
+      L.order.forEach((k) => { const nd = L.nodes[k]; if (nd.leafId != null) byLeaf.set(nd.leafId, nd); });
+
+      // Leaves: one element per note on the tree, kept between frames.
+      const list = shown();
+      const live = new Set(list.map((n) => n.id));
+      for (const [id, el] of leafEls) if (!live.has(id)) { el.remove(); leafEls.delete(id); }
+      const onPath: Record<string, boolean> = {};
+      list.forEach((n) => {
+        const nd = byLeaf.get(n.id);
+        if (!nd) return;
+        let el = leafEls.get(n.id);
+        if (!el) { el = makeLeaf(n); leafEls.set(n.id, el); leavesG.append(el); }
+        const pose = leafPose(L, nd);
+        let { x, y, rot } = pose;
+        let scale = 1.25;
+        if (anim && anim.flyId === n.id) {
+          // The new leaf flies up from the note form, spinning, then pops.
+          const e = ease(anim.t), m = 1 - e;
+          const sx = view.x + view.w * 0.19, sy = 470, mx = (sx + x) / 2, my = Math.min(sy, y) - 140;
+          x = m * m * sx + 2 * m * e * mx + e * e * x;
+          y = m * m * sy + 2 * m * e * my + e * e * y;
+          rot += m * 220;
+          scale *= 1 + 0.4 * Math.sin(Math.PI * Math.min(1, anim.pop));
+        }
+        el.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${rot.toFixed(1)}) scale(${scale.toFixed(3)})`);
+        const on = selected === n.id;
+        el.classList.toggle('is-selected', on);
+        el.setAttribute('aria-pressed', String(on));
+        if (on) { let k: string | null = nd.key; while (k != null) { onPath[k] = true; k = L.nodes[k].parent; } }
+      });
+
+      // The shared words, written along their branches.
+      const glyphs: Glyph[] = [];
+      L.order.forEach((k) => {
+        const nd = L.nodes[k];
+        if (nd.parent == null || !nd.label) return;
+        along(L.nodes[nd.parent], nd, nd.label, !!onPath[k], charW, glyphs);
+      });
+      labels.replaceChildren(...glyphs.map((gl) => {
+        const t = document.createElementNS(SVG, 'text');
+        t.setAttribute('class', gl.lit ? 'wt-glyph is-lit' : 'wt-glyph');
+        t.setAttribute('transform', `translate(${gl.x.toFixed(1)} ${gl.y.toFixed(1)}) rotate(${gl.rot.toFixed(1)})`);
+        t.textContent = gl.ch;
+        return t;
+      }));
+    };
+
+    // ── The note card. Text is set with textContent, never as HTML.
+    const placeNote = () => {
+      const el = selected != null ? leafEls.get(selected) : null;
+      const note = notes.find((n) => n.id === selected);
+      if (!el || !note || anim) { noteCard.hidden = true; return; }
+      noteText.textContent = note.text;
+      noteCard.hidden = false;
+      const s = stage.getBoundingClientRect(), r = el.getBoundingClientRect();
+      const w = noteCard.offsetWidth, h = noteCard.offsetHeight;
+      const left = Math.max(8, Math.min(s.width - w - 8, r.left + r.width / 2 - s.left - w / 2));
+      const above = r.top - s.top - h - 8;
+      noteCard.style.left = `${Math.round(left)}px`;
+      noteCard.style.top = `${Math.round(above >= 0 ? above : r.bottom - s.top + 8)}px`;
+    };
+    const select = (id: number | null) => { selected = id; if (id != null) setForm(false); draw(); placeNote(); };
+    const leafOf = (e: Event) => (e.target as Element | null)?.closest?.<SVGGElement>('.wt-leaf') ?? null;
+    leavesG.addEventListener('click', (e) => { const l = leafOf(e); if (l) { const id = Number(l.dataset.id); select(selected === id ? null : id); } });
+    leavesG.addEventListener('keydown', (e) => {
+      const key = (e as KeyboardEvent).key;
+      const l = leafOf(e);
+      if (l && (key === 'Enter' || key === ' ')) { e.preventDefault(); const id = Number(l.dataset.id); select(selected === id ? null : id); }
+      if (key === 'Escape') select(null);
+    });
+
+    // ── The note form.
+    const setForm = (open: boolean) => {
+      form.hidden = !open;
+      root.classList.toggle('is-composing', open);
+      openBtn.setAttribute('aria-expanded', String(open));
+      // On a phone the form sits under the tree, so bring it into view.
+      if (open) { input.focus({ preventScroll: true }); form.scrollIntoView({ block: 'nearest' }); }
+    };
+    openBtn.addEventListener('click', () => { const open = form.hidden; selected = null; setForm(open); draw(); placeNote(); });
+    form.querySelector('.wt-cancel')!.addEventListener('click', () => { input.value = ''; count.textContent = `0/${wordTree.maxLength}`; setForm(false); openBtn.focus(); });
+    form.addEventListener('keydown', (e) => { if (e.key === 'Escape') { setForm(false); openBtn.focus(); } });
+    input.addEventListener('input', () => { count.textContent = `${input.value.length}/${wordTree.maxLength}`; });
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = input.value.replace(/\s+/g, ' ').trim().slice(0, wordTree.maxLength);
+      if (!text || anim) return;
+      const from = layoutNow();
+      const id = nextId++;
+      notes = notes.concat([{ id, text }]);
+      input.value = '';
+      count.textContent = `0/${wordTree.maxLength}`;
+      selected = null;
+      setForm(false);
+      fitView(layoutNow());
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) { draw(); placeNote(); return; }
+      // One second for the leaf to fly in while the branches bend into place, then a short pop.
+      anim = { from, flyId: id, t: 0, pop: 0 };
+      const t0 = performance.now();
+      const step = (now: number) => {
+        const el = now - t0;
+        if (el >= 1320) { anim = null; draw(); placeNote(); return; }
+        anim!.t = Math.min(1, el / 1000);
+        anim!.pop = el > 1000 ? (el - 1000) / 320 : 0;
+        draw();
+        raf = requestAnimationFrame(step);
+      };
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(step);
+      placeNote();
+    });
+
+    let lastWidth = -1;
+    new ResizeObserver(() => {
+      if (root.clientWidth === lastWidth) return;
+      lastWidth = root.clientWidth;
+      fitView(layoutNow());
+      placeNote();
+    }).observe(root);
+    fitView(layoutNow());
+    draw();
+    root.classList.add('is-ready');
+  }
+</script>
