@@ -18,6 +18,12 @@ const experience = (await getCollection('experience')).sort(byStartDesc);
 // The signature again, large and faint behind the intro. Decorative: the
 // footer copy carries the accessible name.
 const watermark = signatureSvg.replace(/ role="img" aria-label="[^"]*" class="signature"/, ' aria-hidden="true" focusable="false" class="intro-signature"');
+// A skill is "used" when a project on this page lists it in its stack, either
+// by the same name or as a word inside the skill's label ("PostgreSQL" in
+// "SQL (PostgreSQL)", "AWS" in "AWS (EC2, S3, Lambda)").
+const stackNames = new Set(projects.flatMap((p) => p.data.stack));
+const usedInProject = (skill: string) =>
+  stackNames.has(skill) || skill.split(/[\s(),]+/).some((word) => stackNames.has(word));
 const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber(b) - catalogNumber(a);
 ---
 <Base title={site.title} description={site.description} ogImage="/og/home.png" signature>
@@ -55,9 +61,11 @@ const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber
   </section>
   </div>
 
+  <ProjectDeck projects={projects} />
+
   <section id="coursework" class="section section-case">
     <div class="container">
-      <h2 class="big-title">Relevant coursework</h2>
+      <h2 class="big-title">Coursework</h2>
       <table class="courses">
         <thead>
           <tr><th scope="col">Course</th><th scope="col">What I built</th><th scope="col">Used in</th></tr>
@@ -86,9 +94,6 @@ const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber
     </div>
   </section>
 
-  <ProjectDeck projects={projects} />
-
-
   <section id="experience" class="section">
     <div class="container">
       <h2 class="big-title">Experience</h2>
@@ -99,14 +104,17 @@ const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber
   </section>
 
   <section id="skills" class="section section-tint">
-    <div class="container stack">
+    <div class="container">
       <h2 class="big-title">Skills</h2>
-      {skills.map((row) => (
-        <div class="lrow">
-          <p class="kicker">{row.category}</p>
-          <ul class="chips">{row.items.map((s) => <Tag label={s} />)}</ul>
-        </div>
-      ))}
+      <div class="skill-rows">
+        {skills.map((row) => (
+          <div class="lrow">
+            <p class="skill-label">{row.category}</p>
+            <ul class="chips">{row.items.map((s) => <Tag label={s} used={usedInProject(s)} />)}</ul>
+          </div>
+        ))}
+      </div>
+      <p class="skill-legend" aria-hidden="true"><span class="skill-swatch"></span>Used in a project on this page</p>
     </div>
   </section>
 </Base>

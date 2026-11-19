@@ -1,5 +1,7 @@
 ---
-interface Props { label: string }
-const { label } = Astro.props;
+// A skill chip. `used` fills it with the accent: the skill is in the stack of
+// a project on the home page.
+interface Props { label: string; used?: boolean }
+const { label, used = false } = Astro.props;
 ---
-<li class="chip">{label}</li>
+<li class={used ? 'chip is-used' : 'chip'}>{label}{used && <span class="sr-only"> (used in a project on this page)</span>}</li>
