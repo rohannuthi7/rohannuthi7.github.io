@@ -4,8 +4,9 @@ import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import { site } from '../data/site';
 
-interface Props { title: string; description: string; page?: 'home' | 'case'; ogImage: string; signature?: boolean }
-const { title, description, page = 'home', ogImage, signature = false } = Astro.props;
+// `tone` is an inline style for <html>: a project page passes its colour here.
+interface Props { title: string; description: string; page?: 'home' | 'case'; ogImage: string; signature?: boolean; tone?: string }
+const { title, description, page = 'home', ogImage, signature = false, tone } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogUrl = new URL(ogImage, Astro.site);
 // Structured data: one Person record built from the same data the page renders.
@@ -25,7 +26,7 @@ const person = {
 const speculation = { prerender: [{ where: { href_matches: '/projects/*' }, eagerness: 'moderate' }] };
 ---
 <!doctype html>
-<html lang="en" data-page={page}>
+<html lang="en" data-page={page} style={tone}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

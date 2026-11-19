@@ -1,49 +1,115 @@
 ---
-// Case-study page: collage left, article right, shared nav and footer.
+// Project page. Top to bottom: the pager (previous / next project with a
+// counter), a header (title, tagline, GitHub button beside a fact table), then
+// one row per section of the write-up. Each row has its number, heading and
+// one of the project's photos on the left, and the text on the right, so the
+// left column carries something for the whole length of the page.
+//
+// The write-up stays plain Markdown (## headings). Here it is split at each
+// heading, and a paragraph or list item that opens with a bold sentence
+// ("**Signed weights.** A bright cell…") becomes a titled point.
+//
 // Behind it, faint and decorative: a drawing taken from the project
 // (<slug>/art.svg) and, on wide screens, a strip of the project's real code
 // in the right margin (<slug>/excerpt.txt). Either file may be absent.
+import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import Base from './Base.astro';
-import Collage from '../components/Collage.astro';
+import Icon from '../components/Icon.astro';
 import { site } from '../data/site';
 import { formatRange } from '../lib/dates';
 
-interface Props { project: CollectionEntry<'projects'>; next: CollectionEntry<'projects'> }
-const { project, next } = Astro.props;
+interface Props { project: CollectionEntry<'projects'>; projects: CollectionEntry<'projects'>[] }
+const { project, projects } = Astro.props;
 const { data } = project;
+const at = projects.findIndex((p) => p.id === project.id);
+const prev = projects[(at - 1 + projects.length) % projects.length];
+const next = projects[(at + 1) % projects.length];
+const pad = (n: number) => String(n).padStart(2, '0');
+// Each pager tile fills with the colour of the project it leads to.
+// The page takes its own project's colour: --tone tints the background and
+// fills, --tone-link is the readable version for text. A project with no
+// colour of its own keeps the defaults in tokens.css.
+const tone = `--tone: var(--project-${project.id}, var(--tone-default)); --tone-link: var(--project-${project.id}-link, var(--tone-link-default)); --tone-on: var(--project-${project.id}-on, var(--tone-on-default))`;
+const tint = (id: string) => `--project: var(--project-${id}, var(--fg)); --project-on: var(--project-${id}-on, var(--bg))`;
 const arts = import.meta.glob<string>('../content/projects/*/art.svg', { query: '?raw', import: 'default', eager: true });
 const codes = import.meta.glob<string>('../content/projects/*/excerpt.txt', { query: '?raw', import: 'default', eager: true });
 const art = arts[`../content/projects/${project.id}/art.svg`]?.replace('<svg ', '<svg aria-hidden="true" focusable="false" ');
 const code = codes[`../content/projects/${project.id}/excerpt.txt`];
+
+// Split the rendered write-up into its ## sections.
+const html = project.rendered?.html ?? '';
+const parts = html.split(/<h2[^>]*>([\s\S]*?)<\/h2>/);
+// A bold opening sentence becomes the point's title (without its full stop).
+const point = (tag: string, cls: string) => (_: string, lead: string, rest: string) =>
+  `<${tag} class="${cls}"><h3>${lead.replace(/[.:]$/, '')}</h3><p>${rest.trim()}</p></${tag}>`;
+const sections = [];
+for (let i = 1; i < parts.length; i += 2) {
+  const body = parts[i + 1]
+    .replace(/<li>\s*(?:<p>)?<strong>([^<]*[.:])<\/strong>([\s\S]*?)(?:<\/p>)?\s*<\/li>/g, point('li', 'point'))
+    .replace(/<ul>(\s*<li class="point">)/g, '<ul class="points">$1')
+    .replace(/<p><strong>([^<]*[.:])<\/strong>([\s\S]*?)<\/p>/g, point('div', 'point'));
+  sections.push({ title: parts[i], body, photo: data.collage[(i - 1) / 2] });
+}
+
+const facts = [
+  ...(data.role ? [{ label: 'Role', value: data.role }] : []),
+  { label: 'Team', value: data.team },
+  { label: 'Dates', value: formatRange(data.dates.start, data.dates.end) },
+  { label: 'Status', value: data.status },
+  { label: 'Stack', value: data.stack.join(', ') },
+];
 ---
-<Base title={`${data.title} — ${site.name}`} description={data.tagline} page="case" ogImage={`/og/${project.id}.png`}>
+<Base title={`${data.title} — ${site.name}`} description={data.tagline} page="case" ogImage={`/og/${project.id}.png`} tone={tone}>
   <div class="case-page">
   {art && <div class="case-art"><Fragment set:html={art} /></div>}
   {code && <pre class="case-code" aria-hidden="true">{code}</pre>}
-  <div class="container case" style={`--project-link: var(--project-${project.id}-link)`}>
-    <Collage title={data.title} slug={project.id} photos={data.collage} />
-    <article class="article">
-      <header class="case-header">
+  <nav class="container pager" aria-label="More projects">
+    <a class="pager-link pager-prev" href={`/projects/${prev.id}`} rel="prev" style={tint(prev.id)}>
+      <span class="pager-arrow"><Icon name="chevron-left" size={20} /></span>
+      <span class="pager-text"><span class="pager-kicker">Previous project</span><span class="pager-title">{prev.data.title}</span></span>
+    </a>
+    <div class="pager-mid">
+      <p class="pager-count"><span class="pager-i">{pad(at + 1)}</span> / {pad(projects.length)}</p>
+      <ul class="pager-dots">
+        {projects.map((p) => (
+          <li><a class="pager-dot" href={`/projects/${p.id}`} aria-label={p.data.title} aria-current={p.id === project.id ? 'page' : undefined}></a></li>
+        ))}
+      </ul>
+      <a class="pager-all" href="/#projects">All projects</a>
+    </div>
+    <a class="pager-link pager-next" href={`/projects/${next.id}`} rel="next" style={tint(next.id)}>
+      <span class="pager-text"><span class="pager-kicker">Next project</span><span class="pager-title">{next.data.title}</span></span>
+      <span class="pager-arrow"><Icon name="chevron-right" size={20} /></span>
+    </a>
+  </nav>
+  <article class="container case">
+    <header class="case-head">
+      <div class="case-intro">
         <h1>{data.title}</h1>
         <p class="lede">{data.tagline}</p>
-        <dl class="meta">
-          {data.role && <><dt class="kicker">Role</dt><dd>{data.role}</dd></>}
-          <dt class="kicker">Team</dt><dd>{data.team}</dd>
-          <dt class="kicker">Dates</dt><dd>{formatRange(data.dates.start, data.dates.end)}</dd>
-          <dt class="kicker">Status</dt><dd>{data.status}</dd>
-        </dl>
-        <div class="links-row">
-          {data.private
-            ? <span>Private repository: architecture and screenshots below</span>
-            : data.repo && <a href={data.repo} target="_blank" rel="noopener">Code on GitHub</a>}
-          {data.demo && <a href={data.demo} target="_blank" rel="noopener">Live</a>}
-          <a href={site.resume} target="_blank" rel="noopener">Resume</a>
+        {data.private
+          ? <p class="case-private">Private repository</p>
+          : data.repo && <a class="btn btn-primary case-repo" href={data.repo} target="_blank" rel="noopener"><Icon name="github" /><span>Code on GitHub</span></a>}
+      </div>
+      <dl class="ledger case-facts">
+        {facts.map((f) => <div class="ledger-row"><dt>{f.label}</dt><dd>{f.value}</dd></div>)}
+      </dl>
+    </header>
+    {sections.map((s, i) => (
+      <section class="case-section" aria-labelledby={`s${i + 1}`}>
+        <div class="case-side">
+          <p class="case-num" aria-hidden="true">{pad(i + 1)}</p>
+          <h2 id={`s${i + 1}`} set:html={s.title} />
+          {s.photo && (
+            <figure class="case-photo">
+              <Image src={s.photo.src} alt={s.photo.alt} width={Math.min(840, s.photo.src.width)} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" style={i === 0 ? `view-transition-name: cover-${project.id}` : undefined} />
+            </figure>
+          )}
         </div>
-      </header>
-      <slot />
-      <p class="kicker next">Next: <a href={`/projects/${next.id}`}>{next.data.title}</a></p>
-    </article>
-  </div>
+        <div class="prose" set:html={s.body} />
+      </section>
+    ))}
+  </article>
   </div>
 </Base>

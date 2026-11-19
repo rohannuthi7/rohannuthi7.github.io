@@ -1,20 +1,12 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { getCollection } from 'astro:content';
 import Case from '../../layouts/Case.astro';
 
 export async function getStaticPaths() {
   const projects = (await getCollection('projects', ({ data }) => !data.draft)).sort((a, b) => a.data.order - b.data.order);
-  return projects.map((project, i) => ({
-    params: { slug: project.id },
-    props: { project, next: projects[(i + 1) % projects.length] },
-  }));
+  return projects.map((project) => ({ params: { slug: project.id }, props: { project, projects } }));
 }
 
-const { project, next } = Astro.props;
-const { Content } = await render(project);
+const { project, projects } = Astro.props;
 ---
-<Case project={project} next={next}>
-  <div class="prose">
-    <Content />
-  </div>
-</Case>
+<Case project={project} projects={projects} />

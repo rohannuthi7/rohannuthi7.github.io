@@ -33,13 +33,16 @@
           --card-bg: #111111; --card-fg: #E6E6E3; --case-bg: #2A3447; --case-fg: #ECEEF2; --stripe: #2A3447; --chip-bg: #2E3238;
           --accent: #9DB0C8; --accent-hover: #B8C7DA; --img-border: #333331; }
 }
+/* Project pages: near-black, tinted with the project's own colour (--tone,
+   set on <html> by the page). Lines, the faint drawing and small accents take
+   the same colour. One palette for both light and dark schemes. The defaults
+   are a slate teal, for a project with no colour of its own. */
 [data-page="case"] {
-  --bg: #3B4A66; --fg: #ECEEF2; --muted: #C3CAD6; --line: #56637E;
-  --accent: #ECEEF2; --accent-hover: #FFFFFF; --code-bg: #2F3B53; --img-mat: #3B4A66; --img-border: transparent;
-}
-@media (prefers-color-scheme: dark) {
-  [data-page="case"] {
-    --bg: #2A3447; --fg: #ECEEF2; --muted: #B4BDCB; --line: #46536B;
-    --accent: #ECEEF2; --accent-hover: #FFFFFF; --code-bg: #1F2737; --img-mat: #2A3447; --img-border: #46536B;
-  }
+  --tone-default: #2E8C8C; --tone-link-default: #7FCFCF; --tone-on-default: #061414;
+  --bg: color-mix(in srgb, var(--tone) 9%, #0F1011);
+  --fg: #ECEEF2; --muted: #A4A9B0;
+  --line: color-mix(in srgb, var(--tone) 30%, #26282B);
+  --accent: var(--tone-link); --accent-hover: #FFFFFF;
+  --code-bg: color-mix(in srgb, var(--tone) 14%, #0A0B0C);
+  --img-border: var(--line);
 }
