@@ -6,7 +6,8 @@
 // left column carries something for the whole length of the page.
 //
 // The write-up stays plain Markdown (## headings). Here it is split at each
-// heading, and a paragraph or list item that opens with a bold sentence
+// heading (a section that is still a bracketed placeholder is skipped), and
+// a paragraph or list item that opens with a bold sentence
 // ("**Signed weights.** A bright cell…") becomes a titled point.
 //
 // Behind it, faint and decorative: a drawing taken from the project
@@ -49,6 +50,8 @@ for (let i = 1; i < parts.length; i += 2) {
     .replace(/<li>\s*(?:<p>)?<strong>([^<]*[.:])<\/strong>([\s\S]*?)(?:<\/p>)?\s*<\/li>/g, point('li', 'point'))
     .replace(/<ul>(\s*<li class="point">)/g, '<ul class="points">$1')
     .replace(/<p><strong>([^<]*[.:])<\/strong>([\s\S]*?)<\/p>/g, point('div', 'point'));
+  // A section that is still a bracketed placeholder is left off the page.
+  if (/^\s*\[[^\]]*\]\s*$/.test(body.replace(/<[^>]+>/g, ''))) continue;
   sections.push({ title: parts[i], body, photo: data.collage[(i - 1) / 2] });
 }
 
@@ -58,7 +61,7 @@ const facts = [
   { label: 'Dates', value: formatRange(data.dates.start, data.dates.end) },
   { label: 'Status', value: data.status },
   { label: 'Stack', value: data.stack.join(', ') },
-];
+].filter((f) => !f.value.startsWith('['));
 ---
 <Base title={`${data.title} — ${site.name}`} description={data.tagline} page="case" ogImage={`/og/${project.id}.png`} tone={tone}>
   <div class="case-page">
@@ -96,6 +99,11 @@ const facts = [
         {facts.map((f) => <div class="ledger-row"><dt>{f.label}</dt><dd>{f.value}</dd></div>)}
       </dl>
     </header>
+    {sections.length === 0 && (
+      <figure class="case-photo case-photo-solo">
+        <Image src={data.collage[0].src} alt={data.collage[0].alt} width={Math.min(1440, data.collage[0].src.width)} loading="eager" decoding="async" style={`view-transition-name: cover-${project.id}`} />
+      </figure>
+    )}
     {sections.map((s, i) => (
       <section class="case-section" aria-labelledby={`s${i + 1}`}>
         <div class="case-side">

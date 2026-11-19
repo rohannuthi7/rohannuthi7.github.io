@@ -9,9 +9,11 @@ export const site = {
   title: 'Rohan Nuthi — Software Engineer',
   // One line under your name, shown as "Currently: …". Leave empty to hide it.
   currently: '',
-  // TODO(Rohan): the visible bio under your name. 2-3 sentences in your own
-  // voice. Shown as bracketed placeholder text until you replace it.
-  bio: '[Write 2-3 sentences in your own voice: what you build, what you are looking for (Summer 2027 SWE internship), one personal detail. Say here that you study CS + CompE at UW-Madison and graduate May 2028.]',
+  // TODO(Rohan): the visible bio under your name, 2-3 sentences in your own
+  // voice: what you build, what you are looking for (Summer 2027 SWE
+  // internship), one personal detail. While this is empty the page shows
+  // `description` instead.
+  bio: '',
   // ≤ 50 words. The meta description for search and link previews only.
   description:
     'Co-founder and lead software engineer at Reaxe, a multi-tenant SaaS platform for home-remodeling contractors covering quoting, scheduling and customer portals. Software engineering lead at Wisconsin Tech Consulting.',

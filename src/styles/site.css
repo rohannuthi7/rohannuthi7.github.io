@@ -140,10 +140,11 @@ h1, h2, h3 { text-wrap: balance; }
 .courses thead th { padding-top: 0; padding-bottom: 8px; font-size: 13px; line-height: 1.4; font-weight: 400; color: var(--muted); }
 .course-name { width: 26%; font-size: 16px; line-height: 1.4; font-weight: 600; }
 .course-num { display: block; margin-top: 2px; font-size: 13px; font-weight: 400; color: var(--muted); }
-.course-built p:first-child { font-family: var(--font-serif); font-size: 17px; line-height: 1.6; max-width: 46ch; text-wrap: pretty; }
+.course-sentence { font-family: var(--font-serif); font-size: 17px; line-height: 1.6; max-width: 46ch; text-wrap: pretty; }
 .course-topics { margin-top: 4px; font-size: 13px; line-height: 1.4; color: var(--muted); }
+/* With no sentence above it, the topics line is the cell's main text. */
+.course-topics.is-main { margin-top: 0; font-size: 15px; line-height: 1.5; color: var(--fg); }
 .course-used { width: 22%; font-size: 15px; line-height: 1.4; }
-.todo-link { color: var(--accent); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 /* Phones: each course stacks into one block; the column heads are kept for
    screen readers only. */
 @media (max-width: 720px) {
@@ -368,6 +369,8 @@ h1, h2, h3 { text-wrap: balance; }
 .case-side h2 { font-size: 31px; line-height: 1.15; letter-spacing: -0.015em; font-weight: 600; }
 .case-photo { margin-top: 16px; }
 .case-photo img { display: block; width: 100%; height: auto; border: 1px solid var(--img-border); }
+/* A project whose write-up is not written yet shows its photo on its own. */
+.case-photo-solo { margin-top: 0; max-width: 720px; }
 /* Decorative layers behind a project page: the project's drawing behind the
    title, and its code in the right margin on wide screens. */
 .case-page { position: relative; overflow: clip; }
@@ -376,7 +379,7 @@ h1, h2, h3 { text-wrap: balance; }
 .case-art svg { width: 100%; height: auto; max-height: 360px; }
 .case-code { position: absolute; z-index: 0; top: 140px; right: 0; width: calc((100% - var(--container)) / 2 - 32px); max-height: calc(100% - 180px); overflow: hidden; margin: 0; font: 11px/1.7 var(--font-mono); color: var(--tone-link); opacity: 0.2; white-space: pre; pointer-events: none; }
 @media (max-width: 1359px) { .case-code { display: none; } }
-@media (max-width: 960px) { .case-art { top: 24px; width: 80%; opacity: 0.06; } }
+@media (max-width: 960px) { .case-art { top: 160px; width: 80%; opacity: 0.1; } }
 /* Section text. Paragraphs are serif; a point is a short sans title over its
    paragraph, so a section reads as a handful of labelled ideas. */
 .prose { display: flex; flex-direction: column; gap: 20px; padding-top: 28px; }

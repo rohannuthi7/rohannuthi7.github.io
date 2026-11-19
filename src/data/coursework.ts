@@ -1,10 +1,10 @@
 // Courses shown on the home page, highest catalogue number first.
 //
 // `name` is the plain-English name; `number` is the catalogue listing.
-// `built` is one sentence, in Rohan's words, on what he built or solved in the
-// class. `project` is the slug of a project on this site that used the course
-// (a folder name under src/content/projects). Until either is filled in, the
-// page shows a bracketed placeholder. `term` is set only while a course is in
+// TODO(Rohan): `built` is one sentence, in your words, on what you built or
+// solved in the class. `project` is the slug of a project on this site that
+// used the course (a folder name under src/content/projects). The table shows
+// the "What I built" and "Used in" columns once any course has them. `term` is set only while a course is in
 // progress.
 export type Course = {
   number: string;

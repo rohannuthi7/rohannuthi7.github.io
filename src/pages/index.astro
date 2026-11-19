@@ -24,6 +24,10 @@ const watermark = signatureSvg.replace(/ role="img" aria-label="[^"]*" class="si
 const stackNames = new Set(projects.flatMap((p) => p.data.stack));
 const usedInProject = (skill: string) =>
   stackNames.has(skill) || skill.split(/[\s(),]+/).some((word) => stackNames.has(word));
+// The coursework table shows its "What I built" and "Used in" columns only
+// once at least one course has them filled in (src/data/coursework.ts).
+const anyBuilt = coursework.some((c) => c.built);
+const anyUsed = coursework.some((c) => c.project);
 const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber(b) - catalogNumber(a);
 ---
 <Base title={site.title} description={site.description} ogImage="/og/home.png" signature>
@@ -39,7 +43,7 @@ const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber
       <Image class="headshot" src={site.headshot.src} alt={site.headshot.alt} width={320} height={598} loading="eager" />
     </div>
     <div class="about-text">
-      <p class="lede">{site.bio}</p>
+      <p class="lede">{site.bio || site.description}</p>
       <dl class="ledger hero-facts">
         {site.facts.map((f) => (
           <div class="ledger-row"><dt>{f.label}</dt><dd>{f.value}</dd></div>
@@ -68,7 +72,11 @@ const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber
       <h2 class="big-title">Coursework</h2>
       <table class="courses">
         <thead>
-          <tr><th scope="col">Course</th><th scope="col">What I built</th><th scope="col">Used in</th></tr>
+          <tr>
+            <th scope="col">Course</th>
+            <th scope="col">{anyBuilt ? 'What I built' : 'Topics'}</th>
+            {anyUsed && <th scope="col">Used in</th>}
+          </tr>
         </thead>
         <tbody>
           {[...coursework].sort(byNumber).map((c) => {
@@ -80,12 +88,10 @@ const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber
                   <span class="course-num">{c.number}{c.term && ` (${c.term})`}</span>
                 </th>
                 <td class="course-built">
-                  <p>{c.built ?? '[One sentence in your words: what you built or solved in this class]'}</p>
-                  <p class="course-topics">{c.topics}</p>
+                  {c.built && <p class="course-sentence">{c.built}</p>}
+                  <p class={c.built ? 'course-topics' : 'course-topics is-main'}>{c.topics}</p>
                 </td>
-                <td class="course-used">
-                  {used ? <a href={`/projects/${used.id}`}>{used.data.title}</a> : <span class="todo-link">[Your project]</span>}
-                </td>
+                {anyUsed && <td class="course-used">{used && <a href={`/projects/${used.id}`}>{used.data.title}</a>}</td>}
               </tr>
             );
           })}
