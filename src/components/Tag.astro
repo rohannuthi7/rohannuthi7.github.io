@@ -1,7 +1,7 @@
 ---
-// A skill chip. `used` fills it with the accent: the skill is in the stack of
-// a project on the home page.
-interface Props { label: string; used?: boolean }
-const { label, used = false } = Astro.props;
+// One skill in a Skills row, as plain text. `href` links it to a project on
+// this site that uses it.
+interface Props { label: string; href?: string }
+const { label, href } = Astro.props;
 ---
-<li class={used ? 'chip is-used' : 'chip'}>{label}{used && <span class="sr-only"> (used in a project on this page)</span>}</li>
+<li class="skill">{href ? <a href={href}>{label}</a> : label}</li>

@@ -30,8 +30,8 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 
 /* Type */
 .kicker { font-family: var(--font-sans); font-size: 13px; line-height: 1.4; color: var(--muted); }
-.lede { font-family: var(--font-serif); font-size: 19px; line-height: 1.55; max-width: var(--measure); }
-.body { font-family: var(--font-serif); font-size: 17px; line-height: 1.6; max-width: var(--measure); }
+.lede { font-family: var(--font-sans); font-size: 19px; line-height: 1.55; max-width: var(--measure); }
+.body { font-family: var(--font-sans); font-size: 17px; line-height: 1.6; max-width: var(--measure); }
 .h2 { font-size: 31px; line-height: 1.15; letter-spacing: -0.015em; font-weight: 600; }
 h1, h2, h3 { text-wrap: balance; }
 .col-head { font-size: 16px; line-height: 1.4; font-weight: 600; }
@@ -49,17 +49,12 @@ h1, h2, h3 { text-wrap: balance; }
 /* Buttons */
 .btn { display: inline-flex; align-items: center; height: 40px; padding: 0 16px; border-radius: var(--radius); border: 1px solid var(--fg); font-family: var(--font-sans); font-size: 15px; font-weight: 500; line-height: 1; text-decoration: none; cursor: pointer; }
 .btn-primary { background: var(--fg); color: var(--bg); }
-.btn-primary:hover { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: var(--bg); }
 .btn-secondary { background: transparent; color: var(--fg); }
-.btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+.btn-secondary:hover { border-color: var(--accent-hover); color: var(--accent-hover); }
 .btn:active { transform: translateY(1px); }
 .btn-row { display: flex; flex-wrap: wrap; gap: 12px; }
 
-/* Tag / chip */
-/* Filled chips. A chip for a skill used in a project on the page takes the accent. */
-.chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip { font-size: 15px; line-height: 1.4; font-weight: 600; color: var(--fg); background: var(--chip-bg); border-radius: var(--radius); padding: 10px 16px; white-space: nowrap; }
-.chip.is-used { background: var(--accent); color: var(--bg); }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 /* Contact list */
@@ -72,12 +67,15 @@ h1, h2, h3 { text-wrap: balance; }
 
 /* Left-label grid */
 .lrow { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 0 24px; align-items: start; }
-/* Skills: a label, then its chips; the label sits level with the first chip row. */
+/* Skills: a label, then its skills as a row of text. */
 .skill-rows { display: flex; flex-direction: column; gap: 20px; }
-.skill-label { font-size: 15px; line-height: 1.4; color: var(--muted); padding-top: 10px; }
-.skill-legend { display: flex; align-items: center; gap: 8px; margin-top: var(--space-6); font-size: 13px; line-height: 1.4; color: var(--muted); }
-.skill-swatch { width: 12px; height: 12px; background: var(--accent); }
-@media (max-width: 720px) { .lrow { grid-template-columns: minmax(0, 1fr); } .skill-label { padding: 0 0 8px; } .chip { white-space: normal; } }
+.skill-label { font-size: 15px; line-height: 1.6; color: var(--muted); padding-top: 2px; }
+/* Skills are plain text in a wrapping row. One that a project on this site
+   uses is a link to that project. */
+.skill-list { display: flex; flex-wrap: wrap; gap: 6px 28px; font-size: 17px; line-height: 1.6; font-weight: 500; }
+.skill a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; text-decoration-color: var(--muted); }
+.skill a:hover { color: var(--accent-hover); text-decoration-color: currentColor; }
+@media (max-width: 720px) { .lrow { grid-template-columns: minmax(0, 1fr); } .skill-label { padding: 0 0 4px; } }
 
 /* Section rhythm: every section after About has 96px above and below, the
    h2, then 32px to content. Surfaces alternate page / tint / page; the
@@ -105,7 +103,7 @@ h1, h2, h3 { text-wrap: balance; }
 
 /* About */
 .hero { padding-top: var(--space-12); display: flex; flex-direction: column; gap: 16px; }
-.currently { font-family: var(--font-serif); font-size: 17px; line-height: 1.5; color: var(--muted); }
+.currently { font-family: var(--font-sans); font-size: 17px; line-height: 1.5; color: var(--muted); }
 .hero h1, .wt-title { font-size: 64px; line-height: 1.02; letter-spacing: -0.02em; font-weight: 650; }
 .about { padding-top: 48px; padding-bottom: var(--space-12); display: grid; grid-template-columns: 160px minmax(0, 1fr) 200px; gap: 32px; align-items: start; }
 .about-text { display: flex; flex-direction: column; gap: 24px; }
@@ -115,8 +113,13 @@ h1, h2, h3 { text-wrap: balance; }
 .headshot-frame { position: relative; align-self: stretch; width: 160px; min-height: 240px; border: 1px solid var(--img-border); border-radius: var(--radius); overflow: hidden; }
 .headshot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 35%; border-radius: 0; }
 /* Fact table under the bio, in the project cards' ledger style. */
-.hero-facts { max-width: 400px; }
-.hero-facts .mark { display: inline-flex; align-items: center; justify-content: flex-end; gap: 6px; }
+/* The facts under the bio: a plain list, each label beside its value, with no
+   rules (the ruled label-value table is kept for project cards and pages). */
+.hero-facts { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 24px; font-size: 15px; line-height: 1.5; }
+.hero-fact { display: contents; }
+.hero-facts dt { color: var(--muted); }
+.hero-facts dd { font-weight: 500; }
+.hero-facts .mark { display: inline-flex; align-items: center; gap: 6px; }
 .mark-badge { position: relative; width: 20px; height: 20px; border-radius: 50%; overflow: hidden; flex: 0 0 20px; }
 .mark-badge img { position: absolute; top: 50%; left: 50%; width: 132%; height: 132%; max-width: none; transform: translate(-50%, -50%); border-radius: 0; }
 /* Phones: the pitch and button come first so they sit above the fold; the
@@ -131,7 +134,7 @@ h1, h2, h3 { text-wrap: balance; }
 @media (max-width: 480px) { .hero h1, .wt-title { font-size: 40px; } .lede { font-size: 17px; } .h2 { font-size: 25px; } .body { font-size: 16px; } }
 
 /* Coursework: a three-column table on the slate-blue surface. Course name
-   and number, what was built (serif, with the topics underneath), and the
+   and number, what was built (with the topics underneath), and the
    project that used it. Colours come from .section-case. */
 .courses { width: 100%; border-collapse: collapse; text-align: left; font-family: var(--font-sans); }
 .courses th, .courses td { padding: 16px 24px 16px 0; vertical-align: top; border-bottom: 1px solid var(--line); }
@@ -140,7 +143,7 @@ h1, h2, h3 { text-wrap: balance; }
 .courses thead th { padding-top: 0; padding-bottom: 8px; font-size: 13px; line-height: 1.4; font-weight: 400; color: var(--muted); }
 .course-name { width: 26%; font-size: 16px; line-height: 1.4; font-weight: 600; }
 .course-num { display: block; margin-top: 2px; font-size: 13px; font-weight: 400; color: var(--muted); }
-.course-sentence { font-family: var(--font-serif); font-size: 17px; line-height: 1.6; max-width: 46ch; text-wrap: pretty; }
+.course-sentence { font-family: var(--font-sans); font-size: 17px; line-height: 1.6; max-width: 46ch; text-wrap: pretty; }
 .course-topics { margin-top: 4px; font-size: 13px; line-height: 1.4; color: var(--muted); }
 /* With no sentence above it, the topics line is the cell's main text. */
 .course-topics.is-main { margin-top: 0; font-size: 15px; line-height: 1.5; color: var(--fg); }
@@ -174,8 +177,6 @@ h1, h2, h3 { text-wrap: balance; }
 .deck[data-js] .stage { flex-direction: column; justify-content: center; align-items: stretch; }
 .deck[data-js] .cardbox { flex: 0 0 auto; height: min(640px, calc(100vh - var(--nav-h) - 132px)); }
 .deck-now { display: flex; align-items: baseline; gap: 16px; margin: 0 120px 32px 0; font-size: 15px; line-height: 1.2; }
-.deck-now-count { color: var(--muted); font-variant-numeric: tabular-nums; }
-.deck-now-i { font-size: 20px; font-weight: 600; color: var(--fg); }
 .deck-ticks { margin-left: auto; display: flex; gap: 10px; align-self: center; }
 .deck-tick { width: 10px; height: 10px; padding: 0; border: 0; border-radius: 50%; background: var(--line); cursor: pointer; }
 .deck-tick[aria-current] { background: var(--fg); }
@@ -191,7 +192,6 @@ h1, h2, h3 { text-wrap: balance; }
 }
 .deck-panel-shape {
   position: absolute; inset: 0; background: color-mix(in srgb, var(--fg) 6%, var(--bg));
-  transform: rotate(-0.8deg);
 }
 .stage[data-hot] .deck-panel { clip-path: inset(0 0 0 0); transition: clip-path 220ms cubic-bezier(.2, .9, .1, 1); }
 .stage[data-hot] .card.is-front {
@@ -237,12 +237,12 @@ h1, h2, h3 { text-wrap: balance; }
 .card-info { flex: 0 0 auto; display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; padding: 32px 40px; }
 .card-text { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
 /* Card type follows the page scale: 25px sans heading (the case-study h2
-   size), 17px serif body, 13px sans kickers, 15px sans values. No mono. */
+   size), 17px body, 13px kickers, 15px values. No mono. */
 .card-title-row { display: flex; align-items: center; gap: 12px; }
 .card-logo { flex: 0 0 auto; display: block; width: 36px; height: 36px; }
 .card-logo svg { display: block; width: 100%; height: 100%; }
 .card-title { font-size: 31px; line-height: 1.15; letter-spacing: -0.015em; font-weight: 600; }
-.card-blurb { font-family: var(--font-serif); font-size: 17px; line-height: 1.6; text-wrap: pretty; }
+.card-blurb { font-family: var(--font-sans); font-size: 17px; line-height: 1.6; text-wrap: pretty; }
 .ledger { display: flex; flex-direction: column; justify-content: center; font-family: var(--font-sans); font-size: 15px; line-height: 1.4; }
 .ledger-row { display: flex; justify-content: space-between; gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--line); }
 .ledger-row:last-child { border-bottom: 0; }
@@ -299,22 +299,20 @@ h1, h2, h3 { text-wrap: balance; }
 
 /* Experience timeline */
 /* Experience and the guestbook tree under it share a night sky in both colour
-   schemes: a near-black background with a tile of small stars
-   (public/night-sky.svg) and the dark scheme's colours. The sky runs down to
-   the foot of the tree, where the Skills section starts. */
-#experience, #guestbook { --bg: #111214; --fg: #E6E6E3; --muted: #9C9C98; --line: #34363A; --accent: #9DB0C8; --accent-hover: #B8C7DA; --img-border: #34363A; --surface: #1B1C1F; --card-bg: #0B0C0D; --card-fg: #E6E6E3; --tl-line: #4E5259;
-  background: var(--bg) url("/night-sky.svg"); color: var(--fg); }
+   schemes: a near-black background with the dark scheme's colours and a real
+   star map (scripts/night-sky.mjs: Sussex, Wisconsin, 10 pm on 25 September
+   2005). The map is as tall as the two sections together, with the northern
+   horizon on the bottom edge, where the tree stands and Skills begins. */
+.sky { --bg: #111214; --fg: #E6E6E3; --muted: #9C9C98; --line: #34363A; --accent: #E6E6E3; --accent-hover: #FFFFFF; --img-border: #34363A; --surface: #1B1C1F; --card-bg: #0B0C0D; --card-fg: #E6E6E3;
+  background: var(--bg) url("/night-sky.svg") center bottom / auto 100% no-repeat; color: var(--fg); }
+/* On a phone the two sections are far taller than wide, so the map is drawn
+   larger: this file is its middle strip, with smaller dots. */
+@media (max-width: 720px) { .sky { background-image: url("/night-sky-narrow.svg"); } }
 .timeline { display: flex; flex-direction: column; }
-.entry { display: grid; grid-template-columns: 140px 24px 96px minmax(0, 1fr); gap: 0 24px; align-items: start; padding-bottom: 40px; }
+.entry { display: grid; grid-template-columns: 140px 96px minmax(0, 1fr); gap: 0 32px; align-items: start; padding-bottom: 40px; }
 .entry:last-child { padding-bottom: 0; }
 .entry-date { padding-top: 2px; text-align: right; }
 .entry-date-m { display: none; }
-.tl { position: relative; height: 100%; min-height: 96px; }
-.tl::before { content: ""; position: absolute; left: 11px; top: -40px; bottom: 0; width: 1px; background: var(--tl-line, var(--line)); }
-.entry:first-child .tl::before { top: 7px; }
-.entry:last-child .tl::before { bottom: auto; height: 47px; }
-.entry:only-child .tl::before { display: none; }
-.tl::after { content: ""; position: absolute; left: 8px; top: 7px; width: 8px; height: 8px; border-radius: 4px; background: var(--accent); }
 /* Logos are dimmed a touch so white tiles do not glare on the dark sky. */
 .entry-photo { width: 96px; height: 96px; border: 1px solid var(--img-border); object-fit: cover; filter: brightness(0.9); }
 .entry-photo-circle { border-radius: 50%; }
@@ -324,15 +322,14 @@ h1, h2, h3 { text-wrap: balance; }
 /* The role is the entry's headline; the organisation sits on its own line under it. */
 .entry-role { display: flex; flex-direction: column; gap: 2px; }
 .entry-role b { font-size: 20px; line-height: 1.25; letter-spacing: -0.01em; font-weight: 650; }
-.entry-role span { font-family: var(--font-serif); font-size: 16px; line-height: 1.4; color: var(--muted); }
-.bullets { max-width: var(--measure); padding-left: 18px; list-style: disc; font-family: var(--font-serif); font-size: 16px; line-height: 1.5; }
+.entry-role span { font-family: var(--font-sans); font-size: 16px; line-height: 1.4; color: var(--muted); }
+.bullets { max-width: var(--measure); padding-left: 18px; list-style: disc; font-family: var(--font-sans); font-size: 16px; line-height: 1.5; }
 .bullets li { margin-bottom: 4px; }
 @media (max-width: 720px) {
-  .entry { grid-template-columns: 24px 64px minmax(0, 1fr); gap: 0 16px; }
+  .entry { grid-template-columns: 64px minmax(0, 1fr); gap: 0 16px; }
   .entry-date { display: none; }
   .entry-date-m { display: block; }
   .entry-photo { width: 64px; height: 64px; }
-  .tl { min-height: 64px; }
   /* The date and role sit beside the logo; the bullets start under the logo
      and use the full width. */
   .entry-head { min-height: 64px; }
@@ -379,7 +376,6 @@ h1, h2, h3 { text-wrap: balance; }
    The left side stays in view while its section's text scrolls past. */
 .case-section { display: grid; grid-template-columns: 400px minmax(0, 1fr); gap: var(--space-8); align-items: start; }
 .case-side { position: sticky; top: calc(var(--nav-h) + 24px); display: flex; flex-direction: column; gap: 8px; }
-.case-num { font-family: var(--font-mono); font-size: 13px; line-height: 1.2; color: var(--tone-link); }
 .case-side h2 { font-size: 31px; line-height: 1.15; letter-spacing: -0.015em; font-weight: 600; }
 .case-photo { margin-top: 16px; }
 .case-photo img { display: block; width: 100%; height: auto; border: 1px solid var(--img-border); }
@@ -391,13 +387,11 @@ h1, h2, h3 { text-wrap: balance; }
 .case-page > .case, .case-page > .pager { position: relative; z-index: 1; }
 .case-art { position: absolute; z-index: 0; top: 176px; left: max(16px, calc((100% - var(--container)) / 2)); width: min(560px, 52%); display: flex; justify-content: flex-start; color: var(--tone-link); opacity: 0.14; pointer-events: none; }
 .case-art svg { width: 100%; height: auto; max-height: 360px; }
-.case-code { position: absolute; z-index: 0; top: 140px; right: 0; width: calc((100% - var(--container)) / 2 - 32px); max-height: calc(100% - 180px); overflow: hidden; margin: 0; font: 11px/1.7 var(--font-mono); color: var(--tone-link); opacity: 0.2; white-space: pre; pointer-events: none; }
-@media (max-width: 1359px) { .case-code { display: none; } }
 @media (max-width: 960px) { .case-art { top: 160px; width: 80%; opacity: 0.1; } }
-/* Section text. Paragraphs are serif; a point is a short sans title over its
+/* Section text. A point is a short bold title over its
    paragraph, so a section reads as a handful of labelled ideas. */
 .prose { display: flex; flex-direction: column; gap: 20px; padding-top: 28px; }
-.prose p, .prose ul, .prose ol { font-family: var(--font-serif); font-size: 17px; line-height: 1.6; max-width: var(--measure); text-wrap: pretty; }
+.prose p, .prose ul, .prose ol { font-family: var(--font-sans); font-size: 17px; line-height: 1.6; max-width: var(--measure); text-wrap: pretty; }
 .prose ul { list-style: disc; padding-left: 20px; }
 .prose ol { list-style: decimal; padding-left: 20px; }
 .prose ul.points { list-style: none; padding-left: 0; display: flex; flex-direction: column; gap: 20px; }
@@ -425,8 +419,6 @@ h1, h2, h3 { text-wrap: balance; }
 .pager-prev:hover .pager-arrow { transform: translateX(-4px); }
 .pager-next:hover .pager-arrow { transform: translateX(4px); }
 .pager-mid { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 0 16px; font-size: 15px; line-height: 1.2; }
-.pager-count { color: var(--muted); font-variant-numeric: tabular-nums; }
-.pager-i { font-size: 20px; font-weight: 600; color: var(--tone-link); }
 .pager-dots { display: flex; gap: 2px; }
 /* Each dot is a 10px circle inside a 24px target. */
 .pager-dot { display: grid; place-items: center; width: 24px; height: 24px; }
@@ -472,7 +464,7 @@ h1, h2, h3 { text-wrap: balance; }
 /* Windows High Contrast strips backgrounds and shadows: restore the edges that
    carry meaning. Focus stays on outline, which forced-colors preserves. */
 @media (forced-colors: active) {
-  .card, .card-back, .headshot-frame, .btn, .chip, .frame img { border: 1px solid CanvasText; }
+  .card, .card-back, .headshot-frame, .btn, .frame img { border: 1px solid CanvasText; }
   .card:hover .card-bar { border-top: 2px solid Highlight; }
   .card-back::before { background: CanvasText; }
   .ledger-row { border-color: CanvasText; }
@@ -492,9 +484,6 @@ h1, h2, h3 { text-wrap: balance; }
    no top padding, and the Experience section above gives up its bottom
    padding, so the two sit close together. */
 #guestbook { position: relative; overflow: clip; padding-top: 0; padding-bottom: 0; }
-/* Faint code in the right margin on wide screens, as on the project pages. */
-.wt-code { position: absolute; top: 32px; right: 0; width: calc((100% - var(--container)) / 2 - 32px); max-height: calc(100% - 64px); overflow: hidden; margin: 0; font: 11px/1.7 var(--font-mono); color: var(--accent); opacity: 0.22; white-space: pre; pointer-events: none; }
-@media (max-width: 1359px) { .wt-code { display: none; } }
 #experience { padding-bottom: 0; }
 /* The Skills title straddles the colour change: its top half is on the
    guestbook's background and its bottom half on the Skills tint. Only side
@@ -515,17 +504,6 @@ h1, h2, h3 { text-wrap: balance; }
 .wt-title { margin-bottom: var(--space-3); }
 /* While the form is open the button is hidden but keeps its place. */
 .wt.is-composing .wt-leave { visibility: hidden; }
-/* A short note on what the tree is. Side by side it sits above and to the
-   right of the tree; stacked, under the description. */
-.wt-about { display: flex; flex-direction: column; gap: 8px; max-width: 320px; margin-bottom: var(--space-3); padding-left: 16px; border-left: 2px solid var(--line); }
-.wt-about-title { font-size: 20px; line-height: 1.2; letter-spacing: -0.01em; font-weight: 650; }
-.wt-about-text { font-family: var(--font-serif); font-size: 15px; line-height: 1.55; text-wrap: pretty; }
-/* Three of the real leaves beside the line about them. */
-.wt-about-hand { display: flex; align-items: center; gap: 10px; margin-top: 4px; font-size: 13px; line-height: 1.4; color: var(--muted); }
-.wt-about-leaves { display: flex; flex: 0 0 auto; }
-.wt-about-leaves svg { display: block; margin-right: -4px; }
-.wt-about-leaves svg:nth-child(1) { transform: rotate(-14deg); }
-.wt-about-leaves svg:nth-child(3) { transform: rotate(16deg); }
 .wt-stage { position: relative; }
 .wt-open { position: absolute; inset: 0; width: 100%; height: 100%; background: transparent; border: 0; padding: 0; border-radius: var(--radius); cursor: pointer; }
 .wt-svg { position: relative; display: block; width: 100%; height: auto; pointer-events: none; max-height: 620px; overflow: visible; clip-path: inset(-200px -200px 0 -200px); }
@@ -548,15 +526,15 @@ h1, h2, h3 { text-wrap: balance; }
 .wt-stage:hover .wt-leaf:not(.is-selected) .wt-leaf-fill, .wt.is-composing .wt-leaf:not(.is-selected) .wt-leaf-fill { stroke: var(--muted); }
 .wt-note { position: absolute; z-index: 1; width: min(280px, calc(100% - 16px)); padding: 16px; background: var(--card-bg); color: var(--card-fg); border: 1px solid var(--line); border-radius: var(--radius); pointer-events: none; }
 .wt-note-kind { font-size: 13px; line-height: 1.4; color: var(--muted); margin-bottom: 8px; }
-.wt-note-text { font-family: var(--font-serif); font-size: 17px; line-height: 1.6; overflow-wrap: anywhere; }
-.wt-desc { max-width: var(--measure); margin-bottom: var(--space-2); font-family: var(--font-serif); font-size: 17px; line-height: 1.6; }
+.wt-note-text { font-family: var(--font-sans); font-size: 17px; line-height: 1.6; overflow-wrap: anywhere; }
+.wt-desc { max-width: var(--measure); margin-bottom: var(--space-2); font-family: var(--font-sans); font-size: 17px; line-height: 1.6; }
 .wt-form { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 340px; margin-bottom: var(--space-2); padding: 16px; background: var(--card-bg); color: var(--card-fg); border: 1px solid var(--line); border-radius: var(--radius); }
 .wt-form[hidden], .wt-note[hidden] { display: none; }
 .wt-form-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
 .wt-form label { font-size: 15px; font-weight: 500; line-height: 1.4; }
 .wt-count, .wt-hint { font-size: 13px; line-height: 1.4; color: var(--muted); }
 .wt-form input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.wt-form input { width: 100%; height: 44px; padding: 0 12px; background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: var(--radius); font-family: var(--font-serif); font-size: 17px; }
+.wt-form input { width: 100%; height: 44px; padding: 0 12px; background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: var(--radius); font-family: var(--font-sans); font-size: 17px; }
 /* With a mouse, the description stays hidden until the tree is hovered (or
    something in it has focus). Touch screens always show it. */
 @media (hover: hover) {
@@ -571,7 +549,6 @@ h1, h2, h3 { text-wrap: balance; }
    room in the column, so opening it does not move the heading. */
 @media (min-width: 861px) {
   .wt-body { position: relative; }
-  .wt-about { position: absolute; top: 24px; right: 0; width: 236px; margin: 0; pointer-events: none; }
   .wt-form { position: absolute; left: 0; top: 0; margin: 0; z-index: 2; }
   /* The tree sits a little left of the middle of its column, nearer the page's centre. */
   .wt-stage { left: -48px; }
@@ -598,10 +575,10 @@ h1, h2, h3 { text-wrap: balance; }
 @media print {
   :root { --bg: #FFFFFF; --fg: #000000; --muted: #444444; --line: #BBBBBB; --accent: #000000; --card-bg: #FFFFFF; --card-fg: #000000; --surface: #FFFFFF; }
   html { background: #FFFFFF; }
-  .nav, .skip, .btn-row, .card-bar, .card-back, .segment, .strip, .wt-form, .wt-open, .wt-code, .intro-signature, .deck-panel, .deck-now, .case-art, .case-code, .pager { display: none; }
+  .nav, .skip, .btn-row, .card-bar, .card-back, .segment, .strip, .wt-form, .wt-open, .intro-signature, .deck-panel, .deck-now, .case-art, .pager { display: none; }
   .section, .hero, .about { padding-top: 24px; padding-bottom: 24px; break-inside: avoid; }
   .section-tint { background: transparent; }
-  #experience, #guestbook { background: none; color: #000000; --bg: #FFFFFF; --fg: #000000; --muted: #444444; --line: #BBBBBB; --accent: #000000; --card-bg: #FFFFFF; --card-fg: #000000; }
+  .sky { background: none; color: #000000; --bg: #FFFFFF; --fg: #000000; --muted: #444444; --line: #BBBBBB; --accent: #000000; --card-bg: #FFFFFF; --card-fg: #000000; }
   .stage { position: static; height: auto; display: block; }
   .cardbox { height: auto; display: block; }
   .card { position: static; display: block; transform: none; opacity: 1; border: 1px solid var(--line); margin-bottom: 16px; break-inside: avoid; }

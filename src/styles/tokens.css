@@ -6,7 +6,7 @@
   /* The stripe behind the Projects title: fog blue under dark text, slate blue under light text. */
   --stripe: #C9D6E3;
   /* Fill of a skill chip. */
-  --chip-bg: #D5D9DE;
+ 
   --accent: #3B4A66; --accent-hover: #2C3850;
   --img-border: #CFCFCB;
   /* One colour per project, sampled from its own screenshots (Reaxe: its logo,
@@ -22,7 +22,6 @@
   --radius: 0;
   --nav-h: 65px;
   --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-serif: Georgia, "Times New Roman", Times, serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
   --space-1: 8px; --space-2: 16px; --space-3: 24px; --space-4: 32px;
   --space-6: 48px; --space-8: 64px; --space-12: 96px; --space-16: 128px;
@@ -32,8 +31,10 @@
 @media (prefers-color-scheme: dark) {
   :root { --bg: #1C1C1C; --fg: #E6E6E3; --muted: #9C9C98; --line: #333331;
           --surface: #232323; --surface-line: #3A3A38;
-          --card-bg: #111111; --card-fg: #E6E6E3; --case-bg: #2A3447; --case-fg: #ECEEF2; --stripe: #2A3447; --chip-bg: #2E3238;
-          --accent: #9DB0C8; --accent-hover: #B8C7DA; --img-border: #333331; }
+          --card-bg: #111111; --card-fg: #E6E6E3; --case-bg: #2A3447; --case-fg: #ECEEF2; --stripe: #2A3447;
+          /* On dark, links and highlights are the text colour (marked by an
+             underline); navy is the only colour. */
+          --accent: #E6E6E3; --accent-hover: #FFFFFF; --img-border: #333331; }
 }
 /* Project pages: near-black, tinted with the project's own colour (--tone,
    set on <html> by the page). Lines, the faint drawing and small accents take

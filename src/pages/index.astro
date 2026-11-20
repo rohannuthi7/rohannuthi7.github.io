@@ -19,12 +19,11 @@ const experience = (await getCollection('experience')).sort(byStartDesc);
 // The signature again, large and faint behind the intro. Decorative: the
 // footer copy carries the accessible name.
 const watermark = signatureSvg.replace(/ role="img" aria-label="[^"]*" class="signature"/, ' aria-hidden="true" focusable="false" class="intro-signature"');
-// A skill is "used" when a project on this page lists it in its stack, either
+// The project (if any) that lists a skill in its stack, either
 // by the same name or as a word inside the skill's label ("PostgreSQL" in
 // "SQL (PostgreSQL)", "AWS" in "AWS (EC2, S3, Lambda)").
-const stackNames = new Set(projects.flatMap((p) => p.data.stack));
-const usedInProject = (skill: string) =>
-  stackNames.has(skill) || skill.split(/[\s(),]+/).some((word) => stackNames.has(word));
+const usingProject = (skill: string) =>
+  projects.find((p) => p.data.stack.some((t) => t === skill || skill.split(/[\s(),]+/).includes(t)));
 // The coursework table shows its "What I built" and "Used in" columns only
 // once at least one course has them filled in (src/data/coursework.ts).
 const anyBuilt = coursework.some((c) => c.built);
@@ -45,11 +44,11 @@ const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber
     </div>
     <div class="about-text">
       <p class="lede">{site.bio || site.description}</p>
-      <dl class="ledger hero-facts">
+      <dl class="hero-facts">
         {site.facts.map((f) => (
-          <div class="ledger-row"><dt>{f.label}</dt><dd>{f.value}</dd></div>
+          <div class="hero-fact"><dt>{f.label}</dt><dd>{f.value}</dd></div>
         ))}
-        <div class="ledger-row">
+        <div class="hero-fact">
           <dt>Fraternity</dt>
           <dd class="mark"><span class="mark-badge"><Image src={site.fraternity.mark} alt={`${site.fraternity.name} logo`} width={160} height={160} /></span><span>{site.fraternity.name}</span></dd>
         </div>
@@ -101,6 +100,7 @@ const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber
     </div>
   </section>
 
+  <div class="sky">
   <section id="experience" class="section">
     <div class="container">
       <h2 class="big-title">Experience</h2>
@@ -116,6 +116,8 @@ const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber
     </div>
   </section>
 
+  </div>
+
   <section id="skills" class="section section-tint">
     <div class="container">
       <h2 class="big-title">Skills</h2>
@@ -123,11 +125,10 @@ const byNumber = (a: { number: string }, b: { number: string }) => catalogNumber
         {skills.map((row) => (
           <div class="lrow">
             <p class="skill-label">{row.category}</p>
-            <ul class="chips">{row.items.map((s) => <Tag label={s} used={usedInProject(s)} />)}</ul>
+            <ul class="skill-list">{row.items.map((s) => { const p = usingProject(s); return <Tag label={s} href={p && `/projects/${p.id}`} />; })}</ul>
           </div>
         ))}
       </div>
-      <p class="skill-legend" aria-hidden="true"><span class="skill-swatch"></span>Used in a project on this page</p>
     </div>
   </section>
 </Base>
