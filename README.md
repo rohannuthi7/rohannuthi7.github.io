@@ -31,7 +31,7 @@ Everything you will ever edit is under `src/content/` and `src/data/`. Component
 | Courses | `src/data/coursework.ts` | Number and title only; the level column is read from the catalogue number. |
 | Skill chips | `src/data/skills.ts` | |
 | Resume | `public/rohan-nuthi-resume.pdf` and `public/resume.json` | Replace the PDF (the path never changes; `/resume.pdf` redirects to it) and keep the JSON Resume in step with it. |
-| Guestbook (/guestbook) | `src/data/tree.ts` | Tree capacity, where your pinned leaves sit, and the plaque text. |
+| Guestbook tree (home page) | `src/data/word-tree.ts` | How many notes the tree holds, the longest note, the season, and the starter notes. |
 | Colours, spacing, radius | `src/styles/tokens.css` | |
 | Everything visual | `src/styles/site.css` | The only stylesheet. |
 

@@ -468,96 +468,6 @@ h1, h2, h3 { text-wrap: balance; }
   @media (prefers-color-scheme: dark) { :root { --muted: #C8C8C4; --line: #6A6A66; } }
 }
 
-/* ── Guestbook page (/guestbook) ────────────────────────────────────────────
-   Intro and plaque on the left (sticky on desktop), the tree in its own panel
-   on the right. Palette from the guestbook spec for dark mode; the light
-   palette is derived so the tree still recedes on #ECECEA. */
-.guestbook {
-  --gt-bark: #c9c0b3; --gt-soil: #5a4636;
-  --gt-sage: #6f8a69; --gt-slate: #5b7ba8; --gt-clay: #a8745a; --gt-cream: #b4a17a;
-  --gt-pot: #8a5a44; --gt-rim: #9c6a52;
-  --gt-leaf-opacity: 0.72;
-  padding-top: var(--space-8); padding-bottom: var(--space-12);
-  display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 48px; align-items: start;
-}
-@media (prefers-color-scheme: dark) {
-  .guestbook {
-    --gt-bark: #4a4036; --gt-soil: #2a221c;
-    --gt-sage: #8fa58a; --gt-slate: #7f9cc4; --gt-clay: #c09276; --gt-cream: #e8e4da;
-    --gt-leaf-opacity: 0.65;
-  }
-}
-.gb-intro { position: sticky; top: calc(var(--nav-h) + 32px); display: flex; flex-direction: column; gap: 16px; }
-.gb-title { font-size: 39px; line-height: 1.1; letter-spacing: -0.02em; font-weight: 650; }
-.gb-intro .lede { font-size: 17px; }
-.gb-legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; line-height: 1.4; color: var(--muted); }
-.gb-legend li { display: flex; align-items: center; gap: 6px; }
-.gb-dot, .gt-card-dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 8px; background: var(--gt-sage); }
-.gb-dot[data-kind="fun_fact"], .gt-card[data-kind="fun_fact"] .gt-card-dot { background: var(--gt-slate); }
-.gb-dot[data-kind="other"], .gt-card[data-kind="other"] .gt-card-dot { background: var(--gt-clay); }
-.gb-dot[data-kind="pinned"], .gt-card[data-kind="pinned"] .gt-card-dot { background: var(--gt-cream); }
-.gb-plaque { display: flex; flex-direction: column; gap: 10px; padding-top: 16px; border-top: 1px solid var(--line); }
-.gb-plaque-text { font-family: var(--font-serif); font-size: 15px; line-height: 1.55; color: var(--fg); }
-.gb-tree { min-width: 0; }
-@media (max-width: 720px) {
-  .guestbook { grid-template-columns: minmax(0, 1fr); gap: 32px; padding-top: var(--space-6); }
-  .gb-intro { position: static; }
-}
-
-/* The tree */
-.gt-stage { position: relative; width: 100%; }
-.gt-stage svg { display: block; overflow: visible; }
-.gt-trunk { fill: var(--gt-bark); }
-.gt-branch { fill: none; stroke: var(--gt-bark); stroke-linecap: round; }
-.gt-branch.gt-depth-3, .gt-branch.gt-depth-4, .gt-branch.gt-depth-5 { opacity: 0.8; }
-.gt-leaf { opacity: var(--gt-leaf-opacity); pointer-events: auto; transition: opacity 400ms ease; }
-.gt-leaf.is-lit { opacity: 0.88; }
-.gt-leaf:hover, .gt-leaf.is-active { opacity: 1; transition-duration: 120ms; }
-.gt-leaf--encouragement { fill: var(--gt-sage); }
-.gt-leaf--fun_fact { fill: var(--gt-slate); }
-.gt-leaf--other { fill: var(--gt-clay); }
-.gt-leaf--pinned { fill: var(--gt-cream); }
-.gt-midrib { fill: none; stroke: var(--bg); stroke-opacity: 0.35; stroke-width: 0.8; stroke-linecap: round; }
-.gt-fallen .gt-leaf { opacity: 0.55; pointer-events: none; }
-.gt-pot-body { fill: var(--gt-pot); }
-.gt-pot-rim { fill: var(--gt-rim); }
-.gt-soil { fill: var(--gt-soil); }
-
-/* Idle sway: leaves on or near screen rock a couple of degrees around their
-   stem. It pauses while the page scrolls (SVG transforms cost a layout). */
-.gt-sway { transform-box: view-box; transform-origin: 0 0; }
-.gt-leaf.is-near .gt-sway { animation: gt-sway var(--sd, 7s) ease-in-out var(--sl, 0s) infinite alternate; }
-.gt-stage.is-scrolling .gt-sway { animation-play-state: paused; }
-@keyframes gt-sway { from { transform: rotate(-2.2deg); } to { transform: rotate(2.2deg); } }
-
-/* Scroll glow: a soft halo fixed at the middle of the viewport, moved along the
-   trunk by script. Dark mode is the spec's amber light. On the light theme a
-   light halo washes out, so it darkens instead (multiply) and a short amber
-   band marks the exact point on the trunk. */
-.gt-glow { position: fixed; top: 50%; left: 0; z-index: 0; width: 180px; height: 180px; margin: -90px 0 0 -90px; border-radius: 50%; pointer-events: none; opacity: 0; transition: opacity 600ms ease;
-  mix-blend-mode: multiply; background: radial-gradient(circle, rgba(222, 150, 40, 0.3) 0, rgba(222, 150, 40, 0.1) 38%, transparent 70%); }
-.gt-glow.is-ready { opacity: 1; }
-.gt-glow.is-off { opacity: 0; }
-.gt-glow-band { position: absolute; left: 50%; top: 50%; width: 4px; height: 52px; margin: -26px 0 0 -2px; border-radius: 2px; background: linear-gradient(transparent, #c98516, transparent); opacity: 0.75; }
-@media (prefers-color-scheme: dark) {
-  .gt-glow { mix-blend-mode: normal; background: radial-gradient(circle, rgba(242, 196, 109, 0.26) 0, rgba(242, 196, 109, 0.09) 38%, transparent 70%); }
-  .gt-glow-band { display: none; }
-}
-
-/* A note's card: the site's own card colours and fonts, never wider than the screen. */
-.gt-card { position: fixed; z-index: 30; left: 0; top: 0; width: max-content; max-width: min(280px, calc(100vw - 16px)); padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--card-bg); color: var(--card-fg); pointer-events: none; opacity: 0; transition: opacity 120ms ease-out; }
-.gt-card.is-open { opacity: 1; }
-.gt-card-kind { display: flex; align-items: center; gap: 6px; font-family: var(--font-sans); font-size: 12px; line-height: 1.4; color: var(--muted); }
-.gt-card-body { margin-top: 6px; font-family: var(--font-serif); font-size: 15px; line-height: 1.5; overflow-wrap: anywhere; }
-.gt-card-meta { margin-top: 6px; font-family: var(--font-sans); font-size: 12px; line-height: 1.4; color: var(--muted); }
-
-@media (prefers-reduced-motion: reduce) {
-  .gt-leaf.is-near .gt-sway { animation: none; }
-  .gt-leaf, .gt-glow, .gt-card { transition: none; }
-}
-
-/* Print: a plain document. The nav, the deck chrome and the hover-only
-   affordances go; project cards stack with their URLs expanded. */
 /* Guestbook tree on the home page (src/components/WordTree.astro). The tree is
    drawn in a 1040 x 600 box that scales with the column. Its greens and browns
    are its own colours; everything else comes from the page. */
@@ -650,10 +560,12 @@ h1, h2, h3 { text-wrap: balance; }
 @media (prefers-reduced-motion: reduce) { .wt-outline, .wt-leaf-fill, .wt.is-ready .wt-desc { transition: none; } .wt-svg.is-tapped > *, .wt-leaf.is-tapped .wt-leaf-fill, .wt-leaf.is-tapped .wt-leaf-ink { animation: none; } }
 @media (forced-colors: active) { .wt-wood { fill: CanvasText; } .wt-leaf, .wt-decor { color: CanvasText; fill: CanvasText; } }
 
+/* Print: a plain document. The nav, the deck chrome and the hover-only
+   affordances go; project cards stack with their URLs expanded. */
 @media print {
   :root { --bg: #FFFFFF; --fg: #000000; --muted: #444444; --line: #BBBBBB; --accent: #000000; --card-bg: #FFFFFF; --card-fg: #000000; --surface: #FFFFFF; }
   html { background: #FFFFFF; }
-  .nav, .skip, .btn-row, .card-bar, .card-back, .segment, .strip, .gt-glow, .gt-card, .wt-form, .wt-open, .intro-signature, .deck-panel, .deck-now, .case-art, .case-code, .pager { display: none; }
+  .nav, .skip, .btn-row, .card-bar, .card-back, .segment, .strip, .wt-form, .wt-open, .intro-signature, .deck-panel, .deck-now, .case-art, .case-code, .pager { display: none; }
   .section, .hero, .about { padding-top: 24px; padding-bottom: 24px; break-inside: avoid; }
   .section-tint { background: transparent; }
   .stage { position: static; height: auto; display: block; }
