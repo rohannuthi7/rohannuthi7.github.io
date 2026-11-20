@@ -5,15 +5,21 @@ import { formatRange, isoMonth } from '../lib/dates';
 
 interface Props { entry: CollectionEntry<'experience'> }
 const { data } = Astro.props.entry;
-const range = formatRange(data.dates.start, data.dates.end);
+const range = data.dates.label ?? formatRange(data.dates.start, data.dates.end);
+// A hand-written label means the months are not exact, so no machine-readable date.
+const iso = data.dates.label ? undefined : isoMonth(data.dates.start);
 ---
 <li class="entry">
-  <p class="kicker entry-date"><time datetime={isoMonth(data.dates.start)}>{range}</time></p>
+  <p class="kicker entry-date"><time datetime={iso}>{range}</time></p>
   <div class="tl" aria-hidden="true"></div>
-  <Image class={`entry-photo${data.photoShape === 'circle' ? ' entry-photo-circle' : ''}`} src={data.photo.src} alt={data.photo.alt} width={192} height={192} loading="lazy" decoding="async" />
+  {data.photo
+    ? <Image class={`entry-photo${data.photoShape === 'circle' ? ' entry-photo-circle' : ''}`} src={data.photo.src} alt={data.photo.alt} width={192} height={192} loading="lazy" decoding="async" />
+    : <div class="entry-photo entry-photo-text" aria-hidden="true">{data.org}</div>}
   <div class="entry-body">
-    <p class="kicker entry-date-m">{range}</p>
-    <p class="entry-role"><b>{data.role}</b><span> @ {data.org}</span></p>
+    <div class="entry-head">
+      <p class="kicker entry-date-m">{range}</p>
+      <p class="entry-role">{data.role && <b>{data.role}</b>}<span>{data.org}</span></p>
+    </div>
     {data.bullets.length > 0 && (
       <ul class="bullets">
         {data.bullets.map((b) => <li>{b}</li>)}

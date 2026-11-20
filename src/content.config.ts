@@ -40,15 +40,21 @@ const projects = defineCollection({
 });
 
 // One YAML file per role under src/content/experience/. Delete the file to
-// remove the role; entries sort themselves newest start date first.
+// remove the role; entries sort themselves: upcoming roles, then current
+// ones, then newest start date first.
 const experience = defineCollection({
   loader: glob({ pattern: '*.yaml', base: './src/content/experience' }),
   schema: ({ image }) =>
     z.object({
       role: z.string().optional(),
       org: z.string(),
-      dates: z.object({ start: yearMonth, end: endDate }),
-      photo: picture(image),
+      // `label` replaces the printed date range ("Summer 2027") when the exact
+      // months are not known yet; start and end still set the order.
+      dates: z.object({ start: yearMonth, end: endDate, label: z.string().optional() }),
+      // A role that has not started yet. It sorts above the current ones.
+      upcoming: z.boolean().default(false),
+      // Without a photo the tile shows the organisation's name instead.
+      photo: picture(image).optional(),
       // Most logos/photos sit in the standard 4px-radius square tile; a
       // round brand mark (like Reaxe's circular badge) can opt into a full
       // circle crop instead so it reads as the actual logo shape.

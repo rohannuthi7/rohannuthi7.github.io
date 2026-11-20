@@ -1,0 +1,10 @@
+# TODO(Rohan): confirm the exact title, reword the bullet in your own voice,
+# and set the real start and end months. Until then the page shows "Summer 2027".
+role: Incoming Software Engineer
+org: GE HealthCare
+dates: { start: "2027-06", end: "2027-08", label: "Summer 2027" }
+upcoming: true
+photo: { src: ./img/ge-mark.png, alt: "GE HealthCare logo" }
+photoShape: circle
+bullets:
+  - Joining through the Edison Engineering Program

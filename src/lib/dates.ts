@@ -29,8 +29,10 @@ export function formatStart(start: string): string {
   return `${s.month} ${s.year}`;
 }
 
-/** Sort key: roles still held first, then by newest start date; on a tie, the longer-running one first. */
-export function byStartDesc<T extends { data: { dates: { start: string; end: string } } }>(a: T, b: T): number {
+/** Sort key: roles not started yet first, then roles still held, then by newest start date; on a tie, the longer-running one first. */
+export function byStartDesc<T extends { data: { upcoming?: boolean; dates: { start: string; end: string } } }>(a: T, b: T): number {
+  const byUpcoming = Number(b.data.upcoming ?? false) - Number(a.data.upcoming ?? false);
+  if (byUpcoming !== 0) return byUpcoming;
   const current = (e: string) => (e === 'present' || e === 'ongoing' ? 1 : 0);
   const byCurrent = current(b.data.dates.end) - current(a.data.dates.end);
   if (byCurrent !== 0) return byCurrent;

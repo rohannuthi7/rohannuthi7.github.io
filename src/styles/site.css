@@ -299,24 +299,34 @@ h1, h2, h3 { text-wrap: balance; }
 }
 
 /* Experience timeline */
+/* Experience and the guestbook tree under it share a night sky in both colour
+   schemes: a near-black background with a tile of small stars
+   (public/night-sky.svg) and the dark scheme's colours. The sky runs down to
+   the foot of the tree, where the Skills section starts. */
+#experience, #guestbook { --bg: #111214; --fg: #E6E6E3; --muted: #9C9C98; --line: #34363A; --accent: #9DB0C8; --accent-hover: #B8C7DA; --img-border: #34363A; --surface: #1B1C1F; --card-bg: #0B0C0D; --card-fg: #E6E6E3; --tl-line: #4E5259;
+  background: var(--bg) url("/night-sky.svg"); color: var(--fg); }
 .timeline { display: flex; flex-direction: column; }
 .entry { display: grid; grid-template-columns: 140px 24px 96px minmax(0, 1fr); gap: 0 24px; align-items: start; padding-bottom: 40px; }
 .entry:last-child { padding-bottom: 0; }
 .entry-date { padding-top: 2px; text-align: right; }
 .entry-date-m { display: none; }
 .tl { position: relative; height: 100%; min-height: 96px; }
-.tl::before { content: ""; position: absolute; left: 11px; top: -40px; bottom: 0; width: 1px; background: var(--line); }
+.tl::before { content: ""; position: absolute; left: 11px; top: -40px; bottom: 0; width: 1px; background: var(--tl-line, var(--line)); }
 .entry:first-child .tl::before { top: 7px; }
 .entry:last-child .tl::before { bottom: auto; height: 47px; }
 .entry:only-child .tl::before { display: none; }
 .tl::after { content: ""; position: absolute; left: 8px; top: 7px; width: 8px; height: 8px; border-radius: 4px; background: var(--accent); }
-.entry-photo { width: 96px; height: 96px; border: 1px solid var(--img-border); object-fit: cover; }
+/* Logos are dimmed a touch so white tiles do not glare on the dark sky. */
+.entry-photo { width: 96px; height: 96px; border: 1px solid var(--img-border); object-fit: cover; filter: brightness(0.9); }
 .entry-photo-circle { border-radius: 50%; }
-.entry-body { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-.entry-role { font-size: 16px; line-height: 1.4; }
-.entry-role b { font-weight: 600; }
-.entry-role span { font-family: var(--font-serif); }
-.bullets { padding-left: 18px; list-style: disc; font-family: var(--font-serif); font-size: 16px; line-height: 1.5; }
+/* No logo yet: the organisation's name in the tile. */
+.entry-photo-text { display: flex; align-items: center; justify-content: center; background: var(--surface); border-color: var(--line); font-size: 25px; font-weight: 650; letter-spacing: -0.02em; }
+.entry-body { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+/* The role is the entry's headline; the organisation sits on its own line under it. */
+.entry-role { display: flex; flex-direction: column; gap: 2px; }
+.entry-role b { font-size: 20px; line-height: 1.25; letter-spacing: -0.01em; font-weight: 650; }
+.entry-role span { font-family: var(--font-serif); font-size: 16px; line-height: 1.4; color: var(--muted); }
+.bullets { max-width: var(--measure); padding-left: 18px; list-style: disc; font-family: var(--font-serif); font-size: 16px; line-height: 1.5; }
 .bullets li { margin-bottom: 4px; }
 @media (max-width: 720px) {
   .entry { grid-template-columns: 24px 64px minmax(0, 1fr); gap: 0 16px; }
@@ -324,6 +334,11 @@ h1, h2, h3 { text-wrap: balance; }
   .entry-date-m { display: block; }
   .entry-photo { width: 64px; height: 64px; }
   .tl { min-height: 64px; }
+  /* The date and role sit beside the logo; the bullets start under the logo
+     and use the full width. */
+  .entry-head { min-height: 64px; }
+  .entry-role b { font-size: 18px; }
+  .entry .bullets { margin-left: -80px; }
 }
 
 /* Footer */
@@ -477,7 +492,10 @@ h1, h2, h3 { text-wrap: balance; }
    screen the left column comes first and the tree under it. The section has
    no top padding, and the Experience section above gives up its bottom
    padding, so the two sit close together. */
-#guestbook { padding-top: 0; padding-bottom: 0; }
+#guestbook { position: relative; overflow: clip; padding-top: 0; padding-bottom: 0; }
+/* Faint code in the right margin on wide screens, as on the project pages. */
+.wt-code { position: absolute; top: 32px; right: 0; width: calc((100% - var(--container)) / 2 - 32px); max-height: calc(100% - 64px); overflow: hidden; margin: 0; font: 11px/1.7 var(--font-mono); color: var(--accent); opacity: 0.22; white-space: pre; pointer-events: none; }
+@media (max-width: 1359px) { .wt-code { display: none; } }
 #experience { padding-bottom: 0; }
 /* The Skills title straddles the colour change: its top half is on the
    guestbook's background and its bottom half on the Skills tint. Only side
@@ -487,21 +505,28 @@ h1, h2, h3 { text-wrap: balance; }
   #skills .big-title { position: relative; z-index: 1; margin-top: -0.47em; }
 }
 .wt { position: relative; display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: var(--space-4); align-items: end;
-  --wt-wood: #6B5D52; --wt-wood-line: #4A3F36;
-  --wt-c0: #2F7D4F; --wt-c1: #3F8F5F; --wt-c2: #256B43; --wt-c3: #4A9A68;
-  --wt-d0: #5FA878; --wt-d1: #4E9A6B; --wt-d2: #7DB98F; --wt-d3: #5FA878; }
-.wt[data-season="fall"] { --wt-c0: #B8862A; --wt-c1: #C4632A; --wt-c2: #A8452F; --wt-c3: #7A4B2E;
-  --wt-d0: #B8862A; --wt-d1: #C4632A; --wt-d2: #A8452F; --wt-d3: #7A4B2E; }
-@media (prefers-color-scheme: dark) {
-  .wt { --wt-wood: #4A423B; --wt-wood-line: #2E251E;
-    --wt-c0: #8FC79A; --wt-c1: #6FAF7F; --wt-c2: #A3D4A8; --wt-c3: #5FA878;
-    --wt-d0: #4E9A6B; --wt-d1: #3F7F5A; --wt-d2: #6FAF7F; --wt-d3: #4E9A6B; }
-  .wt[data-season="fall"] { --wt-c0: #E2B04A; --wt-c1: #D9772E; --wt-c2: #C4553A; --wt-c3: #8F5A3C;
-    --wt-d0: #E2B04A; --wt-d1: #D9772E; --wt-d2: #C4553A; --wt-d3: #8F5A3C; }
-}
+  /* Always on the dark sky, so one set of colours for both schemes. */
+  --wt-wood: #4A423B; --wt-wood-line: #2E251E;
+  --wt-c0: #8FC79A; --wt-c1: #6FAF7F; --wt-c2: #A3D4A8; --wt-c3: #5FA878;
+  --wt-d0: #4E9A6B; --wt-d1: #3F7F5A; --wt-d2: #6FAF7F; --wt-d3: #4E9A6B; }
+.wt[data-season="fall"] { --wt-c0: #E2B04A; --wt-c1: #D9772E; --wt-c2: #C4553A; --wt-c3: #8F5A3C;
+  --wt-d0: #E2B04A; --wt-d1: #D9772E; --wt-d2: #C4553A; --wt-d3: #8F5A3C; }
 /* The left column sits level with the middle of the tree. */
 .wt-side { align-self: center; display: flex; flex-direction: column; align-items: flex-start; }
 .wt-title { margin-bottom: var(--space-3); }
+/* While the form is open the button is hidden but keeps its place. */
+.wt.is-composing .wt-leave { visibility: hidden; }
+/* A short note on what the tree is. Side by side it sits above and to the
+   right of the tree; stacked, under the description. */
+.wt-about { display: flex; flex-direction: column; gap: 8px; max-width: 320px; margin-bottom: var(--space-3); padding-left: 16px; border-left: 2px solid var(--line); }
+.wt-about-title { font-size: 20px; line-height: 1.2; letter-spacing: -0.01em; font-weight: 650; }
+.wt-about-text { font-family: var(--font-serif); font-size: 15px; line-height: 1.55; text-wrap: pretty; }
+/* Three of the real leaves beside the line about them. */
+.wt-about-hand { display: flex; align-items: center; gap: 10px; margin-top: 4px; font-size: 13px; line-height: 1.4; color: var(--muted); }
+.wt-about-leaves { display: flex; flex: 0 0 auto; }
+.wt-about-leaves svg { display: block; margin-right: -4px; }
+.wt-about-leaves svg:nth-child(1) { transform: rotate(-14deg); }
+.wt-about-leaves svg:nth-child(3) { transform: rotate(16deg); }
 .wt-stage { position: relative; }
 .wt-open { position: absolute; inset: 0; width: 100%; height: 100%; background: transparent; border: 0; padding: 0; border-radius: var(--radius); cursor: pointer; }
 .wt-svg { position: relative; display: block; width: 100%; height: auto; pointer-events: none; max-height: 620px; overflow: visible; clip-path: inset(-200px -200px 0 -200px); }
@@ -537,18 +562,27 @@ h1, h2, h3 { text-wrap: balance; }
    something in it has focus). Touch screens always show it. */
 @media (hover: hover) {
   .wt.is-ready .wt-desc { opacity: 0; transition: opacity 150ms; }
-  .wt.is-ready:has(.wt-stage:hover) .wt-desc, .wt.is-ready:focus-within .wt-desc, .wt.is-ready.is-composing .wt-desc { opacity: 1; }
+  .wt.is-ready:has(.wt-stage:hover, .wt-stage:focus-within, .wt-leave:focus-visible) .wt-desc, .wt.is-ready.is-composing .wt-desc { opacity: 1; }
+  /* Until then the button rests in the description's place, right under the
+     heading, and slides down as the description appears. */
+  .wt.is-ready .wt-leave { translate: 0 calc(-1 * var(--wt-desc-h, 0px)); transition: translate 220ms ease; }
+  .wt.is-ready:has(.wt-stage:hover, .wt-stage:focus-within, .wt-leave:focus-visible) .wt-leave { translate: 0 0; }
 }
 /* Side by side, the note form takes the description's place without taking up
    room in the column, so opening it does not move the heading. */
 @media (min-width: 861px) {
   .wt-body { position: relative; }
+  .wt-about { position: absolute; top: 24px; right: 0; width: 236px; margin: 0; pointer-events: none; }
   .wt-form { position: absolute; left: 0; top: 0; margin: 0; z-index: 2; }
+  /* The tree sits a little left of the middle of its column, nearer the page's centre. */
+  .wt-stage { left: -48px; }
   .wt.is-ready.is-composing .wt-body .wt-desc { opacity: 0; }
 }
 @media (max-width: 860px) {
   .wt { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .wt-side { min-height: 0; }
+  .wt-leave { margin-bottom: var(--space-2); }
+  .wt.is-composing .wt-leave { display: none; }
   #experience { padding-bottom: var(--space-6); }
 }
 /* A click anywhere on the tree makes it sway once around the foot of the
@@ -557,7 +591,7 @@ h1, h2, h3 { text-wrap: balance; }
 @keyframes wt-tap { 40% { transform: scale(1.14); } }
 .wt-svg.is-tapped > * { transform-box: view-box; transform-origin: 520px 600px; animation: wt-sway 480ms ease-out; }
 .wt-leaf.is-tapped .wt-leaf-fill, .wt-leaf.is-tapped .wt-leaf-ink { transform-box: fill-box; transform-origin: 50% 100%; animation: wt-tap 260ms ease-out; }
-@media (prefers-reduced-motion: reduce) { .wt-outline, .wt-leaf-fill, .wt.is-ready .wt-desc { transition: none; } .wt-svg.is-tapped > *, .wt-leaf.is-tapped .wt-leaf-fill, .wt-leaf.is-tapped .wt-leaf-ink { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .wt-outline, .wt-leaf-fill, .wt.is-ready .wt-desc, .wt.is-ready .wt-leave { transition: none; } .wt-svg.is-tapped > *, .wt-leaf.is-tapped .wt-leaf-fill, .wt-leaf.is-tapped .wt-leaf-ink { animation: none; } }
 @media (forced-colors: active) { .wt-wood { fill: CanvasText; } .wt-leaf, .wt-decor { color: CanvasText; fill: CanvasText; } }
 
 /* Print: a plain document. The nav, the deck chrome and the hover-only
@@ -565,9 +599,10 @@ h1, h2, h3 { text-wrap: balance; }
 @media print {
   :root { --bg: #FFFFFF; --fg: #000000; --muted: #444444; --line: #BBBBBB; --accent: #000000; --card-bg: #FFFFFF; --card-fg: #000000; --surface: #FFFFFF; }
   html { background: #FFFFFF; }
-  .nav, .skip, .btn-row, .card-bar, .card-back, .segment, .strip, .wt-form, .wt-open, .intro-signature, .deck-panel, .deck-now, .case-art, .case-code, .pager { display: none; }
+  .nav, .skip, .btn-row, .card-bar, .card-back, .segment, .strip, .wt-form, .wt-open, .wt-code, .intro-signature, .deck-panel, .deck-now, .case-art, .case-code, .pager { display: none; }
   .section, .hero, .about { padding-top: 24px; padding-bottom: 24px; break-inside: avoid; }
   .section-tint { background: transparent; }
+  #experience, #guestbook { background: none; color: #000000; --bg: #FFFFFF; --fg: #000000; --muted: #444444; --line: #BBBBBB; --accent: #000000; --card-bg: #FFFFFF; --card-fg: #000000; }
   .stage { position: static; height: auto; display: block; }
   .cardbox { height: auto; display: block; }
   .card { position: static; display: block; transform: none; opacity: 1; border: 1px solid var(--line); margin-bottom: 16px; break-inside: avoid; }

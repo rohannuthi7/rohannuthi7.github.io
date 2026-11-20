@@ -1,0 +1,46 @@
+// src/lib/word-tree.ts
+export interface Note {
+  id: number;
+  text: string;
+}
+export interface TreeNode {
+  key: string;
+  x: number;
+  y: number;
+  w: number;
+  parent: string | null;
+  leafId: number | null;
+  label: string;
+}
+
+// Each note is split into words and
+// inserted; shared words become one edge.
+const root = { edge: [], children: [], leafId: null };
+const ins = (node, key, id) => {
+  for (let c = 0; c < node.children.length; c++) {
+    const ch = node.children[c];
+    const m = Math.min(ch.edge.length, key.length);
+    let k = 0;
+    while (k < m && ch.edge[k] === key[k]) k++;
+    if (k === 0) continue;
+    if (k === ch.edge.length) {
+      ins(ch, key.slice(k), id);
+      return;
+    }
+    const mid = { edge: ch.edge.slice(0, k), children: [ch], leafId: null };
+    ch.edge = ch.edge.slice(k);
+    node.children[c] = mid;
+    mid.children.push({ edge: key.slice(k), children: [], leafId: id });
+    return;
+  }
+  node.children.push({ edge: key, children: [], leafId: id });
+};
+notes.forEach((n) =>
+  ins(
+    root,
+    norm(n.text)
+      .split(' ')
+      .concat(['\u0000' + n.id]),
+    n.id,
+  ),
+);

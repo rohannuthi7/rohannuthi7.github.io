@@ -5,13 +5,24 @@
 // same words share a branch, and every leaf is one note. Hover outlines it,
 // clicking it opens the note form, and clicking a leaf shows its note.
 // Notes are not saved yet: see `saving` in src/data/word-tree.ts.
+// Behind it, faint and decorative on wide screens: the note's data shape and
+// the insert function, copied from src/lib/word-tree.ts into
+// word-tree-excerpt.txt (the same idea as the project pages' code strip).
 import { wordTree } from '../data/word-tree';
+import excerpt from './word-tree-excerpt.txt?raw';
+import { leafShapes } from '../data/leaf-shapes';
+
+// Three of the hand-drawn leaves, shown beside the line that says so.
+const d = (poly: number[][]) => 'M' + poly.map((q) => q[0] + ' ' + q[1]).join('L') + 'Z';
+const sampleLeaves = [0, 2, 3].map((i) => ({ fill: d(leafShapes[i][0]), ink: leafShapes[i].map(d).join('') }));
 ---
+<pre class="wt-code" aria-hidden="true">{excerpt}</pre>
 <div class="wt" data-season={wordTree.season}>
   <div class="wt-side">
     <h2 class="wt-title">Guestbook</h2>
     <div class="wt-body">
-      <p class="wt-desc">This tree is a guestbook. It’s also a radix tree: notes that start with the same words share a branch, and every leaf is one note. Click a leaf to read it, or click anywhere to leave your own.</p>
+      <p class="wt-desc">This tree is a guestbook. Click a leaf to read it, or click anywhere to leave your own.</p>
+      <button type="button" class="btn btn-primary wt-leave" aria-controls="wt-form">Leave a note</button>
       <form class="wt-form" id="wt-form" hidden>
         <div class="wt-form-head">
           <label for="wt-input">Leave a note</label>
@@ -25,6 +36,19 @@ import { wordTree } from '../data/word-tree';
         </div>
       </form>
     </div>
+    <!-- TODO(Rohan): this note's wording is a first draft; reword it in your own voice. -->
+    <aside class="wt-about">
+      <p class="wt-about-title">A radix tree</p>
+      <p class="wt-about-text">A radix tree stores text by what it shares. Notes that begin with the same words follow one branch and split where they differ, so every leaf is one note.</p>
+      <p class="wt-about-hand">
+        <span class="wt-about-leaves" aria-hidden="true">
+          {sampleLeaves.map((l, i) => (
+            <svg class={`wt-c${i}`} viewBox="-13 -29 26 30" width="19" height="22"><path class="wt-leaf-fill" d={l.fill} /><path class="wt-leaf-ink" d={l.ink} /></svg>
+          ))}
+        </span>
+        The leaves are hand drawn.
+      </p>
+    </aside>
     <noscript><p class="wt-desc">The guestbook tree needs JavaScript to grow.</p></noscript>
   </div>
   <div class="wt-stage">
@@ -223,7 +247,9 @@ import { wordTree } from '../data/word-tree';
       // The form may be off screen, so bring it into view.
       if (open) { input.focus({ preventScroll: true }); form.scrollIntoView({ block: 'nearest' }); }
     };
-    openBtn.addEventListener('click', () => { const open = form.hidden; selected = null; setForm(open); draw(); placeNote(); });
+    const toggleForm = () => { const open = form.hidden; selected = null; setForm(open); draw(); placeNote(); };
+    openBtn.addEventListener('click', toggleForm);
+    root.querySelector('.wt-leave')?.addEventListener('click', toggleForm);
     form.querySelector('.wt-cancel')!.addEventListener('click', () => { input.value = ''; count.textContent = `0/${wordTree.maxLength}`; setForm(false); openBtn.focus(); });
     form.addEventListener('keydown', (e) => { if (e.key === 'Escape') { setForm(false); openBtn.focus(); } });
     input.addEventListener('input', () => { count.textContent = `${input.value.length}/${wordTree.maxLength}`; });
@@ -256,10 +282,16 @@ import { wordTree } from '../data/word-tree';
       placeNote();
     });
 
+    // The "Leave a note" button rests where the description will appear and
+    // slides down by the description's height when it does (site.css).
+    const desc = root.querySelector<HTMLElement>('.wt-desc');
+    const measureDesc = () => { if (desc) root.style.setProperty('--wt-desc-h', `${desc.offsetHeight + parseFloat(getComputedStyle(desc).marginBottom)}px`); };
+    measureDesc();
     let lastWidth = -1;
     new ResizeObserver(() => {
       if (root.clientWidth === lastWidth) return;
       lastWidth = root.clientWidth;
+      measureDesc();
       fitView(layoutNow());
       placeNote();
     }).observe(root);
