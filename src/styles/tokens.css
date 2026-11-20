@@ -18,7 +18,8 @@
   --project-surg-f: #3DA299;   --project-surg-f-on: #141414;   --project-surg-f-link: #6DC8C0;
   --project-reaxe: #044CAC;    --project-reaxe-on: #FFFFFF;    --project-reaxe-link: #8FBEFC;
   --project-synapse: #C9CCD1;  --project-synapse-on: #141414;  --project-synapse-link: #D6D9DD;
-  --radius: 4px;
+  /* Square corners everywhere. Only true circles (dots, round logos) are round. */
+  --radius: 0;
   --nav-h: 65px;
   --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-serif: Georgia, "Times New Roman", Times, serif;

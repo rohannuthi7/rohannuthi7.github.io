@@ -76,7 +76,7 @@ h1, h2, h3 { text-wrap: balance; }
 .skill-rows { display: flex; flex-direction: column; gap: 20px; }
 .skill-label { font-size: 15px; line-height: 1.4; color: var(--muted); padding-top: 10px; }
 .skill-legend { display: flex; align-items: center; gap: 8px; margin-top: var(--space-6); font-size: 13px; line-height: 1.4; color: var(--muted); }
-.skill-swatch { width: 12px; height: 12px; border-radius: 2px; background: var(--accent); }
+.skill-swatch { width: 12px; height: 12px; background: var(--accent); }
 @media (max-width: 720px) { .lrow { grid-template-columns: minmax(0, 1fr); } .skill-label { padding: 0 0 8px; } .chip { white-space: normal; } }
 
 /* Section rhythm: every section after About has 96px above and below, the
@@ -191,7 +191,6 @@ h1, h2, h3 { text-wrap: balance; }
 }
 .deck-panel-shape {
   position: absolute; inset: 0; background: color-mix(in srgb, var(--fg) 6%, var(--bg));
-  border-radius: 72px 28px 28px 72px / 50% 28px 28px 50%;
   transform: rotate(-0.8deg);
 }
 .stage[data-hot] .deck-panel { clip-path: inset(0 0 0 0); transition: clip-path 220ms cubic-bezier(.2, .9, .1, 1); }
