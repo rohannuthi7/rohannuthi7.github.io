@@ -1,5 +1,6 @@
 ---
-// The guestbook tree on the home page. Notes are sorted into a radix tree over
+// The guestbook tree on the home page: the heading, description and note form
+// on the left, the tree on the right (stacked on a narrow screen). Notes are sorted into a radix tree over
 // words (src/lib/word-tree.ts) and drawn as a tree: notes that start with the
 // same words share a branch, and every leaf is one note. Hover outlines it,
 // clicking it opens the note form, and clicking a leaf shows its note.
@@ -7,9 +8,28 @@
 import { wordTree } from '../data/word-tree';
 ---
 <div class="wt" data-season={wordTree.season}>
+  <div class="wt-side">
+    <h2 class="wt-title">Guestbook</h2>
+    <div class="wt-body">
+      <p class="wt-desc">This tree is a guestbook. It’s also a radix tree: notes that start with the same words share a branch, and every leaf is one note. Click a leaf to read it, or click anywhere to leave your own.</p>
+      <form class="wt-form" id="wt-form" hidden>
+        <div class="wt-form-head">
+          <label for="wt-input">Leave a note</label>
+          <span class="wt-count" aria-hidden="true">0/{wordTree.maxLength}</span>
+        </div>
+        <input id="wt-input" type="text" maxlength={wordTree.maxLength} autocomplete="off" />
+        {!wordTree.saving && <p class="wt-hint">Notes aren’t saved yet, so yours stays on your screen only.</p>}
+        <div class="btn-row">
+          <button type="submit" class="btn btn-primary">Add leaf</button>
+          <button type="button" class="btn btn-secondary wt-cancel">Cancel</button>
+        </div>
+      </form>
+    </div>
+    <noscript><p class="wt-desc">The guestbook tree needs JavaScript to grow.</p></noscript>
+  </div>
   <div class="wt-stage">
     <button type="button" class="wt-open" aria-label="Leave a note on the tree" aria-expanded="false" aria-controls="wt-form"></button>
-    <svg class="wt-svg" viewBox="0 0 1040 600" role="group" aria-label="Guestbook tree. Each leaf is a note.">
+    <svg class="wt-svg" viewBox="0 0 1040 600" preserveAspectRatio="xMidYMax meet" role="group" aria-label="Guestbook tree. Each leaf is a note.">
       <path class="wt-outline" />
       <path class="wt-wood" />
       <path class="wt-decor wt-d0" />
@@ -24,20 +44,6 @@ import { wordTree } from '../data/word-tree';
       <p class="wt-note-text"></p>
     </div>
   </div>
-  <p class="wt-desc">This tree is a guestbook. It’s also a radix tree: notes that start with the same words share a branch, and every leaf is one note. Click a leaf to read it, or click anywhere to leave your own.</p>
-  <form class="wt-form" id="wt-form" hidden>
-    <div class="wt-form-head">
-      <label for="wt-input">Leave a note</label>
-      <span class="wt-count" aria-hidden="true">0/{wordTree.maxLength}</span>
-    </div>
-    <input id="wt-input" type="text" maxlength={wordTree.maxLength} autocomplete="off" />
-    {!wordTree.saving && <p class="wt-hint">Notes aren’t saved yet, so yours stays on your screen only.</p>}
-    <div class="btn-row">
-      <button type="submit" class="btn btn-primary">Add leaf</button>
-      <button type="button" class="btn btn-secondary wt-cancel">Cancel</button>
-    </div>
-  </form>
-  <noscript><p class="wt-desc">The guestbook tree needs JavaScript to grow.</p></noscript>
 </div>
 
 <script>
@@ -95,10 +101,10 @@ import { wordTree } from '../data/word-tree';
       return cache.out;
     };
 
-    // On a narrow screen, show only the part of the box the tree fills, so it
-    // is drawn larger. On a wide one, show the whole box.
+    // When the tree's column is narrow, show only the part of the box the tree
+    // fills, so it is drawn larger. In a wide one, show the whole box.
     const fitView = (L: Layout) => {
-      if (root.clientWidth >= 720) { view = { x: 0, w: 1040 }; }
+      if (stage.clientWidth >= 720) { view = { x: 0, w: 1040 }; }
       else {
         const b = bounds(L);
         const w = Math.max(380, b.x1 - b.x0 + 24);
@@ -150,9 +156,9 @@ import { wordTree } from '../data/word-tree';
         let { x, y, rot } = pose;
         let scale = 1.25;
         if (anim && anim.flyId === n.id) {
-          // The new leaf flies up from the note form, spinning, then pops.
+          // The new leaf flies in from the note form's side, spinning, then pops.
           const e = ease(anim.t), m = 1 - e;
-          const sx = view.x + view.w * 0.19, sy = 470, mx = (sx + x) / 2, my = Math.min(sy, y) - 140;
+          const sx = view.x, sy = 300, mx = (sx + x) / 2, my = Math.min(sy, y) - 140;
           x = m * m * sx + 2 * m * e * mx + e * e * x;
           y = m * m * sy + 2 * m * e * my + e * e * y;
           rot += m * 220;
@@ -205,12 +211,16 @@ import { wordTree } from '../data/word-tree';
       if (key === 'Escape') select(null);
     });
 
+    // ── A click on the tree makes it sway once; a clicked leaf swells (site.css).
+    const tap = (el: Element) => { el.classList.remove('is-tapped'); void el.getBoundingClientRect(); el.classList.add('is-tapped'); };
+    stage.addEventListener('click', (e) => { tap(svg); const l = leafOf(e); if (l) tap(l); });
+
     // ── The note form.
     const setForm = (open: boolean) => {
       form.hidden = !open;
       root.classList.toggle('is-composing', open);
       openBtn.setAttribute('aria-expanded', String(open));
-      // On a phone the form sits under the tree, so bring it into view.
+      // The form may be off screen, so bring it into view.
       if (open) { input.focus({ preventScroll: true }); form.scrollIntoView({ block: 'nearest' }); }
     };
     openBtn.addEventListener('click', () => { const open = form.hidden; selected = null; setForm(open); draw(); placeNote(); });

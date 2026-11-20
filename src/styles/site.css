@@ -106,7 +106,7 @@ h1, h2, h3 { text-wrap: balance; }
 /* About */
 .hero { padding-top: var(--space-12); display: flex; flex-direction: column; gap: 16px; }
 .currently { font-family: var(--font-serif); font-size: 17px; line-height: 1.5; color: var(--muted); }
-.hero h1 { font-size: 64px; line-height: 1.02; letter-spacing: -0.02em; font-weight: 650; }
+.hero h1, .wt-title { font-size: 64px; line-height: 1.02; letter-spacing: -0.02em; font-weight: 650; }
 .about { padding-top: 48px; padding-bottom: var(--space-12); display: grid; grid-template-columns: 160px minmax(0, 1fr) 200px; gap: 32px; align-items: start; }
 .about-text { display: flex; flex-direction: column; gap: 24px; }
 .about-contact { display: flex; flex-direction: column; gap: 12px; padding-top: 4px; }
@@ -128,7 +128,7 @@ h1, h2, h3 { text-wrap: balance; }
   .headshot-frame { grid-area: photo; width: 120px; align-self: start; aspect-ratio: 8 / 15; min-height: 0; }
   .about-contact { grid-area: contact; }
 }
-@media (max-width: 480px) { .hero h1 { font-size: 40px; } .lede { font-size: 17px; } .h2 { font-size: 25px; } .body { font-size: 16px; } }
+@media (max-width: 480px) { .hero h1, .wt-title { font-size: 40px; } .lede { font-size: 17px; } .h2 { font-size: 25px; } .body { font-size: 16px; } }
 
 /* Coursework: a three-column table on the slate-blue surface. Course name
    and number, what was built (serif, with the topics underneath), and the
@@ -561,7 +561,22 @@ h1, h2, h3 { text-wrap: balance; }
 /* Guestbook tree on the home page (src/components/WordTree.astro). The tree is
    drawn in a 1040 x 600 box that scales with the column. Its greens and browns
    are its own colours; everything else comes from the page. */
-.wt { position: relative;
+/* The heading, description and note form sit in a column on the left and the
+   tree on the right. The tree stands on the next section: no space or rule
+   under it, so the foot of the trunk meets the colour change. On a narrow
+   screen the left column comes first and the tree under it. The section has
+   no top padding, and the Experience section above gives up its bottom
+   padding, so the two sit close together. */
+#guestbook { padding-top: 0; padding-bottom: 0; }
+#experience { padding-bottom: 0; }
+/* The Skills title straddles the colour change: its top half is on the
+   guestbook's background and its bottom half on the Skills tint. Only side
+   by side: stacked, the trunk stands where the title would overlap it. */
+@media (min-width: 861px) {
+  #skills { padding-top: 0; display: flow-root; }
+  #skills .big-title { position: relative; z-index: 1; margin-top: -0.47em; }
+}
+.wt { position: relative; display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: var(--space-4); align-items: end;
   --wt-wood: #6B5D52; --wt-wood-line: #4A3F36;
   --wt-c0: #2F7D4F; --wt-c1: #3F8F5F; --wt-c2: #256B43; --wt-c3: #4A9A68;
   --wt-d0: #5FA878; --wt-d1: #4E9A6B; --wt-d2: #7DB98F; --wt-d3: #5FA878; }
@@ -574,9 +589,12 @@ h1, h2, h3 { text-wrap: balance; }
   .wt[data-season="fall"] { --wt-c0: #E2B04A; --wt-c1: #D9772E; --wt-c2: #C4553A; --wt-c3: #8F5A3C;
     --wt-d0: #E2B04A; --wt-d1: #D9772E; --wt-d2: #C4553A; --wt-d3: #8F5A3C; }
 }
-.wt-stage { position: relative; border-bottom: 1px solid var(--line); }
+/* The left column sits level with the middle of the tree. */
+.wt-side { align-self: center; display: flex; flex-direction: column; align-items: flex-start; }
+.wt-title { margin-bottom: var(--space-3); }
+.wt-stage { position: relative; }
 .wt-open { position: absolute; inset: 0; width: 100%; height: 100%; background: transparent; border: 0; padding: 0; border-radius: var(--radius); cursor: pointer; }
-.wt-svg { position: relative; display: block; width: 100%; height: auto; pointer-events: none; overflow: visible; }
+.wt-svg { position: relative; display: block; width: 100%; height: auto; pointer-events: none; max-height: 620px; overflow: visible; clip-path: inset(-200px -200px 0 -200px); }
 .wt-wood { fill: var(--wt-wood); }
 .wt-outline { fill: none; stroke: var(--wt-wood-line); stroke-width: 3; stroke-linejoin: round; transition: stroke 150ms; }
 .wt-d0 { fill: var(--wt-d0); } .wt-d1 { fill: var(--wt-d1); } .wt-d2 { fill: var(--wt-d2); } .wt-d3 { fill: var(--wt-d3); }
@@ -597,24 +615,39 @@ h1, h2, h3 { text-wrap: balance; }
 .wt-note { position: absolute; z-index: 1; width: min(280px, calc(100% - 16px)); padding: 16px; background: var(--card-bg); color: var(--card-fg); border: 1px solid var(--line); border-radius: var(--radius); pointer-events: none; }
 .wt-note-kind { font-size: 13px; line-height: 1.4; color: var(--muted); margin-bottom: 8px; }
 .wt-note-text { font-family: var(--font-serif); font-size: 17px; line-height: 1.6; overflow-wrap: anywhere; }
-.wt-desc { max-width: var(--measure); margin-top: var(--space-2); font-family: var(--font-serif); font-size: 17px; line-height: 1.6; }
-.wt-form { display: flex; flex-direction: column; gap: 12px; max-width: 340px; margin-top: var(--space-2); padding: 16px; background: var(--card-bg); color: var(--card-fg); border: 1px solid var(--line); border-radius: var(--radius); }
+.wt-desc { max-width: var(--measure); margin-bottom: var(--space-2); font-family: var(--font-serif); font-size: 17px; line-height: 1.6; }
+.wt-form { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 340px; margin-bottom: var(--space-2); padding: 16px; background: var(--card-bg); color: var(--card-fg); border: 1px solid var(--line); border-radius: var(--radius); }
 .wt-form[hidden], .wt-note[hidden] { display: none; }
 .wt-form-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
 .wt-form label { font-size: 15px; font-weight: 500; line-height: 1.4; }
 .wt-count, .wt-hint { font-size: 13px; line-height: 1.4; color: var(--muted); }
 .wt-form input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .wt-form input { width: 100%; height: 44px; padding: 0 12px; background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: var(--radius); font-family: var(--font-serif); font-size: 17px; }
-/* Wide screens with a mouse: the description fades in over the tree's lower
-   right on hover, and the form sits over its lower left. Phones and touch
-   screens keep both under the tree, always visible. */
-@media (min-width: 721px) and (hover: hover) {
-  .wt.is-ready .wt-desc { position: absolute; right: 0; bottom: 24px; width: 380px; margin: 0; opacity: 0; pointer-events: none; transition: opacity 150ms; }
-  .wt.is-ready:hover .wt-desc, .wt.is-ready:focus-within .wt-desc { opacity: 1; }
-  .wt.is-ready.is-composing .wt-desc { opacity: 0; }
-  .wt-form { position: absolute; left: 0; bottom: 24px; width: 340px; margin: 0; }
+/* With a mouse, the description stays hidden until the tree is hovered (or
+   something in it has focus). Touch screens always show it. */
+@media (hover: hover) {
+  .wt.is-ready .wt-desc { opacity: 0; transition: opacity 150ms; }
+  .wt.is-ready:has(.wt-stage:hover) .wt-desc, .wt.is-ready:focus-within .wt-desc, .wt.is-ready.is-composing .wt-desc { opacity: 1; }
 }
-@media (prefers-reduced-motion: reduce) { .wt-outline, .wt-leaf-fill, .wt.is-ready .wt-desc { transition: none; } }
+/* Side by side, the note form takes the description's place without taking up
+   room in the column, so opening it does not move the heading. */
+@media (min-width: 861px) {
+  .wt-body { position: relative; }
+  .wt-form { position: absolute; left: 0; top: 0; margin: 0; z-index: 2; }
+  .wt.is-ready.is-composing .wt-body .wt-desc { opacity: 0; }
+}
+@media (max-width: 860px) {
+  .wt { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .wt-side { min-height: 0; }
+  #experience { padding-bottom: var(--space-6); }
+}
+/* A click anywhere on the tree makes it sway once around the foot of the
+   trunk (520,600 in the drawing's own units), and a clicked leaf swells. */
+@keyframes wt-sway { 30% { transform: rotate(0.7deg); } 65% { transform: rotate(-0.35deg); } }
+@keyframes wt-tap { 40% { transform: scale(1.14); } }
+.wt-svg.is-tapped > * { transform-box: view-box; transform-origin: 520px 600px; animation: wt-sway 480ms ease-out; }
+.wt-leaf.is-tapped .wt-leaf-fill, .wt-leaf.is-tapped .wt-leaf-ink { transform-box: fill-box; transform-origin: 50% 100%; animation: wt-tap 260ms ease-out; }
+@media (prefers-reduced-motion: reduce) { .wt-outline, .wt-leaf-fill, .wt.is-ready .wt-desc { transition: none; } .wt-svg.is-tapped > *, .wt-leaf.is-tapped .wt-leaf-fill, .wt-leaf.is-tapped .wt-leaf-ink { animation: none; } }
 @media (forced-colors: active) { .wt-wood { fill: CanvasText; } .wt-leaf, .wt-decor { color: CanvasText; fill: CanvasText; } }
 
 @media print {
